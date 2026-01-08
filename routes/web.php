@@ -19,5 +19,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 });
 
 Route::prefix('/')->name('user.')->group(function () {
-        Route::get('/', [DashboardUser::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardUser::class, 'index'])->name('dashboard');
+    Route::get('/profile', [DashboardUser::class, 'profile'])->name('profile');
 });

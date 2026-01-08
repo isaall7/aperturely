@@ -1,102 +1,107 @@
-<div class="header">    
-    <div class="header-content clearfix">
-
-        <div class="nav-control">
-            <div class="hamburger">
-                <span class="toggle-icon"><i class="icon-menu"></i></span>
-            </div>
+ <aside class="left-sidebar">
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-center px-5 py-4">
+          <a href="./index.html" class="text-nowrap logo-img">
+            <img src="{{asset('ui/images/logos/aperturely.png')}}" width="90%" height="90%" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
         </div>
-
-        <div class="header-left">
-            <div class="input-group icons">
-                <div class="input-group-prepend">
-                    <span class="input-group-text bg-transparent border-0 pr-2 pr-sm-3">
-                        <i class="mdi mdi-magnify"></i>
-                    </span>
+        <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+          <ul id="sidebarnav">
+            <!-- <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">Home</span>
+            </li> -->
+            <li class="sidebar-item">
+              <a class="sidebar-link primary-hover-bg justify-content-between"
+                href="{{route('user.dashboard')}}" aria-expanded="false">
+                <div class="d-flex align-items-center gap-6">
+                  <span class="d-flex">
+                    <iconify-icon icon="solar:widget-line-duotone"></iconify-icon>  
+                  </span>
+                  <span class="hide-menu">Beranda</span>
                 </div>
-                <input type="search" class="form-control" placeholder="Search Dashboard">
-            </div>
-        </div>
-
-        <div class="header-right">
-            <ul class="clearfix">
-
-                <!-- USER DROPDOWN -->
-                <li class="icons dropdown">
-                    <div class="user-img c-pointer position-relative" data-toggle="dropdown">
-                        <span class="activity active"></span>
-                        <img src="{{ asset('ui/images/user/1.png') }}" height="40" width="40" alt="">
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link primary-hover-bg justify-content-between"
+                href="{{route('user.dashboard')}}" aria-expanded="false">
+                <div class="d-flex align-items-center gap-6">
+                  <span class="d-flex">
+                    <iconify-icon icon="solar:bell-line-duotone" class=""></iconify-icon>
+                  </span>
+                  <span class="hide-menu">Notifikasi</span>
+                </div>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link primary-hover-bg justify-content-between"
+                href="https://bootstrapdemos.wrappixel.com/spike/dist/main/index2.html" aria-expanded="false">
+                <div class="d-flex align-items-center gap-6">
+                  <span class="d-flex">
+                    <iconify-icon icon="solar:add-circle-line-duotone" class=""></iconify-icon>
+                  </span>
+                  <span class="hide-menu">Buat</span>
+                </div>
+              </a>
+               <li class="sidebar-item">
+              <a class="sidebar-link primary-hover-bg justify-content-between"
+                href="https://bootstrapdemos.wrappixel.com/spike/dist/main/index2.html" aria-expanded="false">
+                <div class="d-flex align-items-center gap-6">
+                  <span class="d-flex">
+                    <iconify-icon icon="solar:chart-line-duotone" class=""></iconify-icon>
+                  </span>
+                  <span class="hide-menu">Trending</span>
+                </div>
+              </a>
+              <a class="sidebar-link primary-hover-bg justify-content-between"
+                href="https://bootstrapdemos.wrappixel.com/spike/dist/main/index2.html" aria-expanded="false">
+                <div class="d-flex align-items-center gap-6">
+                  <span class="d-flex">
+                    <iconify-icon icon="solar:compass-line-duotone" class=""></iconify-icon>
+                  </span>
+                  <span class="hide-menu">Eksplor</span>
+                </div>
+              </a>
+            </li>
+             <li class="sidebar-item">
+              <a class="sidebar-link primary-hover-bg justify-content-between has-arrow" href="javascript:void(0)"
+                aria-expanded="false">
+                <div class="d-flex align-items-center gap-6">
+                  <span class="d-flex">
+                    <iconify-icon icon="solar:history-line-duotone"></iconify-icon>
+                  </span>
+                  <span class="hide-menu">Riwayat</span>
+                </div>
+              </a>
+              <ul aria-expanded="false" class="collapse first-level">
+                <li class="sidebar-item">
+                  <a class="sidebar-link primary-hover-bg justify-content-between"
+                    href="https://bootstrapdemos.wrappixel.com/spike/dist/main/frontend-landingpage.html">
+                    <div class="d-flex align-items-center gap-6">
+                      <span class="d-flex">
+                        <span class="ti ti-message-circle"></span>
+                      </span>
+                      <span class="hide-menu">Komentar</span>
                     </div>
-
-                    <div class="drop-down dropdown-profile animated fadeIn dropdown-menu">
-                        <div class="dropdown-content-body">
-                            <ul>
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-user"></i> <span>Profile</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-envelope-open"></i> <span>Pesan</span>
-                                    </a>
-                                </li>
-
-                                <hr class="my-2">
-
-                                {{-- JIKA LOGIN --}}
-                                @auth
-                                    <li>
-                                        <a href="{{ route('logout') }}"
-                                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            <i class="icon-key"></i> <span>Logout</span>
-                                        </a>
-                                    </li>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                @endauth
-
-                                {{-- JIKA BELUM LOGIN --}}
-                                @guest
-                                    <li>
-                                        <a href="#" data-toggle="modal" data-target="#loginModal">
-                                            <i class="icon-key"></i> <span>Login</span>
-                                        </a>
-                                    </li>
-                                @endguest
-
-                            </ul>
-                        </div>
-                    </div>
+                  </a>
                 </li>
-
-            </ul>
-        </div>
-    </div>
-</div>
-
-<!-- ================= MODAL LOGIN ================= -->
-<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title">Login</h5>
-                <button type="button" class="close" data-dismiss="modal">
-                    <span>&times;</span>
-                </button>
-            </div>
-
-            <div class="modal-body text-center">
-                <p>Login menggunakan akun Google Anda</p>
-
-                <a href="{{ url('/auth/google-redirect') }}" class="btn btn-danger btn-block">
-                    <i class="fab fa-google"></i> Login dengan Google
-                </a>
-            </div>
-
-        </div>
-    </div>
-</div>
+                <li class="sidebar-item">
+                  <a class="sidebar-link primary-hover-bg justify-content-between"
+                    href="https://bootstrapdemos.wrappixel.com/spike/dist/main/frontend-aboutpage.html">
+                    <div class="d-flex align-items-center gap-6">
+                      <span class="d-flex">
+                        <span class="ti ti-thumb-up"></span>
+                      </span>
+                      <span class="hide-menu">Menyukai</span>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </aside>

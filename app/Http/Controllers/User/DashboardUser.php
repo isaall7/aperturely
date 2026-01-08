@@ -10,6 +10,11 @@ class DashboardUser extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function profile()
+    {
+        return view('user.profile');
+    }
+    
     public function index()
     {
         return view('user.dashboard');
