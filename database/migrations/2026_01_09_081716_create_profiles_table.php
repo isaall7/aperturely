@@ -9,22 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up(): void  
     {
-        Schema::create('photo_likes', function (Blueprint $table) {
+        Schema::create('profiles', function (Blueprint $table) {
             $table->id();
-
-            $table->unsignedBigInteger('post_id');
-            $table->unsignedBigInteger('user_id');
-
-            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
+            $table->unsignedBigInteger('user_id')->unique();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-
+            $table->string('bio')->nullable();
             $table->timestamps();
-
-            $table->unique(['post_id', 'user_id']); // tidak bisa like 2x
         });
-
     }
 
     /**
@@ -32,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('likes_photos');
+        Schema::dropIfExists('profiles');
     }
 };

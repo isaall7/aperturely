@@ -9,20 +9,22 @@ class Likes_photo extends Model
 {
     use HasFactory;
 
+    protected $table = 'photo_likes';
+
     protected $fillable = [
-        'photo_id',
+        'post_id',
         'user_id'
     ];
 
-    // RELASI
-
-    public function photo()
+    // LIKE MILIK POST
+    public function post()
     {
-        return $this->belongsTo(Photo::class);
+        return $this->belongsTo(Posts::class, 'post_id');
     }
 
+    // LIKE MILIK USER
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

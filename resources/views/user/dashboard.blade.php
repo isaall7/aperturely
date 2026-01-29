@@ -3,280 +3,455 @@
 @section('content')
 <style>
     .feed-container {
-        background: #f0f5f9;
+        background: #ffffff;
         min-height: 100vh;
         padding: 20px 0;
     }
     
-    .post-card {
-        background: white;
-        border-radius: 12px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        overflow: hidden;
+    .masonry-grid {
+        column-count: 4;
+        column-gap: 20px;
+        padding: 0 20px;
     }
     
-    .post-header {
+    @media (max-width: 1200px) {
+        .masonry-grid {
+            column-count: 3;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .masonry-grid {
+            column-count: 2;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .masonry-grid {
+            column-count: 1;
+        }
+    }
+    
+    .post-card {
+        background: white;
+        border-radius: 16px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        overflow: hidden;
+        break-inside: avoid;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .post-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
+    }
+    
+    .post-card:hover .post-overlay {
+        opacity: 1;
+    }
+    
+    .post-image-container {
+        position: relative;
+        width: 100%;
+        background: #f0f0f0;
+    }
+    
+    .post-image-container img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 16px 16px 0 0;
+    }
+    
+    .post-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         padding: 15px;
+        border-radius: 16px 16px 0 0;
+    }
+    
+    .post-overlay-top {
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .post-overlay-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .overlay-btn {
+        background: white;
+        border: none;
+        border-radius: 24px;
+        padding: 8px 16px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    .overlay-btn:hover {
+        transform: scale(1.05);
+    }
+    
+    .save-btn {
+        background: #e60023;
+        color: white;
+    }
+    
+    .action-btns {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .icon-btn {
+        background: white;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid #e8e8e8;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 18px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        transition: all 0.2s;
+    }
+    
+    .icon-btn:hover {
+        transform: scale(1.1);
+        background: #f0f0f0;
+    }
+    
+    .post-info {
+        padding: 12px 15px;
+    }
+    
+    .post-caption {
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 8px;
+        font-weight: 500;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
     
     .post-user {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 8px;
     }
     
     .user-avatar {
-        width: 40px;
-        height: 40px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid #4a90e2;
     }
     
-    .user-info h6 {
-        margin: 0;
-        font-weight: 600;
+    .user-name {
+        font-size: 13px;
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .post-stats {
+        display: flex;
+        gap: 15px;
+        font-size: 13px;
+        color: #666;
+        margin-top: 8px;
+    }
+    
+    .post-stats span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .empty-feed {
+        text-align: center;
+        padding: 100px 20px;
+        background: white;
+        border-radius: 16px;
+        margin: 20px;
+    }
+
+    .empty-feed i {
+        font-size: 64px;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .empty-feed h4 {
         color: #1a1a1a;
+        margin-bottom: 10px;
+    }
+
+    .empty-feed p {
+        color: #8e8e8e;
         font-size: 14px;
     }
     
-    .user-info span {
-        font-size: 12px;
-        color: #8e8e8e;
+    /* Modal Styles */
+    .detail-modal .modal-dialog {
+        max-width: 1200px;
+        height: 90vh;
+        margin: 5vh auto;
     }
     
-    .post-carousel {
-        position: relative;
+    .detail-modal .modal-content {
+        border-radius: 16px;
+        overflow: hidden;
+        border: none;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .detail-modal .modal-body {
+        padding: 0;
+        flex: 1;
+        overflow: hidden;
+    }
+    
+    .modal-container {
+        display: flex;
+        height: 100%;
+    }
+    
+    .modal-image-section {
+        flex: 1;
         background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
     }
     
-    .post-carousel img {
-        width: 100%;
-        height: 500px;
+    .modal-image-section img {
+        max-width: 100%;
+        max-height: 100%;
         object-fit: contain;
     }
-    
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 40px;
-        height: 40px;
-        background: rgba(255,255,255,0.8);
+
+    /* Modal Carousel */
+    .modal-carousel {
+        width: 100%;
+        height: 100%;
+    }
+
+    .modal-carousel .carousel-inner {
+        height: 100%;
+    }
+
+    .modal-carousel .carousel-item {
+        height: 100%;
+        display: none !important;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .modal-carousel .carousel-item.active {
+        display: flex !important;
+        position: relative;
+    }
+
+    .modal-carousel .carousel-item img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .modal-carousel .carousel-control-prev,
+    .modal-carousel .carousel-control-next {
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.9);
         border-radius: 50%;
         top: 50%;
         transform: translateY(-50%);
+        opacity: 1;
+        transition: all 0.3s;
+        z-index: 10;
     }
-    
-    .carousel-control-prev {
-        left: 15px;
+
+    .modal-carousel .carousel-control-prev:hover,
+    .modal-carousel .carousel-control-next:hover {
+        background: rgba(255, 255, 255, 1);
+        transform: translateY(-50%) scale(1.1);
     }
-    
-    .carousel-control-next {
-        right: 15px;
+
+    .modal-carousel .carousel-control-prev {
+        left: 20px;
     }
-    
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
+
+    .modal-carousel .carousel-control-next {
+        right: 20px;
+    }
+
+    .modal-carousel .carousel-control-prev:hover,
+    .modal-carousel .carousel-control-next:hover {
+        background: rgba(255, 255, 255, 1);
+    }
+
+    .modal-carousel .carousel-control-prev-icon,
+    .modal-carousel .carousel-control-next-icon {
+        width: 24px;
+        height: 24px;
         filter: invert(1);
     }
-    
-    .post-actions {
-        padding: 12px 15px;
-        display: flex;
-        gap: 15px;
-        border-bottom: 1px solid #e8e8e8;
+
+    .modal-carousel .carousel-indicators {
+        bottom: 20px;
     }
-    
-    .action-btn {
-        background: none;
+
+    .modal-carousel .carousel-indicators button {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.5);
         border: none;
-        cursor: pointer;
-        font-size: 24px;
-        color: #1a1a1a;
-        transition: all 0.2s;
+        margin: 0 4px;
+    }
+
+    .modal-carousel .carousel-indicators button.active {
+        background-color: #fff;
     }
     
-    .action-btn:hover {
-        transform: scale(1.1);
-        color: #4a90e2;
-    }
-    
-    .action-btn.liked {
-        color: #e74c3c;
-    }
-    
-    .post-likes {
-        padding: 0 15px 8px;
-        font-weight: 600;
-        font-size: 14px;
-        color: #1a1a1a;
-    }
-    
-    .post-caption {
-        padding: 0 15px 8px;
-        font-size: 14px;
-        color: #1a1a1a;
-    }
-    
-    .post-caption .username {
-        font-weight: 600;
-        margin-right: 6px;
-    }
-    
-    .post-comments {
-        padding: 0 15px 12px;
-    }
-    
-    .view-comments {
-        color: #8e8e8e;
-        font-size: 14px;
-        cursor: pointer;
-        background: none;
-        border: none;
-        padding: 0;
-        text-align: left;
-    }
-    
-    .view-comments:hover {
-        color: #4a90e2;
-    }
-    
-    .post-time {
-        padding: 0 15px 12px;
-        font-size: 12px;
-        color: #8e8e8e;
-        text-transform: uppercase;
-    }
-    
-    .notification-sidebar {
+    .modal-details-section {
+        width: 450px;
         background: white;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        position: sticky;
-        top: 20px;
-        max-height: calc(100vh - 40px);
-        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid #e0e0e0;
     }
     
-    .notification-header {
-        font-weight: 700;
-        font-size: 16px;
-        margin-bottom: 20px;
-        color: #1a1a1a;
+    .modal-header-custom {
+        padding: 20px;
+        border-bottom: 1px solid #e0e0e0;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
     
-    .notification-badge {
-        background: #e74c3c;
-        color: white;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: 600;
-    }
-    
-    .notification-item {
+    .modal-header-actions {
         display: flex;
         gap: 12px;
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 8px;
-        transition: all 0.2s;
-        cursor: pointer;
+        align-items: center;
     }
     
-    .notification-item:hover {
-        background: #f0f7ff;
-    }
-    
-    .notification-item.unread {
-        background: #e8f4ff;
-    }
-    
-    .notification-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        object-fit: cover;
-        flex-shrink: 0;
-    }
-    
-    .notification-content {
-        flex: 1;
-    }
-    
-    .notification-content strong {
-        font-weight: 600;
-        color: #1a1a1a;
-    }
-    
-    .notification-content p {
-        margin: 0;
-        font-size: 13px;
-        color: #4a4a4a;
-    }
-    
-    .notification-time {
-        font-size: 11px;
-        color: #8e8e8e;
-        margin-top: 4px;
-    }
-    
-    /* Modal Styles */
-    .comment-modal .modal-dialog {
-        max-width: 1000px;
-    }
-    
-    .comment-modal .modal-content {
-        border-radius: 12px;
-        overflow: hidden;
+    .modal-action-btn {
+        background: none;
         border: none;
-    }
-    
-    .comment-modal .modal-body {
-        padding: 0;
-    }
-    
-    .modal-post-image {
-        background: #000;
+        cursor: pointer;
+        font-size: 24px;
+        padding: 8px;
+        border-radius: 50%;
+        transition: all 0.2s;
+        width: 40px;
+        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 600px;
     }
     
-    .modal-post-image img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
+    .modal-action-btn:hover {
+        background: #f0f0f0;
+    }
+    
+    .modal-save-btn {
+        background: #e60023;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 24px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .modal-save-btn:hover {
+        background: #ad081b;
+        transform: scale(1.05);
+    }
+    
+    .modal-user-section {
+        padding: 20px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .modal-user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .modal-user-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .modal-user-details h6 {
+        margin: 0;
+        font-weight: 600;
+        color: #1a1a1a;
+        font-size: 16px;
+    }
+    
+    .modal-user-details span {
+        font-size: 13px;
+        color: #666;
+    }
+    
+    .modal-caption {
+        font-size: 14px;
+        color: #333;
+        line-height: 1.6;
+    }
+    
+    .modal-stats {
+        display: flex;
+        gap: 20px;
+        margin-top: 12px;
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .modal-stats span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
     
     .modal-comments-section {
-        height: 600px;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .modal-post-header {
-        padding: 15px;
-        border-bottom: 1px solid #e8e8e8;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    
-    .modal-comments-list {
         flex: 1;
         overflow-y: auto;
         padding: 20px;
@@ -289,8 +464,8 @@
     }
     
     .comment-avatar {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
         object-fit: cover;
         flex-shrink: 0;
@@ -308,8 +483,9 @@
     }
     
     .comment-text {
-        color: #4a4a4a;
+        color: #333;
         font-size: 14px;
+        line-height: 1.5;
     }
     
     .comment-actions {
@@ -317,520 +493,541 @@
         gap: 15px;
         margin-top: 8px;
         font-size: 12px;
-        color: #8e8e8e;
+        color: #666;
     }
     
     .comment-actions button {
         background: none;
         border: none;
-        color: #8e8e8e;
+        color: #666;
         cursor: pointer;
         padding: 0;
         font-weight: 600;
+        font-size: 12px;
     }
     
     .comment-actions button:hover {
-        color: #4a90e2;
+        color: #000;
     }
     
-    .modal-post-actions {
-        padding: 12px 15px;
-        border-top: 1px solid #e8e8e8;
-        border-bottom: 1px solid #e8e8e8;
+    .modal-comment-input-section {
+        padding: 20px;
+        border-top: 1px solid #e0e0e0;
     }
     
     .modal-comment-input {
-        padding: 15px;
         display: flex;
-        gap: 10px;
+        gap: 12px;
         align-items: center;
     }
     
     .modal-comment-input input {
         flex: 1;
-        border: none;
+        border: 2px solid #e0e0e0;
+        border-radius: 24px;
+        padding: 12px 20px;
         outline: none;
         font-size: 14px;
+        transition: all 0.2s;
+    }
+    
+    .modal-comment-input input:focus {
+        border-color: #4a90e2;
     }
     
     .modal-comment-input button {
-        background: none;
+        background: #4a90e2;
+        color: white;
         border: none;
-        color: #4a90e2;
+        padding: 12px 24px;
+        border-radius: 24px;
         font-weight: 600;
         cursor: pointer;
         font-size: 14px;
+        transition: all 0.2s;
     }
     
     .modal-comment-input button:hover {
-        color: #357abd;
+        background: #357abd;
     }
     
-    /* Scrollbar Styling */
-    .notification-sidebar::-webkit-scrollbar,
-    .modal-comments-list::-webkit-scrollbar {
+    .modal-comment-input button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    /* Dropdown Menu */
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-radius: 8px;
+        padding: 8px 0;
+        min-width: 200px;
+    }
+
+    .dropdown-item {
+        padding: 10px 20px;
+        font-size: 14px;
+        color: #1a1a1a;
+        transition: all 0.2s;
+    }
+
+    .dropdown-item:hover {
+        background: #f0f7ff;
+        color: #4a90e2;
+    }
+
+    .dropdown-item.text-danger:hover {
+        background: #ffe8e8;
+        color: #e74c3c;
+    }
+
+    /* Report Modal */
+    .report-modal .modal-dialog {
+        max-width: 500px;
+    }
+
+    .report-modal .modal-content {
+        border-radius: 12px;
+        border: none;
+    }
+
+    .report-modal .modal-header {
+        border-bottom: 1px solid #e8e8e8;
+        padding: 20px;
+    }
+
+    .report-modal .modal-title {
+        font-weight: 700;
+        font-size: 18px;
+        color: #1a1a1a;
+    }
+
+    .report-modal .modal-body {
+        padding: 20px;
+    }
+
+    .report-modal .form-label {
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .report-modal .form-select,
+    .report-modal .form-control {
+        border: 2px solid #e8e8e8;
+        border-radius: 8px;
+        padding: 10px 15px;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+
+    .report-modal .form-select:focus,
+    .report-modal .form-control:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    }
+
+    .report-modal .btn-submit-report {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.2s;
+        width: 100%;
+    }
+
+    .report-modal .btn-submit-report:hover {
+        background: #c0392b;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+    }
+
+    .report-modal .btn-cancel {
+        background: #f0f5f9;
+        color: #1a1a1a;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.2s;
+        width: 100%;
+    }
+
+    .report-modal .btn-cancel:hover {
+        background: #e0e7ed;
+    }
+    
+    /* Scrollbar */
+    .modal-comments-section::-webkit-scrollbar {
         width: 6px;
     }
     
-    .notification-sidebar::-webkit-scrollbar-track,
-    .modal-comments-list::-webkit-scrollbar-track {
+    .modal-comments-section::-webkit-scrollbar-track {
         background: #f1f1f1;
     }
     
-    .notification-sidebar::-webkit-scrollbar-thumb,
-    .modal-comments-list::-webkit-scrollbar-thumb {
+    .modal-comments-section::-webkit-scrollbar-thumb {
         background: #c1c1c1;
         border-radius: 10px;
     }
     
-    .notification-sidebar::-webkit-scrollbar-thumb:hover,
-    .modal-comments-list::-webkit-scrollbar-thumb:hover {
+    .modal-comments-section::-webkit-scrollbar-thumb:hover {
         background: #a8a8a8;
+    }
+
+    @media (max-width: 992px) {
+        .modal-details-section {
+            width: 100%;
+        }
+        
+        .modal-container {
+            flex-direction: column;
+        }
+        
+        .modal-image-section {
+            height: 50vh;
+        }
     }
 </style>
 
 <div class="feed-container">
     <div class="container-fluid">
-        <div class="row">
-            <!-- Posts Feed -->
-            <div class="col-lg-8">
-                <!-- Post 1 -->
-                <div class="post-card">
-                    <div class="post-header">
-                        <div class="post-user">
-                            <img src="https://i.pravatar.cc/150?img=1" alt="User" class="user-avatar">
-                            <div class="user-info">
-                                <h6>asupan_gabutmu5444</h6>
-                                <span>44m</span>
-                            </div>
-                        </div>
-                        <button class="action-btn">⋯</button>
-                    </div>
-                    
-                    <div id="carousel1" class="carousel slide post-carousel" data-bs-ride="false">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="https://picsum.photos/600/600?random=1" alt="Post 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="https://picsum.photos/600/600?random=2" alt="Post 2">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="https://picsum.photos/600/600?random=3" alt="Post 3">
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel1" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carousel1" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>
-                    </div>
-                    
-                    <div class="post-actions">
-                        <button class="action-btn like-btn" onclick="toggleLike(this)">🤍</button>
-                        <button class="action-btn" data-bs-toggle="modal" data-bs-target="#commentModal1">💬</button>
-                        <button class="action-btn">📤</button>
-                        <button class="action-btn ms-auto">🔖</button>
-                    </div>
-                    
-                    <div class="post-likes">455 likes</div>
-                    
-                    <div class="post-caption">
-                        <span class="username">asupan_gabutmu5444</span>
-                        Saat dewasa baru ngeh gue lihat scene ini 😂
-                    </div>
-                    
-                    <div class="post-comments">
-                        <button class="view-comments" data-bs-toggle="modal" data-bs-target="#commentModal1">
-                            View all 23 comments
-                        </button>
-                    </div>
-                    
-                    <div class="post-time">44 minutes ago</div>
-                </div>
-
-                <!-- Post 2 -->
-                <div class="post-card">
-                    <div class="post-header">
-                        <div class="post-user">
-                            <img src="https://i.pravatar.cc/150?img=2" alt="User" class="user-avatar">
-                            <div class="user-info">
-                                <h6>travel_indonesia</h6>
-                                <span>2h</span>
-                            </div>
-                        </div>
-                        <button class="action-btn">⋯</button>
-                    </div>
-                    
-                    <div id="carousel2" class="carousel slide post-carousel" data-bs-ride="false">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="https://picsum.photos/600/600?random=4" alt="Post 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="https://picsum.photos/600/600?random=5" alt="Post 2">
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel2" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carousel2" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>
-                    </div>
-                    
-                    <div class="post-actions">
-                        <button class="action-btn like-btn" onclick="toggleLike(this)">🤍</button>
-                        <button class="action-btn" data-bs-toggle="modal" data-bs-target="#commentModal2">💬</button>
-                        <button class="action-btn">📤</button>
-                        <button class="action-btn ms-auto">🔖</button>
-                    </div>
-                    
-                    <div class="post-likes">1,234 likes</div>
-                    
-                    <div class="post-caption">
-                        <span class="username">travel_indonesia</span>
-                        Pemandangan indah dari Raja Ampat 🌴🌊
-                    </div>
-                    
-                    <div class="post-comments">
-                        <button class="view-comments" data-bs-toggle="modal" data-bs-target="#commentModal2">
-                            View all 156 comments
-                        </button>
-                    </div>
-                    
-                    <div class="post-time">2 hours ago</div>
-                </div>
-
-                <!-- Post 3 -->
-                <div class="post-card">
-                    <div class="post-header">
-                        <div class="post-user">
-                            <img src="https://i.pravatar.cc/150?img=3" alt="User" class="user-avatar">
-                            <div class="user-info">
-                                <h6>food_lovers</h6>
-                                <span>5h</span>
-                            </div>
-                        </div>
-                        <button class="action-btn">⋯</button>
-                    </div>
-                    
-                    <div class="post-carousel">
-                        <img src="https://picsum.photos/600/600?random=6" alt="Post">
-                    </div>
-                    
-                    <div class="post-actions">
-                        <button class="action-btn like-btn" onclick="toggleLike(this)">🤍</button>
-                        <button class="action-btn" data-bs-toggle="modal" data-bs-target="#commentModal3">💬</button>
-                        <button class="action-btn">📤</button>
-                        <button class="action-btn ms-auto">🔖</button>
-                    </div>
-                    
-                    <div class="post-likes">892 likes</div>
-                    
-                    <div class="post-caption">
-                        <span class="username">food_lovers</span>
-                        Rendang terenak se-Indonesia! 🍛🔥
-                    </div>
-                    
-                    <div class="post-comments">
-                        <button class="view-comments" data-bs-toggle="modal" data-bs-target="#commentModal3">
-                            View all 67 comments
-                        </button>
-                    </div>
-                    
-                    <div class="post-time">5 hours ago</div>
-                </div>
-            </div>
-
-            <!-- Notifications Sidebar -->
-            <div class="col-lg-4 d-none d-lg-block">
-                <div class="notification-sidebar">
-                    <div class="notification-header">
-                        <span>Notifications</span>
-                        <div class="notification-badge">8</div>
-                    </div>
-                    
-                    <div class="notification-item unread">
-                        <img src="https://i.pravatar.cc/150?img=11" alt="User" class="notification-avatar">
-                        <div class="notification-content">
-                            <p><strong>Rajvanti</strong> started following you</p>
-                            <div class="notification-time">2m ago</div>
-                        </div>
-                    </div>
-                    
-                    <div class="notification-item unread">
-                        <img src="https://i.pravatar.cc/150?img=12" alt="User" class="notification-avatar">
-                        <div class="notification-content">
-                            <p><strong>Green Day</strong> liked your post</p>
-                            <div class="notification-time">5m ago</div>
-                        </div>
-                    </div>
-                    
-                    <div class="notification-item unread">
-                        <img src="https://i.pravatar.cc/150?img=13" alt="User" class="notification-avatar">
-                        <div class="notification-content">
-                            <p><strong>@SAVA_ARDIAN_25</strong> commented: "Amazing shot! 🔥"</p>
-                            <div class="notification-time">12m ago</div>
-                        </div>
-                    </div>
-                    
-                    <div class="notification-item">
-                        <img src="https://i.pravatar.cc/150?img=14" alt="User" class="notification-avatar">
-                        <div class="notification-content">
-                            <p><strong>Hariis</strong> and <strong>3 others</strong> liked your comment</p>
-                            <div class="notification-time">13m ago</div>
-                        </div>
-                    </div>
-                    
-                    <div class="notification-item">
-                        <img src="https://i.pravatar.cc/150?img=15" alt="User" class="notification-avatar">
-                        <div class="notification-content">
-                            <p><strong>6 pretty woman</strong> started following you</p>
-                            <div class="notification-time">4h ago</div>
-                        </div>
-                    </div>
-                    
-                    <div class="notification-item">
-                        <img src="https://i.pravatar.cc/150?img=16" alt="User" class="notification-avatar">
-                        <div class="notification-content">
-                            <p><strong>tech_updates</strong> mentioned you in a comment</p>
-                            <div class="notification-time">6h ago</div>
-                        </div>
-                    </div>
-                    
-                    <div class="notification-item">
-                        <img src="https://i.pravatar.cc/150?img=17" alt="User" class="notification-avatar">
-                        <div class="notification-content">
-                            <p><strong>music_daily</strong> shared your post to their story</p>
-                            <div class="notification-time">8h ago</div>
-                        </div>
-                    </div>
-                    
-                    <div class="notification-item">
-                        <img src="https://i.pravatar.cc/150?img=18" alt="User" class="notification-avatar">
-                        <div class="notification-content">
-                            <p><strong>art_gallery</strong> saved your post</p>
-                            <div class="notification-time">1d ago</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Comment Modal 1 -->
-<div class="modal fade comment-modal" id="commentModal1" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="row g-0">
-                    <div class="col-md-6 modal-post-image">
-                        <img src="https://picsum.photos/600/600?random=1" alt="Post">
-                    </div>
-                    <div class="col-md-6 modal-comments-section">
-                        <div class="modal-post-header">
-                            <img src="https://i.pravatar.cc/150?img=1" alt="User" class="user-avatar">
-                            <div class="user-info">
-                                <h6>asupan_gabutmu5444</h6>
-                            </div>
-                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
-                        </div>
-                        
-                        <div class="modal-comments-list">
-                            <div class="comment-item">
-                                <img src="https://i.pravatar.cc/150?img=21" alt="User" class="comment-avatar">
-                                <div class="comment-content">
-                                    <div>
-                                        <span class="comment-username">budi_santoso</span>
-                                        <span class="comment-text">Wkwkwk ngakak parah 😂</span>
-                                    </div>
-                                    <div class="comment-actions">
-                                        <span>2h</span>
-                                        <button>Reply</button>
-                                        <button>12 likes</button>
-                                    </div>
-                                </div>
-                            </div>
+        @if($posts->count() > 0)
+            <div class="masonry-grid">
+                @foreach($posts as $post)
+                    <div class="post-card" data-bs-toggle="modal" data-bs-target="#detailModal{{ $post->id }}">
+                        <div class="post-image-container">
+                            @if($post->photos && $post->photos->first())
+                                <img src="{{ asset('storage/' . $post->photos->first()->photo) }}" alt="Post">
+                            @else
+                                <img src="https://via.placeholder.com/300x400?text=No+Image" alt="No Image">
+                            @endif
                             
-                            <div class="comment-item">
-                                <img src="https://i.pravatar.cc/150?img=22" alt="User" class="comment-avatar">
-                                <div class="comment-content">
-                                    <div>
-                                        <span class="comment-username">rina_official</span>
-                                        <span class="comment-text">Nostalgia banget masa kecil dulu 🥺</span>
-                                    </div>
-                                    <div class="comment-actions">
-                                        <span>1h</span>
-                                        <button>Reply</button>
-                                        <button>8 likes</button>
-                                    </div>
+                            <div class="post-overlay">
+                                <div class="post-overlay-top">
+                                    <button class="overlay-btn save-btn" onclick="event.stopPropagation();">Save</button>
                                 </div>
-                            </div>
-                            
-                            <div class="comment-item">
-                                <img src="https://i.pravatar.cc/150?img=23" alt="User" class="comment-avatar">
-                                <div class="comment-content">
-                                    <div>
-                                        <span class="comment-username">joko_gaming</span>
-                                        <span class="comment-text">Scene legend ini mah 🔥</span>
+                                <div class="post-overlay-bottom">
+                                    <div class="action-btns">
+                                        <button class="icon-btn" onclick="event.stopPropagation(); toggleLike(this);">🤍</button>
+                                        <button class="icon-btn" onclick="event.stopPropagation();">💬</button>
+                                        <button class="icon-btn" onclick="event.stopPropagation();">📤</button>
                                     </div>
-                                    <div class="comment-actions">
-                                        <span>45m</span>
-                                        <button>Reply</button>
-                                        <button>5 likes</button>
+                                    <div class="dropdown" onclick="event.stopPropagation();">
+                                        <button class="icon-btn" type="button" data-bs-toggle="dropdown">
+                                            ⋯
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            @auth
+                                                @if(auth()->id() === $post->user_id)
+                                                    <li><a class="dropdown-item" href="#">✏️ Edit</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#">🗑️ Hapus</a></li>
+                                                @else
+                                                    <li>
+                                                        <a class="dropdown-item text-danger" href="#" 
+                                                           data-bs-toggle="modal" 
+                                                           data-bs-target="#reportPostModal{{ $post->id }}">
+                                                            🚩 Laporkan
+                                                        </a>
+                                                    </li>
+                                                @endif
+                                            @else
+                                                <li>
+                                                    <a class="dropdown-item text-danger" href="#" 
+                                                       data-bs-toggle="modal" 
+                                                       data-bs-target="#reportPostModal{{ $post->id }}">
+                                                        🚩 Laporkan
+                                                    </a>
+                                                </li>
+                                            @endauth
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="modal-post-actions">
-                            <div class="post-actions" style="border: none; padding: 0;">
-                                <button class="action-btn like-btn" onclick="toggleLike(this)">🤍</button>
-                                <button class="action-btn">💬</button>
-                                <button class="action-btn">📤</button>
+                        @if($post->caption || $post->user)
+                            <div class="post-info">
+                                <div class="post-user">
+                               <img 
+                                    src="{{ $post->user?->avatar_display 
+                                        ?? 'https://ui-avatars.com/api/?name=User' }}" 
+                                    alt="Avatar" 
+                                    class="user-avatar"
+                                >
+                                    <span class="user-name">{{ $post->user->username ?? $post->user->name }}</span>
+                                </div>  
+                                @if($post->caption)
+                                    <div class="post-caption">{{ $post->caption }}</div>
+                                @endif
+                                <div class="post-stats">
+                                    <span>❤️ {{ $post->likes->count() ?? 0 }}</span>
+                                    <span>💬 {{ $post->comments->count() ?? 0 }}</span>
+                                </div>
                             </div>
-                            <div class="post-likes" style="padding: 8px 0;">455 likes</div>
-                            <div class="post-time" style="padding: 0;">44 MINUTES AGO</div>
-                        </div>
-                        
-                        <div class="modal-comment-input">
-                            <input type="text" placeholder="Add a comment...">
-                            <button>Post</button>
-                        </div>
+                        @endif
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Comment Modal 2 -->
-<div class="modal fade comment-modal" id="commentModal2" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="row g-0">
-                    <div class="col-md-6 modal-post-image">
-                        <img src="https://picsum.photos/600/600?random=4" alt="Post">
-                    </div>
-                    <div class="col-md-6 modal-comments-section">
-                        <div class="modal-post-header">
-                            <img src="https://i.pravatar.cc/150?img=2" alt="User" class="user-avatar">
-                            <div class="user-info">
-                                <h6>travel_indonesia</h6>
-                            </div>
-                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
-                        </div>
-                        
-                        <div class="modal-comments-list">
-                            <div class="comment-item">
-                                <img src="https://i.pravatar.cc/150?img=24" alt="User" class="comment-avatar">
-                                <div class="comment-content">
-                                    <div>
-                                        <span class="comment-username">traveler_pro</span>
-                                        <span class="comment-text">Raja Ampat emang surga dunia! 🌴</span>
-                                    </div>
-                                    <div class="comment-actions">
-                                        <span>3h</span>
-                                        <button>Reply</button>
-                                        <button>25 likes</button>
+                    <!-- Detail Modal -->
+                    <div class="modal fade detail-modal" id="detailModal{{ $post->id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <div class="modal-container">
+                                        <div class="modal-image-section">
+                                            @if($post->photos && $post->photos->count() > 1)
+                                                <div id="modalCarousel{{ $post->id }}" class="carousel slide modal-carousel" data-bs-ride="false">
+                                                    <div class="carousel-inner">
+                                                        @foreach($post->photos as $index => $photo)
+                                                            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                                                                <img src="{{ asset('storage/' . $photo->photo) }}" alt="Post {{ $index + 1 }}">
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                    @if($post->photos->count() > 1)
+                                                        <button class="carousel-control-prev" type="button" data-bs-target="#modalCarousel{{ $post->id }}" data-bs-slide="prev">
+                                                            <span class="carousel-control-prev-icon"></span>
+                                                        </button>
+                                                        <button class="carousel-control-next" type="button" data-bs-target="#modalCarousel{{ $post->id }}" data-bs-slide="next">
+                                                            <span class="carousel-control-next-icon"></span>
+                                                        </button>
+                                                        <div class="carousel-indicators">
+                                                            @foreach($post->photos as $index => $photo)
+                                                                <button type="button" 
+                                                                        data-bs-target="#modalCarousel{{ $post->id }}" 
+                                                                        data-bs-slide-to="{{ $index }}" 
+                                                                        class="{{ $index == 0 ? 'active' : '' }}">
+                                                                </button>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @elseif($post->photos && $post->photos->first())
+                                                <img src="{{ asset('storage/' . $post->photos->first()->photo) }}" alt="Post">
+                                            @else
+                                                <img src="https://via.placeholder.com/600x600?text=No+Image" alt="No Image">
+                                            @endif
+                                        </div>
+                                        
+                                        <div class="modal-details-section">
+                                            <div class="modal-header-custom">
+                                                <div class="modal-header-actions">
+                                                    <button class="modal-action-btn" onclick="toggleLike(this)">🤍</button>
+                                                    <button class="modal-action-btn">📤</button>
+                                                    <div class="dropdown">
+                                                        <button class="modal-action-btn" type="button" data-bs-toggle="dropdown">
+                                                            ⋯
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            @auth
+                                                                @if(auth()->id() === $post->user_id)
+                                                                    <li><a class="dropdown-item" href="#">✏️ Edit</a></li>
+                                                                    <li><a class="dropdown-item text-danger" href="#">🗑️ Hapus</a></li>
+                                                                @else
+                                                                    <li>
+                                                                        <a class="dropdown-item text-danger" href="#" 
+                                                                           data-bs-toggle="modal" 
+                                                                           data-bs-target="#reportPostModal{{ $post->id }}">
+                                                                            🚩 Laporkan
+                                                                        </a>
+                                                                    </li>
+                                                                @endif
+                                                            @else
+                                                                <li>
+                                                                    <a class="dropdown-item text-danger" href="#" 
+                                                                       data-bs-toggle="modal" 
+                                                                       data-bs-target="#reportPostModal{{ $post->id }}">
+                                                                        🚩 Laporkan
+                                                                    </a>
+                                                                </li>
+                                                            @endauth
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <button class="modal-save-btn">Save</button>
+                                            </div>
+                                            
+                                            <div class="modal-user-section">
+                                                <div class="modal-user-info">
+                                               <img 
+                                                    src="{{ $post->user?->avatar_display 
+                                                        ?? 'https://ui-avatars.com/api/?name=User' }}" 
+                                                    alt="Avatar" 
+                                                    class="modal-user-avatar"
+                                                >
+                                                    <div class="modal-user-details">
+                                                        <h6>{{ $post->user->username ?? $post->user->name }}</h6>
+                                                        <span>{{ $post->created_at->diffForHumans() }}</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                @if($post->caption)
+                                                    <div class="modal-caption">{{ $post->caption }}</div>
+                                                @endif
+                                                
+                                                <div class="modal-stats">
+                                                    <span>❤️ {{ $post->likes->count() ?? 0 }} likes</span>
+                                                    <span>💬 {{ $post->comments->count() ?? 0 }} comments</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="modal-comments-section">
+                                                @forelse($post->comments as $comment)
+                                                    <div class="comment-item">
+                                                        <img src="{{ $comment->user->avatar ? asset('storage/' . $comment->user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($comment->user->name) }}" 
+                                                             alt="{{ $comment->user->name }}" 
+                                                             class="comment-avatar">
+                                                        <div class="comment-content">
+                                                            <div>
+                                                                <span class="comment-username">{{ $comment->user->username ?? $comment->user->name }}</span>
+                                                                <span class="comment-text">{{ $comment->comment }}</span>
+                                                            </div>
+                                                            <div class="comment-actions">
+                                                                <span>{{ $comment->created_at->diffForHumans() }}</span>
+                                                                <button>Reply</button>
+                                                                @auth
+                                                                    @if(auth()->id() !== $comment->user_id)
+                                                                        <button data-bs-toggle="modal" 
+                                                                                data-bs-target="#reportCommentModal{{ $comment->id }}">
+                                                                            Report
+                                                                        </button>
+                                                                    @endif
+                                                                @else
+                                                                    <button data-bs-toggle="modal" 
+                                                                            data-bs-target="#reportCommentModal{{ $comment->id }}">
+                                                                        Report
+                                                                    </button>
+                                                                @endauth
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @empty
+                                                    <p class="text-center text-muted">Belum ada komentar</p>
+                                                @endforelse
+                                            </div>
+                                            
+                                            <div class="modal-comment-input-section">
+                                                <div class="modal-comment-input">
+                                                    <input type="text" placeholder="Add a comment...">
+                                                    <button disabled>Post</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="comment-item">
-                                <img src="https://i.pravatar.cc/150?img=25" alt="User" class="comment-avatar">
-                                <div class="comment-content">
-                                    <div>
-                                        <span class="comment-username">diving_enthusiast</span>
-                                        <span class="comment-text">Kapan kesana lagi nih? 🤿</span>
-                                    </div>
-                                    <div class="comment-actions">
-                                        <span>2h</span>
-                                        <button>Reply</button>
-                                        <button>15 likes</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="modal-post-actions">
-                            <div class="post-actions" style="border: none; padding: 0;">
-                                <button class="action-btn like-btn" onclick="toggleLike(this)">🤍</button>
-                                <button class="action-btn">💬</button>
-                                <button class="action-btn">📤</button>
-                            </div>
-                            <div class="post-likes" style="padding: 8px 0;">1,234 likes</div>
-                            <div class="post-time" style="padding: 0;">2 HOURS AGO</div>
-                        </div>
-                        
-                        <div class="modal-comment-input">
-                            <input type="text" placeholder="Add a comment...">
-                            <button>Post</button>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Comment Modal 3 -->
-<div class="modal fade comment-modal" id="commentModal3" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="row g-0">
-                    <div class="col-md-6 modal-post-image">
-                        <img src="https://picsum.photos/600/600?random=6" alt="Post">
-                    </div>
-                    <div class="col-md-6 modal-comments-section">
-                        <div class="modal-post-header">
-                            <img src="https://i.pravatar.cc/150?img=3" alt="User" class="user-avatar">
-                            <div class="user-info">
-                                <h6>food_lovers</h6>
+                    <!-- Report Post Modal -->
+                    <div class="modal fade report-modal" id="reportPostModal{{ $post->id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">🚩 Laporkan Postingan</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form action="{{ route('user.report.post', $post->id) }}" method="POST">
+                                    @csrf
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Alasan Laporan <span class="text-danger">*</span></label>
+                                            <select class="form-select" name="reason" required>
+                                                <option value="">Pilih alasan...</option>
+                                                <option value="spam">Spam</option>
+                                                <option value="bullying">Bullying atau Pelecehan</option>
+                                                <option value="hate_speech">Ujaran Kebencian (SARA)</option>
+                                                <option value="pornography">Konten Pornografi</option>
+                                                <option value="violence">Kekerasan</option>
+                                                <option value="scam">Penipuan</option>
+                                                <option value="copyright">Pelanggaran Hak Cipta</option>
+                                                <option value="misinformation">Informasi Menyesatkan</option>
+                                                <option value="other">Lainnya</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Keterangan Tambahan (Opsional)</label>
+                                            <textarea class="form-control" 
+                                                      name="description" 
+                                                      rows="4" 
+                                                      placeholder="Jelaskan lebih detail mengapa Anda melaporkan postingan ini..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn-cancel" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn-submit-report">Kirim Laporan</button>
+                                    </div>
+                                </form>
                             </div>
-                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
                         </div>
-                        
-                        <div class="modal-comments-list">
-                            <div class="comment-item">
-                                <img src="https://i.pravatar.cc/150?img=26" alt="User" class="comment-avatar">
-                                <div class="comment-content">
-                                    <div>
-                                        <span class="comment-username">culinary_expert</span>
-                                        <span class="comment-text">Rendangnya menggoda banget! 😋</span>
+                    </div>
+
+                    @foreach($post->comments as $comment)
+                        <!-- Report Comment Modal -->
+                        <div class="modal fade report-modal" id="reportCommentModal{{ $comment->id }}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">🚩 Laporkan Komentar</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
-                                    <div class="comment-actions">
-                                        <span>6h</span>
-                                        <button>Reply</button>
-                                        <button>30 likes</button>
-                                    </div>
+                                    <form action="{{ route('user.report.comment', $comment->id) }}" method="POST">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Alasan Laporan <span class="text-danger">*</span></label>
+                                                <select class="form-select" name="reason" required>
+                                                    <option value="">Pilih alasan...</option>
+                                                    <option value="spam">Spam</option>
+                                                    <option value="bullying">Bullying atau Pelecehan</option>
+                                                    <option value="hate_speech">Ujaran Kebencian (SARA)</option>
+                                                    <option value="pornography">Konten Pornografi</option>
+                                                    <option value="violence">Kekerasan</option>
+                                                    <option value="scam">Penipuan</option>
+                                                    <option value="copyright">Pelanggaran Hak Cipta</option>
+                                                    <option value="misinformation">Informasi Menyesatkan</option>
+                                                    <option value="other">Lainnya</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label">Keterangan Tambahan (Opsional)</label>
+                                                <textarea class="form-control" 
+                                                          name="description" 
+                                                          rows="4" 
+                                                          placeholder="Jelaskan lebih detail mengapa Anda melaporkan komentar ini..."></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn-cancel" data-bs-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn-submit-report">Kirim Laporan</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="modal-post-actions">
-                            <div class="post-actions" style="border: none; padding: 0;">
-                                <button class="action-btn like-btn" onclick="toggleLike(this)">🤍</button>
-                                <button class="action-btn">💬</button>
-                                <button class="action-btn">📤</button>
-                            </div>
-                            <div class="post-likes" style="padding: 8px 0;">892 likes</div>
-                            <div class="post-time" style="padding: 0;">5 HOURS AGO</div>
-                        </div>
-                        
-                        <div class="modal-comment-input">
-                            <input type="text" placeholder="Add a comment...">
-                            <button>Post</button>
-                        </div>
-                    </div>
-                </div>
+                    @endforeach
+                @endforeach
             </div>
-        </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-4 mb-4">
+                {{ $posts->links() }}
+            </div>
+        @else
+            <div class="empty-feed">
+                <i>📷</i>
+                <h4>Belum Ada Postingan</h4>
+                <p>Jadilah yang pertama membuat postingan!</p>
+            </div>
+        @endif
     </div>
 </div>
 
@@ -844,6 +1041,45 @@ function toggleLike(button) {
         button.classList.add('liked');
     }
 }
+
+// Enable post button when input has text
+document.addEventListener('DOMContentLoaded', function() {
+    // Comment input functionality
+    document.querySelectorAll('.modal-comment-input input').forEach(input => {
+        input.addEventListener('input', function() {
+            const button = this.nextElementSibling;
+            if (this.value.trim().length > 0) {
+                button.disabled = false;
+            } else {
+                button.disabled = true;
+            }
+        });
+    });
+
+    // Fix carousel functionality
+    const carousels = document.querySelectorAll('.carousel');
+    carousels.forEach(carousel => {
+        const bsCarousel = new bootstrap.Carousel(carousel, {
+            interval: false, // Don't auto-slide
+            wrap: true,
+            touch: true
+        });
+    });
+
+    // Prevent modal close when clicking carousel controls
+    document.querySelectorAll('.carousel-control-prev, .carousel-control-next').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+
+    // Prevent card click when interacting with carousel in feed
+    document.querySelectorAll('.post-card .carousel-control-prev, .post-card .carousel-control-next').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+});
 </script>
 
 @endsection

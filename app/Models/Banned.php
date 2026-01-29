@@ -12,7 +12,7 @@ class Banned extends Model
     protected $fillable = [
         'admin_id',
         'user_id',
-        'photo_id',
+        'post_id',
         'comment_id',
         'reason',
         'notes'
@@ -31,9 +31,9 @@ class Banned extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function photo()
+    public function post()
     {
-        return $this->belongsTo(Photo::class);
+        return $this->belongsTo(Posts::class);
     }
 
     public function comment()

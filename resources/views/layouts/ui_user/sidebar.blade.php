@@ -1,13 +1,20 @@
  <aside class="left-sidebar">
       <div>
-        <div class="brand-logo d-flex align-items-center justify-content-center px-5 py-4">
-          <a href="./index.html" class="text-nowrap logo-img">
-            <img src="{{asset('ui/images/logos/aperturely.png')}}" width="90%" height="90%" alt="" />
-          </a>
-          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
-            <i class="ti ti-x fs-8"></i>
-          </div>
-        </div>
+        <div class="brand-logo d-flex align-items-center justify-content-between px-4 py-3">
+  <a href="{{ route('user.dashboard') }}" class="logo-img d-flex align-items-center">
+    <img 
+      src="{{ asset('ui/images/logos/aperturely.png') }}" 
+      class="img-fluid"
+      style="max-height: 70px;"
+      alt="Aperturely Logo"
+    />
+  </a>
+
+  <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+    <i class="ti ti-x fs-8"></i>
+  </div>
+</div>
+
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
           <ul id="sidebarnav">
             <!-- <li class="nav-small-cap">
@@ -38,7 +45,7 @@
             </li>
             <li class="sidebar-item">
               <a class="sidebar-link primary-hover-bg justify-content-between"
-                href="https://bootstrapdemos.wrappixel.com/spike/dist/main/index2.html" aria-expanded="false">
+                href="{{ auth()->check() ? route('user.postingan.create') : route('login') }}" aria-expanded="false">
                 <div class="d-flex align-items-center gap-6">
                   <span class="d-flex">
                     <iconify-icon icon="solar:add-circle-line-duotone" class=""></iconify-icon>

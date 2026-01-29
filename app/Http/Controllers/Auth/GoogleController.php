@@ -18,22 +18,23 @@ class GoogleController extends Controller
     public function google_callback()
     {
         $googleUser = Socialite::driver('google')
-        ->stateless() // Nonaktifkan state checking
-        ->user();
+            ->stateless()
+            ->user();
 
         $user = User::whereEmail($googleUser->email)->first();
-        if (!$user){
-            // Jika user belum ada, buat user baru
+
+        if (!$user) {
             $user = User::create([
-                'name' => $googleUser->name,
-                'email' => $googleUser->email,
-                'avatar' => $googleUser->getAvatar(),
+                'name'      => $googleUser->name,
+                'email'     => $googleUser->email,
+                'avatar'    => $googleUser->getAvatar(), // URL Google
                 'google_id' => $googleUser->id,
-                'password' => bcrypt(str()->random(16)), // Buat password random
+                'password'  => bcrypt(str()->random(16)),
             ]);
         }
-        Auth::login($user, true); // Login user dan ingat sesinya
+
+        Auth::login($user, true);
         return redirect('/');
-        
     }
+
 }

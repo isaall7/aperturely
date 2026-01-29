@@ -22,13 +22,13 @@ return new class extends Migration
             $table->foreign('reported_user_id')->references('id')->on('users')->onDelete('cascade');
 
             // objek laporan (salah satu)
-            $table->unsignedBigInteger('photo_id')->nullable();
+            $table->unsignedBigInteger('post_id')->nullable();
             $table->unsignedBigInteger('comment_id')->nullable();
 
-            $table->foreign('photo_id')->references('id')->on('photos')->onDelete('cascade');
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->foreign('comment_id')->references('id')->on('comments')->onDelete('cascade');
 
-            $table->string('reason'); // sara, pornografi, bullying, spam, penipuan, kekerasan dll
+            $table->string('reason'); // copyright, sara, pornografi, bullying, spam, penipuan, kekerasan dll
             $table->text('description')->nullable(); // penjelasan tambahan dari pelapor
 
             $table->enum('status', ['pending', 'reviewed'])->default('pending');

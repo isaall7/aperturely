@@ -3,6 +3,12 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\Posts;
+use App\Models\Photo;
+use App\Models\Comment; 
+use App\Models\Likes_photo;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class DashboardUser extends Controller
@@ -10,14 +16,25 @@ class DashboardUser extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function profile()
-    {
-        return view('user.profile');
-    }
     
     public function index()
     {
-        return view('user.dashboard');
+        $user = Auth::user();
+        
+        $posts = Posts::with([
+            'photos',
+            'user',
+            'likes',
+            'comments.user',
+            'comments.replies.user'
+        ])
+        ->where('status', 'active')
+        ->withCount(['likes', 'comments']) // Hitung total likes & comments
+        ->orderByRaw('(likes_count + comments_count * 2) DESC') // Prioritas engagement
+        ->orderBy('created_at', 'desc') // Lalu urutkan dari terbaru
+        ->paginate(12);
+        
+        return view('user.dashboard', compact('posts', 'user'));
     }
 
     /**

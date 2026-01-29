@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'role',
         'avatar',
+        'avatar_url',
         'google_id',
     ];
 
@@ -49,9 +50,16 @@ class User extends Authenticatable
         ];
     }
     
-    public function photos()
+    // --- RELASI ---
+
+    public function profile()
     {
-        return $this->hasMany(Photo::class);
+        return $this->hasOne(Profile::class);
+    }
+    
+    public function posts()
+    {
+        return $this->hasMany(Posts::class);
     }
 
     public function comments()
@@ -85,4 +93,21 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function getAvatarDisplayAttribute()
+{
+    if (!$this->avatar) {
+        return asset('ui/images/profile/user3.jpg');
+    }
+
+    // kalau avatar URL (Google)
+    if (str_starts_with($this->avatar, 'http')) {
+        return $this->avatar;
+    }
+
+    // kalau avatar file lokal
+    return asset('storage/' . $this->avatar);
+}
+
+
 }

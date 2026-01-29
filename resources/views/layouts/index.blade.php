@@ -113,6 +113,20 @@
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
 
+<div id="content" class="hidden">
+    @if(session('success'))
+        <script>
+            Swal.fire({
+                title: 'Success!',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#22c55e'
+            });
+        </script>
+    @endif
+</div>
+
     <!-- Sidebar Start -->
     @auth
         @if (auth()->user()->role === 'admin')

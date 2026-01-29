@@ -13,10 +13,10 @@
               
                 <a class="nav-link" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
                 @auth 
-                  <img src="{{ Auth::user()->avatar ?? asset('ui/images/profile/si_imoet.jpeg') }}" alt="" width="60" height="60" class="rounded-circle">
+                  <img src="{{ auth()->user()->avatar_display }}" alt="" width="60" height="60" class="rounded-circle">
                 @endauth
                 @guest
-                  <img src="{{asset('ui/images/profile/user3.jpg')}}" alt="" width="60" height="60" class="rounded-circle">
+                  <img src="{{ asset('ui/images/profile/user3.jpg') }}" alt="" width="60" height="60" class="rounded-circle">
                 @endguest
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
@@ -63,10 +63,14 @@
       </div>
 
       <div class="modal-body text-center">
-        <p>Login menggunakan akun Google Anda</p>
+        <p>Silahkan Login</p>
 
         <a href="{{ url('/auth/google-redirect') }}" class="btn btn-danger w-100">
           <i class="fab fa-google"></i> Login dengan Google
+        </a>
+        <hr/>
+        <a href="{{ route('login') }}" class="btn btn-primary w-100">
+          <i class="fab fa-google"></i> Login dengan Email
         </a>
       </div>
 

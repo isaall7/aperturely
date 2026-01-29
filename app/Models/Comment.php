@@ -7,49 +7,39 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Comment extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'photo_id',
+        'post_id',
         'user_id',
         'reply_id',
         'comment',
         'status',
-        'ban_reason'
+        'ban_reason',
     ];
-    public $timestamp = true;
 
-    // --- RELASI ---
-
-    public function photo()
+    public function post()
     {
-        return $this->belongsTo(Photo::class);
+        return $this->belongsTo(Posts::class, 'post_id');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    // reply comment
-    public function reply()
+    // komentar induk
+    public function parent()
     {
         return $this->belongsTo(Comment::class, 'reply_id');
     }
 
-    // Reply (children)
+    // balasan komentar
     public function replies()
     {
         return $this->hasMany(Comment::class, 'reply_id');
     }
-
+    
     public function reports()
     {
-        return $this->hasMany(Report::class);
-    }
-
-    public function bans()
-    {
-        return $this->hasMany(Banned::class);
+        return $this->hasMany(Report::class, 'comment_id');
     }
 }

@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('photos', function (Blueprint $table) {
+        Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             
-            $table->string('image_path'); // lokasi file foto
             $table->string('caption')->nullable();
-
             $table->string('camera_type'); // DSLR / Mirrorless / Phone
             $table->string('genre'); // Landscape / Portrait / Street / Macro
 
@@ -39,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('photos');
+        Schema::dropIfExists('posts');
     }
 };
