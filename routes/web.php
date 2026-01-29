@@ -27,10 +27,14 @@ Route::prefix('/')->name('user.')->group(function () {
     Route::get('/', [DashboardUser::class, 'index'])->name('dashboard');
 
     Route::resource('/postingan', PostsController::class);
-    Route::get('/profile', [PostsController::class, 'index'])->name('profile');
 
     Route::post('/report/post/{post}', [ReportController::class, 'reportPost'])->name('report.post');
     Route::post('/report/comment/{comment}', [ReportController::class, 'reportComment'])->name('report.comment');
 
     Route::resource('/avatar', ProfileController::class);
+    // profile sendiri
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    // profile user lain
+    Route::get('/users/{name}', [ProfileController::class, 'show'])->name('profile.username');
+
 });

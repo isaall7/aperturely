@@ -855,14 +855,17 @@
                                             
                                             <div class="modal-user-section">
                                                 <div class="modal-user-info">
-                                               <img 
-                                                    src="{{ $post->user?->avatar_display 
-                                                        ?? 'https://ui-avatars.com/api/?name=User' }}" 
-                                                    alt="Avatar" 
-                                                    class="modal-user-avatar"
-                                                >
-                                                    <div class="modal-user-details">
-                                                        <h6>{{ $post->user->username ?? $post->user->name }}</h6>
+                                                <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}">
+                                                    <img src="{{ $post->user->avatar_display }}" alt="Avatar" class="user-avatar">
+                                                </a>
+
+                                                <div class="modal-user-details">
+                                                <h6 class="username text-dark">
+                                                    <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}" class="text-dark text-decoration-none">
+                                                        {{ $post->user->username ?? $post->user->name }}
+                                                    </a>
+                                                </h6>
+
                                                         <span>{{ $post->created_at->diffForHumans() }}</span>
                                                     </div>
                                                 </div>

@@ -824,7 +824,7 @@
             <div class="profile-info-main">
                 <div class="profile-header-row">
                     <div class="profile-name-section">
-                        <h1>{{ Auth::user()->name ?? 'username' }}</h1>
+                        <h1>{{ $user->name ?? 'username' }}</h1>
                     </div>
 
                     <div class="profile-action-buttons">
@@ -840,16 +840,16 @@
                             @else
                                 <!-- Other's Profile -->
                                 <button class="btn-primary-action btn-follow" id="followBtn" onclick="toggleFollow()">
-                                    <span>Follow</span> 
+                                    <span>Mengikuti</span> 
                                 </button>
                                 <button class="btn-secondary-action">
-                                    <span>Message</span> 
+                                    <span>Pesan</span> 
                                 </button>
                             @endif
                         @else
                             <!-- Not Logged In -->
                             <a href="{{ route('login') }}" class="btn-primary-action btn-follow">
-                                <span>Follow</span> 
+                                <span>Login</span> 
                             </a>
                         @endauth
                     </div>
@@ -858,19 +858,19 @@
                 <div class="profile-stats-row">
                     <div class="stat-box">
                         <span class="stat-number">{{ $totalPost }}</span>
-                        <span class="stat-label">Posts</span>
+                        <span class="stat-label">Postingan</span>
                     </div>
                     <div class="stat-box">
                         <span class="stat-number">0</span>
-                        <span class="stat-label">Followers</span>
+                        <span class="stat-label">Mengikuti</span>
                     </div>
                     <div class="stat-box">
                         <span class="stat-number">0</span>
-                        <span class="stat-label">Following</span>
+                        <span class="stat-label">Diikuti</span>
                     </div>
                     <div class="stat-box">
                         <span class="stat-number">{{ $totalLike }}</span>
-                        <span class="stat-label">Likes</span>
+                        <span class="stat-label">Menyukai</span>
                     </div>
                 </div>
 
@@ -881,7 +881,7 @@
 
                         <div class="meta-item">
                             <i>📅</i>
-                            <span> Joined {{ optional(auth()->user()?->created_at)->format('F Y') ?? '-' }}</span>
+                            <span>Joined {{ optional($user->created_at)->format('F Y') ?? '-' }}</span>
                         </div>
                     </div>
                 </div>
@@ -981,8 +981,7 @@
                                             <div class="modal-user-section">
                                                 <div class="modal-user-info">
                                                <img 
-                                                    src="{{ $user?->avatar_display 
-                                                        ?? 'https://ui-avatars.com/api/?name=User' }}" 
+                                                    src="{{ $post->user->avatar_display }}" 
                                                     alt="Avatar" 
                                                     class="modal-user-avatar"
                                                 >
@@ -1005,7 +1004,7 @@
                                             <div class="modal-comments-section">
                                                 @forelse($post->comments as $comment)
                                                     <div class="comment-item">
-                                                        <img src="{{ $comment->user->avatar ? asset('storage/' . $comment->user->avatar) : 'https://ui-avatar.com/api/?name=' . urlencode($comment->user->name) }}" 
+                                                        <img src="{{ $comment->user->avatar_display }}" 
                                                              alt="{{ $comment->user->name }}" 
                                                              class="comment-avatar">
                                                         <div class="comment-content">

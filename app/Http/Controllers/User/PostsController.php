@@ -106,7 +106,7 @@ class PostsController extends Controller
             }
 
             return redirect()
-                ->route('user.profile')
+                ->route('user.dashboard')
                 ->with('success', 'Postingan berhasil diupload! 🎉');
 
         } catch (\Exception $e) {

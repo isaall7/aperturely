@@ -6,21 +6,64 @@ use App\Http\Controllers\Controller;
 use App\Models\Profile;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use App\Models\Posts;
+use App\Models\Likes_photo;
+use App\Models\Photo;
+use App\Models\Comment;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // masuk ke dalam profile sendiri
     public function index()
     {
-        // untuk profile ada di postscontroller bagian index
+        $user = Auth::user(); // user login
+
+        return $this->profileData($user);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // masuk ke dalam profile pengguna lain
+    public function show($username)
+    {
+        if (Auth::check() && Auth::user()->name === $username) {
+        return redirect()->route('user.profile');
+        }
+
+        $user = User::where('name', $username)->firstOrFail();
+
+        return $this->profileData($user);
+    }
+
+    // data profile
+    private function profileData($user)
+    {
+        $totalPost = Posts::where('user_id', $user->id)->count();
+
+        $totalLike = Likes_photo::whereHas('post', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })->count();
+
+        $posts = Posts::with([
+            'photos',
+            'user',
+            'likes',
+            'comments.user',
+            'comments.replies.user'
+        ])
+            ->where('status', 'active')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->paginate(12);
+
+        return view('user.profile', compact(
+            'user',
+            'posts',
+            'totalPost',
+            'totalLike'
+        ));
+    }
+
     public function create()
     {
         return view('user.avatar.create');
@@ -58,10 +101,7 @@ class ProfileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Profile $profile)
-    {
-        //
-    }
+
 
     /**
      * Show the form for editing the specified resource.
