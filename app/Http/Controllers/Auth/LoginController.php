@@ -19,6 +19,7 @@ class LoginController extends Controller
             return route('admin.dashboard');
         }
 
+        session()->flash('success', 'Login berhasil! Selamat datang, ' . Auth::user()->name . '.');
         return route('user.dashboard');
     }
 

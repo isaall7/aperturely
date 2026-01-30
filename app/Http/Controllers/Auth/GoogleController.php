@@ -34,6 +34,7 @@ class GoogleController extends Controller
         }
 
         Auth::login($user, true);
+        session()->flash('success', 'Login berhasil! Selamat datang, ' . Auth::user()->name . '.');
         return redirect('/');
     }
 

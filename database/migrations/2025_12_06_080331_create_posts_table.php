@@ -17,8 +17,12 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             
             $table->string('caption')->nullable();
-            $table->string('camera_type'); // DSLR / Mirrorless / Phone
-            $table->string('genre'); // Landscape / Portrait / Street / Macro
+            
+            $table->unsignedBiginteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+
+            $table->unsignedBiginteger('type_category_id');
+            $table->foreign('type_category_id')->references('id')->on('type_categories')->onDelete('cascade');
 
             // status foto
             $table->enum('status', ['active', 'banned', 'rejected_ai', 'deleted'])->default('active');
@@ -30,6 +34,24 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        //tags dibuat sama user contohnya #sunset, #nature, #portrait
+        schema::create('tags', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->timestamps();
+        });
+
+        schema::create('post_tag', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('post_id');
+            $table->unsignedBigInteger('tag_id');
+            $table->timestamps();
+
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
+            $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');  
+        });
+    
     }
 
     /**
@@ -38,5 +60,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('posts');
+        Schema::dropIfExists('tags');
+        Schema::dropIfExists('post_tag');
     }
 };

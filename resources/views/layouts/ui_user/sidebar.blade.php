@@ -1,20 +1,19 @@
- <aside class="left-sidebar">
-      <div>
-        <div class="brand-logo d-flex align-items-center justify-content-between px-4 py-3">
-  <a href="{{ route('user.dashboard') }}" class="logo-img d-flex align-items-center">
-    <img 
-      src="{{ asset('ui/images/logos/aperturely.png') }}" 
-      class="img-fluid"
-      style="max-height: 70px;"
-      alt="Aperturely Logo"
-    />
-  </a>
+        <aside class="left-sidebar">
+              <div>
+                <div class="brand-logo d-flex align-items-center justify-content-between px-4 py-3">
+          <a href="{{ route('user.dashboard') }}" class="logo-img d-flex align-items-center">
+            <img 
+              src="{{ asset('ui/images/logos/aperturely.png') }}" 
+              class="img-fluid"
+              style="max-height: 70px;"
+              alt="Aperturely Logo"
+            />
+          </a>
 
-  <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
-    <i class="ti ti-x fs-8"></i>
-  </div>
-</div>
-
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
           <ul id="sidebarnav">
             <!-- <li class="nav-small-cap">

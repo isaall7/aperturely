@@ -22,6 +22,21 @@ class Posts extends Model
 
     // --- RELASI ---
 
+     public function category()
+    {
+        return $this->belongsTo(Categories::class);
+    }
+
+    public function subCategory()
+    {
+        return $this->belongsTo(TypeCategories::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
     public function photos()
     {
         return $this->hasMany(Photo::class, 'post_id');

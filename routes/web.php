@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Admin\DashboardAdmin;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\TypeCategoryController;
 
 use App\Http\Controllers\User\DashboardUser;
 use App\Http\Controllers\User\PostsController;  
@@ -21,6 +23,12 @@ Auth::routes();
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/', [DashboardAdmin::class, 'index'])->name('dashboard');
+    Route::get('/users', [DashboardAdmin::class, 'userAccount'])->name('user.index');
+    Route::delete('/users/{id}', [DashboardAdmin::class, 'destroy'])->name('user.destroy');
+
+    Route::resource('/category', CategoryController::class);
+    Route::resource('/typecategory', TypeCategoryController::class);
+
 });
 
 Route::prefix('/')->name('user.')->group(function () {

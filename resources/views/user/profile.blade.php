@@ -9,10 +9,11 @@
     }
 
     .profile-banner {
-        height: 190px;
+        height: 140px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         position: relative;
         overflow: hidden;
+        border-radius: 5px 5px 0 0;
     }
 
     .profile-banner::before {
@@ -78,7 +79,7 @@
 
     .profile-info-main {
         flex: 1;
-        padding-top: 10px;
+        padding-top: 0px;
     }
 
     .profile-header-row {

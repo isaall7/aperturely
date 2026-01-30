@@ -16446,7 +16446,7 @@ textarea.form-control-lg {
   margin: 0 auto;
   padding: 1.5rem;
   transition: 0.2s ease-in;
-  padding-top: 90px;
+  padding-top: 60px;
 }
 @media (max-width: 991.98px) {
   .body-wrapper .container-fluid, .body-wrapper .container-sm, .body-wrapper .container-md, .body-wrapper .container-lg, .body-wrapper .container-xl, .body-wrapper .container-xxl {
@@ -16473,7 +16473,7 @@ textarea.form-control-lg {
   }
 }
 #main-wrapper[data-layout=vertical][data-header-position=fixed] .body-wrapper > .container-fluid, #main-wrapper[data-layout=vertical][data-header-position=fixed] .body-wrapper > .container-sm, #main-wrapper[data-layout=vertical][data-header-position=fixed] .body-wrapper > .container-md, #main-wrapper[data-layout=vertical][data-header-position=fixed] .body-wrapper > .container-lg, #main-wrapper[data-layout=vertical][data-header-position=fixed] .body-wrapper > .container-xl, #main-wrapper[data-layout=vertical][data-header-position=fixed] .body-wrapper > .container-xxl {
-  padding-top: calc(75px + 30px);
+  padding-top: calc(60px + 30px);
 }
 
 @media (min-width: 1200px) {

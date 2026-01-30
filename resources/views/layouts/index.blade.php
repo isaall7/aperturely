@@ -29,7 +29,7 @@
 
     .body-wrapper {
       flex: 1;
-      margin-left: 270px; /* Space dari sidebar */
+      margin-left: 200px; /* Space dari sidebar */
       display: flex;
       flex-direction: column;
     }
@@ -113,20 +113,6 @@
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
 
-<div id="content" class="hidden">
-    @if(session('success'))
-        <script>
-            Swal.fire({
-                title: 'Success!',
-                text: '{{ session('success') }}',
-                icon: 'success',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#22c55e'
-            });
-        </script>
-    @endif
-</div>
-
     <!-- Sidebar Start -->
     @auth
         @if (auth()->user()->role === 'admin')
@@ -160,19 +146,19 @@
     @endguest
 
       <div class="body-wrapper-inner">
-        <div class="container-fluid pt-6 px-0">
+        <div class="container-fluid">
           <!-- Konten utama -->
               @yield('content')
           </div>
 
           <!-- Footer -->
-          <div class="page-footer">
+          <!-- <div class="page-footer">
             <p class="mb-0 fs-4">
               Design and Developed by 
               <a href="https://www.instagram.com/isaallajh?igsh=MTIyZTJleDY4Y2tudg==" target="_blank" class="pe-1 text-primary text-decoration-underline">Faisal</a> 
-              <!-- Distributed by <a href="https://themewagon.com/">ThemeWagon</a> -->
+              Distributed by <a href="https://themewagon.com/">ThemeWagon</a>
             </p>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -187,5 +173,34 @@
   <script src="{{ asset('ui/libs/simplebar/dist/simplebar.js') }}"></script>
   <script src="{{ asset('ui/js/dashboard.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- notifikasi -->
+  @if (session('success'))
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          Swal.fire({
+              icon: 'success',
+              title: 'Berhasil!',
+              text: @json(session('success')),
+              confirmButtonColor: '#22c55e'
+          });
+      });
+  </script>
+  @endif
+
+  @if (session('error'))
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          Swal.fire({
+              icon: 'error',
+              title: 'Gagal!',
+              text: @json(session('error')),
+              confirmButtonColor: '#ef4444'
+          });
+      });
+  </script>
+  @endif
+
 </body>
 </html>
