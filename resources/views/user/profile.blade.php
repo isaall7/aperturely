@@ -373,7 +373,7 @@
         font-size: 15px;
     }
 
-    /* Modal Styles (sama seperti feed) */
+    /* Modal Styles */
     .detail-modal .modal-dialog {
         max-width: 1200px;
         height: 90vh;
@@ -613,12 +613,28 @@
         padding: 20px;
     }
     
+    /* Comment Styles with Profile Links */
+    .comment-wrapper {
+        margin-bottom: 20px;
+    }
+
     .comment-item {
         display: flex;
         gap: 12px;
-        margin-bottom: 20px;
+        margin-bottom: 0;
     }
     
+    .comment-avatar-link {
+        display: block;
+        line-height: 0;
+        transition: opacity 0.2s ease;
+        flex-shrink: 0;
+    }
+    
+    .comment-avatar-link:hover {
+        opacity: 0.7;
+    }
+
     .comment-avatar {
         width: 36px;
         height: 36px;
@@ -631,11 +647,23 @@
         flex: 1;
     }
     
+    .comment-username-link {
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .comment-username-link:hover .comment-username {
+        text-decoration: underline;
+        color: #000;
+    }
+    
     .comment-username {
         font-weight: 600;
         color: #1a1a1a;
         font-size: 14px;
         margin-right: 8px;
+        transition: all 0.2s ease;
+        cursor: pointer;
     }
     
     .comment-text {
@@ -660,10 +688,31 @@
         padding: 0;
         font-weight: 600;
         font-size: 12px;
+        transition: color 0.2s ease;
     }
     
     .comment-actions button:hover {
         color: #000;
+    }
+
+    .comment-actions .delete-comment-btn {
+        color: #ed4956;
+    }
+
+    .comment-actions .delete-comment-btn:hover {
+        color: #c91f2e;
+    }
+
+    /* Replies Container */
+    .replies-container {
+        margin-left: 48px;
+        margin-top: 12px;
+        padding-left: 12px;
+        border-left: 2px solid #efefef;
+    }
+
+    .reply-item {
+        margin-bottom: 12px;
     }
     
     .modal-comment-input-section {
@@ -710,6 +759,37 @@
     .modal-comment-input button:disabled {
         background: #ccc;
         cursor: not-allowed;
+    }
+
+    /* Reply Info Banner */
+    .reply-info {
+        display: none;
+        padding: 8px 12px;
+        background: #f0f5f9;
+        border-radius: 8px;
+        margin-top: 8px;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .reply-info small {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .cancel-reply {
+        background: none;
+        border: none;
+        color: #e74c3c;
+        cursor: pointer;
+        font-weight: 600;
+        padding: 0;
+        margin-left: 10px;
+    }
+
+    .cancel-reply:hover {
+        color: #c0392b;
     }
 
     .modal-comments-section::-webkit-scrollbar {
@@ -929,7 +1009,7 @@
                         </div>
                     </div>
 
-                    <!-- Post Detail Modal (sama seperti feed) -->
+                    <!-- Post Detail Modal -->
                     <div class="modal fade detail-modal" id="postModal{{ $post->id }}" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
@@ -978,10 +1058,10 @@
                                                     <button class="modal-action-btn" type="button" data-bs-dismiss="modal">✖️</button>
                                                     @auth
                                                         @if(auth()->id() === $post->user_id)
-                                                            <form action="{{ route('user.postingan.destroy', $post) }}" method="POST">
+                                                            <form action="{{ route('user.postingan.destroy', $post) }}" method="POST" style="display: inline;">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button class="modal-action-btn" onclick="return confirm('Yakin ingin hapus postingan ini?')">🗑️</button>
+                                                                <button class="modal-action-btn" type="submit" onclick="return confirm('Yakin ingin hapus postingan ini?')">🗑️</button>
                                                             </form>
                                                         @endif
                                                     @endauth
@@ -991,13 +1071,19 @@
                                             
                                             <div class="modal-user-section">
                                                 <div class="modal-user-info">
-                                               <img 
-                                                    src="{{ $post->user->avatar_display }}" 
-                                                    alt="Avatar" 
-                                                    class="modal-user-avatar"
-                                                >
+                                                    <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}">
+                                                        <img 
+                                                            src="{{ $post->user->avatar_display }}" 
+                                                            alt="Avatar" 
+                                                            class="modal-user-avatar"
+                                                        >
+                                                    </a>
                                                     <div class="modal-user-details">
-                                                        <h6>{{ $post->user->username ?? $post->user->name }}</h6>
+                                                        <h6>
+                                                            <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}" class="text-dark text-decoration-none">
+                                                                {{ $post->user->username ?? $post->user->name }}
+                                                            </a>
+                                                        </h6>
                                                         <span>{{ $post->created_at->diffForHumans() }}</span>
                                                     </div>
                                                 </div>
@@ -1012,35 +1098,141 @@
                                                 </div>
                                             </div>
                                             
-                                            <div class="modal-comments-section">
-                                                @forelse($post->comments as $comment)
-                                                    <div class="comment-item">
-                                                        <img src="{{ $comment->user->avatar_display }}" 
-                                                             alt="{{ $comment->user->name }}" 
-                                                             class="comment-avatar">
-                                                        <div class="comment-content">
-                                                            <div>
-                                                                <span class="comment-username">{{ $comment->user->username ?? $comment->user->name }}</span>
-                                                                <span class="comment-text">{{ $comment->comment }}</span>
-                                                            </div>
-                                                            <div class="comment-actions">
-                                                                <span>{{ $comment->created_at->diffForHumans() }}</span>
-                                                                <button>Reply</button>
-                                                                <button>Like</button>
+                                            <div class="modal-comments-section" id="comments-container-{{ $post->id }}">
+                                                @forelse($post->comments->where('reply_id', null) as $comment)
+                                                    <div class="comment-wrapper" id="comment-wrapper-{{ $comment->id }}">
+                                                        <div class="comment-item" id="comment-{{ $comment->id }}">
+                                                            <a href="{{ route('user.profile.username', ['name' => $comment->user->username ?? $comment->user->name]) }}" class="comment-avatar-link">
+                                                                <img src="{{ $comment->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" 
+                                                                     alt="{{ $comment->user->name ?? 'User' }}" 
+                                                                     class="comment-avatar">
+                                                            </a>
+                                                            <div class="comment-content">
+                                                                <div>
+                                                                    <a href="{{ route('user.profile.username', ['name' => $comment->user->username ?? $comment->user->name]) }}" class="comment-username-link">
+                                                                        <span class="comment-username">{{ $comment->user->username ?? $comment->user->name }}</span>
+                                                                    </a>
+                                                                    <span class="comment-text">{{ $comment->comment }}</span>
+                                                                </div>
+                                                                <div class="comment-actions">
+                                                                    <span>{{ $comment->created_at->diffForHumans() }}</span>
+                                                                    
+                                                                    @auth
+                                                                        <button type="button" 
+                                                                                class="reply-btn" 
+                                                                                data-id="{{ $comment->id }}"
+                                                                                data-username="{{ $comment->user->username ?? $comment->user->name }}">
+                                                                            Reply
+                                                                        </button>
+                                                                        
+                                                                        @if(auth()->id() === $comment->user_id || auth()->user()->role === 'admin')
+                                                                            <button type="button" 
+                                                                                    class="delete-comment-btn" 
+                                                                                    data-id="{{ $comment->id }}"
+                                                                                    data-url="{{ route('user.comments.destroy', $comment->id) }}">
+                                                                                Hapus
+                                                                            </button>
+                                                                        @endif
+                                                                        
+                                                                        @if(auth()->id() !== $comment->user_id)
+                                                                            <button data-bs-toggle="modal" 
+                                                                                    data-bs-target="#reportCommentModal{{ $comment->id }}">
+                                                                                Report
+                                                                            </button>
+                                                                        @endif
+                                                                    @else
+                                                                        <button data-bs-toggle="modal" 
+                                                                                data-bs-target="#reportCommentModal{{ $comment->id }}">
+                                                                            Report
+                                                                        </button>
+                                                                    @endauth
+                                                                </div>
                                                             </div>
                                                         </div>
+
+                                                        @if($comment->replies->count() > 0)
+                                                            <div class="replies-container">
+                                                                @foreach($comment->replies as $reply)
+                                                                    <div class="comment-item reply-item" id="comment-{{ $reply->id }}">
+                                                                        <a href="{{ route('user.profile.username', ['name' => $reply->user->username ?? $reply->user->name]) }}" class="comment-avatar-link">
+                                                                            <img src="{{ $reply->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" 
+                                                                                 alt="{{ $reply->user->name ?? 'User' }}" 
+                                                                                 class="comment-avatar">
+                                                                        </a>
+                                                                        <div class="comment-content">
+                                                                            <div>
+                                                                                <a href="{{ route('user.profile.username', ['name' => $reply->user->username ?? $reply->user->name]) }}" class="comment-username-link">
+                                                                                    <span class="comment-username">{{ $reply->user->username ?? $reply->user->name }}</span>
+                                                                                </a>
+                                                                                <span class="comment-text">{{ $reply->comment }}</span>
+                                                                            </div>
+                                                                            <div class="comment-actions">
+                                                                                <span>{{ $reply->created_at->diffForHumans() }}</span>
+                                                                                
+                                                                                @auth
+                                                                                    <button type="button" 
+                                                                                            class="reply-btn" 
+                                                                                            data-id="{{ $reply->id }}"
+                                                                                            data-username="{{ $reply->user->username ?? $reply->user->name }}">
+                                                                                        Reply
+                                                                                    </button>
+                                                                                    
+                                                                                    @if(auth()->id() === $reply->user_id || auth()->user()->role === 'admin')
+                                                                                        <button type="button" 
+                                                                                                class="delete-comment-btn" 
+                                                                                                data-id="{{ $reply->id }}"
+                                                                                                data-url="{{ route('user.comments.destroy', $reply->id) }}">
+                                                                                            Hapus
+                                                                                        </button>
+                                                                                    @endif
+                                                                                    
+                                                                                    @if(auth()->id() !== $reply->user_id)
+                                                                                        <button data-bs-toggle="modal" 
+                                                                                                data-bs-target="#reportCommentModal{{ $reply->id }}">
+                                                                                            Report
+                                                                                        </button>
+                                                                                    @endif
+                                                                                @else
+                                                                                    <button data-bs-toggle="modal" 
+                                                                                            data-bs-target="#reportCommentModal{{ $reply->id }}">
+                                                                                        Report
+                                                                                    </button>
+                                                                                @endauth
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                 @empty
-                                                    <p class="text-center text-muted">Belum ada komentar</p>
+                                                    <p class="text-center text-muted" id="no-comments-{{ $post->id }}">Belum ada komentar</p>
                                                 @endforelse
                                             </div>
                                             
-                                            <div class="modal-comment-input-section">
-                                                <div class="modal-comment-input">
-                                                    <input type="text" placeholder="Add a comment...">
-                                                    <button disabled>Post</button>
+                                            @auth
+                                            <form class="comment-form-ajax" data-post-id="{{ $post->id }}">
+                                                @csrf
+                                                <div class="modal-comment-input-section">
+                                                    <div class="modal-comment-input">
+                                                        <input type="hidden" name="post_id" value="{{ $post->id }}">
+                                                        <input type="hidden" name="reply_id" class="reply-id-input" value="">
+                                                        <input type="text" name="comment" class="comment-input" placeholder="Tambah komentar...">
+                                                        <button type="submit">Kirim</button>
+                                                    </div>
+                                                    <div class="reply-info">
+                                                        <small>
+                                                            Membalas: <span class="reply-to-username"></span>
+                                                            <button type="button" class="cancel-reply">✕ Batal</button>
+                                                        </small>
+                                                    </div>
                                                 </div>
+                                            </form>
+                                            @else
+                                            <div class="modal-comment-input-section">
+                                                <p class="text-center text-muted">Silakan login untuk berkomentar</p>
                                             </div>
+                                            @endauth
                                         </div>
                                     </div>
                                 </div>
@@ -1078,7 +1270,6 @@ function toggleFollow() {
         btn.classList.add('btn-following');
         btn.innerHTML = '<span>✓</span> Following';
         
-        // Update followers count
         const followersStat = document.querySelectorAll('.stat-number')[1];
         const currentCount = parseInt(followersStat.textContent);
         followersStat.textContent = currentCount + 1;
@@ -1087,7 +1278,6 @@ function toggleFollow() {
         btn.classList.add('btn-follow');
         btn.innerHTML = '<span>➕</span> Follow';
         
-        // Update followers count
         const followersStat = document.querySelectorAll('.stat-number')[1];
         const currentCount = parseInt(followersStat.textContent);
         followersStat.textContent = currentCount - 1;
@@ -1095,6 +1285,176 @@ function toggleFollow() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // ==================== AJAX COMMENT FUNCTIONALITY ====================
+    document.querySelectorAll('.comment-form-ajax').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const commentInput = this.querySelector('.comment-input');
+            const postId = this.dataset.postId;
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Mengirim...';
+
+            fetch('{{ route("user.comments.store") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const commentsContainer = document.getElementById('comments-container-' + postId);
+                    const noComments = document.getElementById('no-comments-' + postId);
+                    
+                    if (noComments) {
+                        noComments.remove();
+                    }
+
+                    if (data.comment.reply_id) {
+                        const parentWrapper = document.getElementById('comment-wrapper-' + data.comment.reply_id);
+                        if (parentWrapper) {
+                            let repliesContainer = parentWrapper.querySelector('.replies-container');
+                            if (!repliesContainer) {
+                                repliesContainer = document.createElement('div');
+                                repliesContainer.className = 'replies-container';
+                                parentWrapper.appendChild(repliesContainer);
+                            }
+                            repliesContainer.insertAdjacentHTML('beforeend', data.html);
+                        }
+                    } else {
+                        commentsContainer.insertAdjacentHTML('afterbegin', data.html);
+                    }
+
+                    commentInput.value = '';
+                    const replyIdInput = form.querySelector('.reply-id-input');
+                    const replyInfo = form.querySelector('.reply-info');
+                    replyIdInput.value = '';
+                    replyInfo.style.display = 'none';
+                    
+                    showAlert('success', 'Komentar berhasil ditambahkan!');
+                } else {
+                    showAlert('error', data.message || 'Terjadi kesalahan');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('error', 'Terjadi kesalahan saat mengirim komentar');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Kirim';
+            });
+        });
+    });
+
+    // Handle reply button
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('reply-btn')) {
+            const commentId = e.target.getAttribute('data-id');
+            const username = e.target.getAttribute('data-username');
+            
+            const modal = e.target.closest('.modal');
+            if (modal) {
+                const form = modal.querySelector('.comment-form-ajax');
+                const replyIdInput = form.querySelector('.reply-id-input');
+                const replyInfo = form.querySelector('.reply-info');
+                const replyToUsername = form.querySelector('.reply-to-username');
+                const commentInput = form.querySelector('.comment-input');
+                
+                replyIdInput.value = commentId;
+                replyToUsername.textContent = username;
+                replyInfo.style.display = 'block';
+                commentInput.focus();
+            }
+        }
+    });
+
+    // Handle cancel reply
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('cancel-reply')) {
+            const form = e.target.closest('.comment-form-ajax');
+            const replyIdInput = form.querySelector('.reply-id-input');
+            const replyInfo = form.querySelector('.reply-info');
+            
+            replyIdInput.value = '';
+            replyInfo.style.display = 'none';
+        }
+    });
+
+    // Handle delete comment
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-comment-btn')) {
+            if (confirm('Apakah Anda yakin ingin menghapus komentar ini?')) {
+                const commentId = e.target.getAttribute('data-id');
+                const deleteUrl = e.target.getAttribute('data-url');
+                
+                fetch(deleteUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const commentElement = document.getElementById('comment-' + commentId);
+                        if (commentElement) {
+                            const commentWrapper = document.getElementById('comment-wrapper-' + commentId);
+                            if (commentWrapper) {
+                                commentWrapper.remove();
+                            } else {
+                                commentElement.remove();
+                            }
+                            
+                            const modal = e.target.closest('.modal');
+                            const commentsContainer = modal.querySelector('[id^="comments-container-"]');
+                            const remainingComments = commentsContainer.querySelectorAll('.comment-wrapper, .comment-item:not(.reply-item)');
+                            
+                            if (remainingComments.length === 0) {
+                                const postId = commentsContainer.id.replace('comments-container-', '');
+                                commentsContainer.innerHTML = '<p class="text-center text-muted" id="no-comments-' + postId + '">Belum ada komentar</p>';
+                            }
+                        }
+                        showAlert('success', 'Komentar berhasil dihapus!');
+                    } else {
+                        showAlert('error', data.message || 'Gagal menghapus komentar');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('error', 'Terjadi kesalahan saat menghapus komentar');
+                });
+            }
+        }
+    });
+
+    function showAlert(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+        alertDiv.style.position = 'fixed';
+        alertDiv.style.top = '80px';
+        alertDiv.style.right = '20px';
+        alertDiv.style.zIndex = '99999';
+        alertDiv.style.minWidth = '300px';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }
+
     // Comment input functionality
     document.querySelectorAll('.modal-comment-input input').forEach(input => {
         input.addEventListener('input', function() {

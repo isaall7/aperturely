@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Posts;
 use App\Models\Banned;
+use App\Models\Report;
+use App\Models\Comment;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardAdmin extends Controller
@@ -40,9 +43,6 @@ class DashboardAdmin extends Controller
         return view('admin.user.posts', compact('posts', 'search', 'totalPosts', 'userId'));
     }
 
-
-
-
     public function userAccount(Request $request)
     {
         $search = request()->search;
@@ -59,6 +59,66 @@ class DashboardAdmin extends Controller
         ->get();
         return view('admin.user.index', compact('users', 'search'));
     }
+
+    public function reportPosts(Request $request)
+    {
+        $search = $request->search;
+
+        $reports = Report::with([
+                'reporter',
+                'reportedUser',
+                'post'
+            ])
+            ->whereNotNull('post_id')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('reporter', fn ($qr) =>
+                        $qr->where('name', 'like', "%{$search}%")
+                    )
+                    ->orWhereHas('reportedUser', fn ($qu) =>
+                        $qu->where('name', 'like', "%{$search}%")
+                    )
+                    ->orWhere('reason', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->get();
+
+        return view('admin.report.posts', compact('reports', 'search'));
+    }
+
+    /**
+     * Halaman laporan komentar
+     */
+    public function reportComments(Request $request)
+    {
+        $search = $request->search;
+
+        $reports = Report::with([
+                'reporter',
+                'reportedUser',
+                'comment'
+            ])
+            ->whereNotNull('comment_id')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('reporter', fn ($qr) =>
+                        $qr->where('name', 'like', "%{$search}%")
+                    )
+                    ->orWhereHas('reportedUser', fn ($qu) =>
+                        $qu->where('name', 'like', "%{$search}%")
+                    )
+                    ->orWhere('reason', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->get();
+
+        return view('admin.report.comment', compact('reports', 'search'));
+    }
+
 
     public function index()
     {
@@ -140,6 +200,33 @@ class DashboardAdmin extends Controller
         });
 
         return back()->with('success', 'Postingan berhasil dibanned 🚫');
+    }
+
+    public function banComment(Request $request, Comment $comment)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:255',
+            'notes' => 'nullable|string',
+        ]);
+
+        DB::transaction(function () use ($comment, $request) {
+
+            // update status comment
+            $comment->update([
+                'status' => 'banned'
+            ]);
+
+            // simpan histori ban
+            Banned::create([
+                'admin_id' => auth()->id(),
+                'user_id' => $comment->user_id,
+                'comment_id' => $comment->id,
+                'reason' => $request->reason,
+                'notes' => $request->notes,
+            ]);
+        });
+
+        return back()->with('success', 'Komentar berhasil dibanned 🚫');
     }
 
 }

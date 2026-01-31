@@ -15,4 +15,5 @@ class Photo extends Model
     {
         return $this->belongsTo(Posts::class, 'post_id');
     }
+
 }

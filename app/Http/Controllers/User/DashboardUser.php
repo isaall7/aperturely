@@ -68,8 +68,8 @@ class DashboardUser extends Controller
         ->where('status', 'active')
         ->withCount(['likes', 'comments']) // Hitung total likes & comments
         ->orderByRaw('(likes_count + comments_count * 2) DESC') // Prioritas engagement
-        ->orderBy('created_at', 'desc') // Lalu urutkan dari terbaru
-        ->paginate(25);
+        ->inRandomOrder() // Acak urutan postingan
+        ->get();
         
         return view('user.dashboard', compact('posts', 'user', 'cari', 'search'));
     }

@@ -74,7 +74,7 @@ class PostsController extends Controller
                 $image = $manager
                     ->read($photoFile->getPathname())
                     ->scaleDown(1920)
-                    ->toJpeg(70);  // Kompresi ke JPEG dengan kualitas 70%
+                    ->toJpeg(70);  // jadi saat upload foto ke kompresi dengan kualitas 70% dengan format JPEG
 
 
                 $filename = uniqid() . '.jpg';
@@ -92,7 +92,7 @@ class PostsController extends Controller
 
             return redirect()
                 ->route('user.dashboard')
-                ->with('success', 'Postingan berhasil diupload & dikompres! 🎉');
+                ->with('success', 'Postingan berhasil diupload! Ayo upload lagi karya mu yang lain!🎉');
 
         } catch (\Exception $e) {
 

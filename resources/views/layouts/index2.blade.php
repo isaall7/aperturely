@@ -7,6 +7,7 @@
 
   <link rel="shortcut icon" type="image/png" href="{{ asset('ui/images/logos/aperturely_logo.png') }}" />
   <link rel="stylesheet" href="{{ asset('ui/css/styles.min.css') }}" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <style>
     * {

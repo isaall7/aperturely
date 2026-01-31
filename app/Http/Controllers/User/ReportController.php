@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
+
     public function reportPost(Request $request, Posts $post)
     {
         $request->validate([

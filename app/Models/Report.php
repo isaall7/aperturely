@@ -23,6 +23,11 @@ class Report extends Model
 
     // --- RELASI ---
 
+    public function photos()
+    {
+        return $this->hasMany(Photo::class, 'post_id');
+    }
+
     public function reporter()
     {
         return $this->belongsTo(User::class, 'reporter_id');

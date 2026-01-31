@@ -91,6 +91,30 @@
               </a>
           </li>
 
+          <li class="sidebar-item">
+              <a class="sidebar-link primary-hover-bg justify-content-between"
+                href="{{ route('admin.report.post') }}" aria-expanded="false">
+                  <div class="d-flex align-items-center gap-6">
+                      <span class="d-flex">
+                          <iconify-icon icon="solar:flag-line-duotone"></iconify-icon>
+                      </span>
+                      <span class="hide-menu">Report Postingan</span>
+                  </div>
+              </a>
+          </li>
+
+          <li class="sidebar-item">
+              <a class="sidebar-link primary-hover-bg justify-content-between"
+                href="{{ route('admin.report.comment') }}" aria-expanded="false">
+                  <div class="d-flex align-items-center gap-6">
+                      <span class="d-flex">
+                          <iconify-icon icon="solar:flag-2-line-duotone"></iconify-icon>
+                      </span>
+                      <span class="hide-menu">Report Komentar</span>
+                  </div>
+              </a>
+          </li>
+
           </ul>
         </nav>
       </div>
