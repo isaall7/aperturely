@@ -23,13 +23,17 @@ Auth::routes();
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/', [DashboardAdmin::class, 'index'])->name('dashboard');
+
     Route::get('/users', [DashboardAdmin::class, 'userAccount'])->name('user.index');
-    Route::delete('/users/{id}', [DashboardAdmin::class, 'destroy'])->name('user.destroy');
+    Route::delete('/users/{id}', [DashboardAdmin::class, 'destroyUser'])->name('user.destroy');
+
+    Route::get('/post', [DashboardAdmin::class, 'userPosts'])->name('user.posts');
+    Route::patch('/post/{post}/ban', [DashboardAdmin::class, 'banPost'])->name('post.ban');
 
     Route::resource('/category', CategoryController::class);
     Route::resource('/typecategory', TypeCategoryController::class);
-
 });
+
 
 Route::prefix('/')->name('user.')->group(function () {
     Route::get('/', [DashboardUser::class, 'index'])->name('dashboard');
@@ -44,5 +48,7 @@ Route::prefix('/')->name('user.')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     // profile user lain
     Route::get('/users/{name}', [ProfileController::class, 'show'])->name('profile.username');
+
+    Route::get('/notifikasi', [DashboardUser::class, 'notifikasi'])->name('riwayat.notifikasi');
 
 });

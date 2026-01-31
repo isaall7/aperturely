@@ -12,8 +12,8 @@ class Posts extends Model
     protected $fillable = [
         'user_id',
         'caption',
-        'camera_type',
-        'genre',
+        'category_id',
+        'type_category_id',
         'status',
         'ban_reason',
         'ai_reason',
@@ -35,7 +35,7 @@ class Posts extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
-    }
+    }           
 
     public function photos()
     {
@@ -71,7 +71,7 @@ class Posts extends Model
 
     public function bans()
     {
-        return $this->hasMany(Banned::class);
+        return $this->hasMany(Banned::class, 'post_id');
     }
 
     // --- HELPER ---

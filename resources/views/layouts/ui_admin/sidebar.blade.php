@@ -69,7 +69,7 @@
 
           <li class="sidebar-item">
               <a class="sidebar-link primary-hover-bg justify-content-between"
-                href="#" aria-expanded="false">
+                href="{{ route('admin.user.posts') }}" aria-expanded="false">
                   <div class="d-flex align-items-center gap-6">
                       <span class="d-flex">
                           <iconify-icon icon="solar:gallery-wide-line-duotone"></iconify-icon>

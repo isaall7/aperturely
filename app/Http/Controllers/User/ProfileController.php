@@ -38,8 +38,8 @@ class ProfileController extends Controller
     // data profile
     private function profileData($user)
     {
-        $totalPost = Posts::where('user_id', $user->id)->count();
-
+        $totalPost = Posts::where('user_id', $user->id)->where('status', 'active')->count();
+        
         $totalLike = Likes_photo::whereHas('post', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         })->count();

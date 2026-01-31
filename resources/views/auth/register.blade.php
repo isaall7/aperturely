@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Aperturely - Register</title>
+  <title>Aperture - Register</title>
   <link rel="shortcut icon" type="image/png" href="{{asset('ui/images/logos/aperturely_logo.png')}}" />
   <link rel="stylesheet" href="{{asset('ui/css/styles.min.css')}}" />
   <style>

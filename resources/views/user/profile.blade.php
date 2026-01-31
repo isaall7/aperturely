@@ -1,4 +1,4 @@
-@extends('layouts.index')
+@extends('layouts.index2')
 
 @section('content')
 <style>
@@ -6,6 +6,7 @@
         background: #ffffff;
         min-height: 80vh;
         padding: 0;
+        margin-top: -25px;
     }
 
     .profile-banner {
@@ -876,13 +877,13 @@
                 </div>
 
                 <div class="profile-bio">
-                    <p>{{ $user->bio ?? 'Belum ada bio.' }}</p>
+                    <p>{{ $user->profile->bio ?? 'Belum ada bio.' }}</p>
                     
                     <div class="profile-meta">
 
                         <div class="meta-item">
                             <i>📅</i>
-                            <span>Joined {{ optional($user->created_at)->format('F Y') ?? '-' }}</span>
+                            <span>Bergabung {{ optional($user->created_at)->format('F Y') ?? '-' }}</span>
                         </div>
                     </div>
                 </div>
@@ -975,6 +976,15 @@
                                                     <button class="modal-action-btn" onclick="toggleLike(this)">🤍</button>
                                                     <button class="modal-action-btn">📤</button>
                                                     <button class="modal-action-btn" type="button" data-bs-dismiss="modal">✖️</button>
+                                                    @auth
+                                                        @if(auth()->id() === $post->user_id)
+                                                            <form action="{{ route('user.postingan.destroy', $post) }}" method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button class="modal-action-btn" onclick="return confirm('Yakin ingin hapus postingan ini?')">🗑️</button>
+                                                            </form>
+                                                        @endif
+                                                    @endauth
                                                 </div>
                                                 <button class="modal-save-btn">Save</button>
                                             </div>
