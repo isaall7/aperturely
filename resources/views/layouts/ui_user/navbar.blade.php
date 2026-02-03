@@ -35,7 +35,7 @@
           </a>
         </li>
         <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Eksplor">
-          <a class="nav-link" href="#">
+          <a class="nav-link" href="{{ route('user.explore.halaman') }}">
             <iconify-icon icon="solar:compass-line-duotone" width="24"></iconify-icon>
           </a>
         </li>

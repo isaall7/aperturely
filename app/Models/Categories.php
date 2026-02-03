@@ -18,7 +18,7 @@ class Categories extends Model
 
     public function TypeCategories()
     {
-        return $this->hasMany(TypeCategories::class);
+        return $this->hasMany(TypeCategories::class, 'category_id');
     }
 
     public function posts()

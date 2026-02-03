@@ -13,10 +13,7 @@ use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ReportController;
 use App\Http\Controllers\User\CommentController;
 use App\Http\Controllers\User\LikesPhotoController;
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+use App\Http\Controllers\User\ExploreController;
 
 Route::get('/auth/google-redirect', [App\Http\Controllers\Auth\GoogleController::class, 'google_redirect']);
 Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleController::class, 'google_callback']);
@@ -65,6 +62,11 @@ Route::prefix('/')->name('user.')->group(function () {
 
     Route::post('/follow/{userId}', [ProfileController::class, 'follow'])->name('profile.follow');
     Route::get('riwayat-menyukai', [DashboardUser::class, 'showLikesPhoto'])->name('riwayat.like');
+
+    // Routes untuk Explore
+    Route::get('/explore', [ExploreController::class, 'index'])->name('explore.halaman');
+    Route::get('/explore/category/{id}', [ExploreController::class, 'filterByCategory'])->name('explore.category');
+    Route::get('/explore/search', [ExploreController::class, 'search'])->name('explore.search');
 
     Route::get('riwayat-diikuti', [DashboardUser::class, 'showFollowers'])->name('riwayat.diikuti');
     Route::get('riwayat-mengikuti', [DashboardUser::class, 'showFollowing'])->name('riwayat.mengikuti');
