@@ -2,6 +2,7 @@
 
 @section('content')
 <style>
+    /* Existing styles... */
     /* Reset & Base */
     * {
         margin: 0;
@@ -639,6 +640,36 @@
     .notification-card {
         animation: slideIn 0.5s ease;
     }
+    /* Like Button & Count */
+    .post-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .modal-action-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        padding: 4px 8px;
+    }
+
+    .modal-action-btn:hover {
+        transform: scale(1.2);
+    }
+
+    .modal-action-btn:active {
+        transform: scale(0.9);
+    }
+
+    .like-count {
+        font-size: 14px;
+        font-weight: 600;
+        color: #262626;
+    }
 </style>
 
 <div class="notification-container">
@@ -650,71 +681,63 @@
                     <h5 class="sidebar-title">Riwayat Aktivitas</h5>
                     
                     <div class="nav-list">
-                        <!-- Notifikasi (Active) -->
-                        <a href="{{ route('user.riwayat.postingan') }}" class="nav-item active">
-                            <div class="nav-icon">
-                                🔔
-                            </div>
+                        <!-- Notifikasi -->
+                        <a href="{{ route('user.riwayat.postingan') }}" class="nav-item">
+                            <div class="nav-icon">🔔</div>
                             <div class="nav-content">
                                 <span class="nav-label">Notifikasi</span>
                                 <span class="nav-desc">Postingan dibanned</span>
                             </div>
-                             @if($totalPosts > 0)
-                                <span class="nav-badge">{{ $totalPosts ?? '-'}}</span>
+                            @if(isset($totalPosts) && $totalPosts > 0)
+                                <span class="nav-badge">{{ $totalPosts }}</span>
                             @endif
                         </a>
 
                         <!-- Komentar -->
                         <a href="{{ route('user.riwayat.komentar') }}" class="nav-item">
-                            <div class="nav-icon">
-                                💬
-                            </div>
+                            <div class="nav-icon">💬</div>
                             <div class="nav-content">
                                 <span class="nav-label">Komentar</span>
                                 <span class="nav-desc">Riwayat komentar</span>
                             </div>
-                             @if($totalComments > 0)
-                                <span class="nav-badge">{{ $totalComments ?? '-'}}</span>
+                            @if(isset($totalComments) && $totalComments > 0)
+                                <span class="nav-badge">{{ $totalComments }}</span>
                             @endif
                         </a>
 
-                        <!-- Menyukai -->
-                        <a href="{{ route('user.riwayat.like') }}" class="nav-item">
-                            <div class="nav-icon">
-                                ❤️
-                            </div>
+                        <!-- Menyukai (Active) -->
+                        <a href="{{ route('user.riwayat.like') }}" class="nav-item active">
+                            <div class="nav-icon">❤️</div>
                             <div class="nav-content">
                                 <span class="nav-label">Menyukai</span>
                                 <span class="nav-desc">Postingan disukai</span>
                             </div>
                             @if($totalLikes > 0)
-                                <span class="nav-badge">{{ $totalLikes ?? '-'}}</span>
+                                <span class="nav-badge">{{ $totalLikes }}</span>
                             @endif
                         </a>
 
+                        <!-- Diikuti -->
                         <a href="{{ route('user.riwayat.diikuti') }}" class="nav-item">
-                            <div class="nav-icon">
-                                👥
-                            </div>
+                            <div class="nav-icon">👥</div>
                             <div class="nav-content">
                                 <span class="nav-label">Pengikut</span>
                                 <span class="nav-desc">Pengguna yang diikuti</span>
                             </div>
                             @if($totalFollowing > 0)
-                                <span class="nav-badge">{{ $totalFollowing ?? '-'}}</span>
+                                <span class="nav-badge">{{ $totalFollowing }}</span>
                             @endif
                         </a>
                         
+                        <!-- Mengikuti -->
                         <a href="{{ route('user.riwayat.mengikuti') }}" class="nav-item">
-                            <div class="nav-icon">
-                                👤
-                            </div>
+                            <div class="nav-icon">👤</div>
                             <div class="nav-content">
                                 <span class="nav-label">Mengikuti</span>
                                 <span class="nav-desc">Pengguna yang mengikuti</span>
                             </div>
                             @if($totalFollowers > 0)
-                                <span class="nav-badge">{{ $totalFollowers ?? '-'}}</span>
+                                <span class="nav-badge">{{ $totalFollowers }}</span>
                             @endif
                         </a>
                     </div>
@@ -724,180 +747,145 @@
             <!-- Main Content -->
             <div class="col-lg-9">
                 <div class="main-content">
-                    <!-- Page Header -->
                     <div class="page-header">
-                        <h1 class="page-title">
-                            <span>Notifikasi Pelanggaran</span>
-                        </h1>
-                        <p class="page-subtitle">Postingan Anda yang telah dibanned oleh admin</p>
+                        <h2 class="page-title">
+                            Riwayat Menyukai
+                        </h2>
+                        <p class="page-subtitle">Lihat postingan yang telah Anda sukai.</p>
                     </div>
 
-                    <!-- Notifications List -->
+                    @if($likesPhotos->count() > 0)
                     <div class="notifications-list">
-                        @forelse($posts as $post)
-                            <div class="notification-card">
-                                <!-- Card Header -->
-                                <div class="card-header-custom">
-                                    <div class="header-icon">
-                                        ⛔
-                                    </div>
-                                    <div class="header-text">
-                                        <h6>Postingan Dibanned</h6>
-                                        <small>{{ $post->bans->first()->created_at->diffForHumans() }}</small>
-                                    </div>
-                                </div>
-
-                                <!-- Card Body -->
-                                <div class="card-body-custom">
-                                    <div class="post-preview-section">
-                                        <!-- Post Image -->
-                                        <div class="post-image-wrapper">
-                                            <img src="{{ asset('storage/'.$post->photos->first()->photo) }}" alt="Post image">
-                                            @if($post->photos->count() > 1)
-                                                <div class="photo-count-badge">
-                                                    <span>📸</span>
-                                                    <span>{{ $post->photos->count() }}</span>
-                                                </div>
-                                            @endif
+                        @foreach($likesPhotos as $like)
+                            @if($like->photo) {{-- Tambahkan pengecekan ini --}}
+                                <div class="notification-card">
+                                    <!-- Card Header -->
+                                    <div class="card-header-custom">
+                                        <div class="header-text">
+                                            <h6>Postingan Disukai</h6>
+                                            <small>{{ $like->created_at->diffForHumans() }}</small>
                                         </div>
+                                    </div>
 
-                                        <!-- Ban Details -->
-                                        <div class="ban-details">
-                                            <!-- Caption -->
-                                            <div class="detail-item">
-                                                <div class="detail-label">Caption</div>
-                                                <div class="detail-value">{{ Str::limit($post->caption, 100) }}</div>
+                                    <!-- Card Body -->
+                                    <div class="card-body-custom">
+                                        <div class="post-preview-section">
+                                            <!-- Post Image -->
+                                            <div class="post-image-wrapper">
+                                                @if($like->photo->photo)
+                                                    <img src="{{ asset('storage/' . $like->photo->photo) }}" 
+                                                        alt="Post Image">
+                                                @else
+                                                    <img src="{{ asset('images/default-post.jpg') }}" 
+                                                        alt="Default Image">
+                                                @endif
                                             </div>
 
-                                            <!-- Ban Reason -->
-                                            <div class="detail-item">
-                                                <div class="detail-label">Alasan Ban</div>
-                                                <div class="detail-value">
-                                                    <span>{{ $post->bans->first()->reason }}</span>
-                                                </div>
-                                            </div>
-
-                                            <!-- Admin Notes -->
-                                            @if($post->bans->first()->notes)
+                                            <!-- Post Details -->
+                                            <div class="post-details">
+                                                <!-- Pemilik Postingan -->
                                                 <div class="detail-item">
-                                                    <div class="detail-label">Catatan Admin</div>
-                                                    <div class="detail-value">{{ $post->bans->first()->notes }}</div>
-                                                </div>
-                                            @endif
-
-                                            <!-- Banned By -->
-                                            <div class="detail-item">
-                                                <div class="detail-label">Dibanned Oleh</div>
-                                                <div class="detail-value">
-                                                    <div class="admin-badge">
-                                                        <strong>{{ $post->bans->first()->admin->name }} Baik</strong>
-                                                        <!-- <span class="badge-role">Admin</span> -->
+                                                    <span class="detail-label">Pemilik Postingan</span>
+                                                    <div class="user-info">
+                                                        @if($like->photo->user)
+                                                            @if($like->profile->user)
+                                                                <img src="{{ $likw->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" 
+                                                                    alt="{{ $like->photo->user->name }}" 
+                                                                    class="user-avatar">
+                                                            @else
+                                                                <img src="{{ asset('images/default-avatar.png') }}" 
+                                                                    alt="Default Avatar" 
+                                                                    class="user-avatar">
+                                                            @endif
+                                                            <span class="username">{{ $like->photo->user->name }}</span>
+                                                        @else
+                                                            <span class="detail-value muted">Pengguna tidak ditemukan</span>
+                                                        @endif
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <!-- Date -->
-                                            <div class="detail-item">
-                                                <div class="detail-label">Tanggal</div>
-                                                <div class="detail-value">{{ $post->bans->first()->created_at->format('d M Y') }}</div>
+                                                <!-- Caption -->
+                                                <div class="detail-item">
+                                                    <span class="detail-label">Caption</span>
+                                                    <p class="detail-value">
+                                                        {{ $like->post->bio ?? 'Tidak ada caption' }}
+                                                    </p>
+                                                </div>
+
+                                                <!-- Tanggal Disukai -->
+                                                <div class="detail-item">
+                                                    <span class="detail-label">Disukai Pada</span>
+                                                    <p class="detail-value">
+                                                        {{ $like->created_at->format('d M Y') }}
+                                                    </p>
+                                                </div>
+
+                                                <!-- Like Actions -->
+                                                <div class="post-actions">
+                                                    <button type="button" 
+                                                            class="modal-action-btn" 
+                                                            data-post-id="{{ $like->photo->id }}" 
+                                                            data-liked="{{ $like->photo->isLikedBy(auth()->id()) ? '1' : '0' }}">
+                                                        {{ $like->photo->isLikedBy(auth()->id()) ? '❤️' : '🤍' }}
+                                                    </button>
+                                                    <span class="like-count" data-post-id="{{ $like->photo->id }}">
+                                                        {{ $like->photo->likesCount() }}
+                                                    </span>
+                                                    <span style="font-size: 14px; color: #8e8e8e;">suka</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Card Footer -->
-                                <div class="card-footer-custom" style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-                                    <form action="{{ route('user.postingan.destroy', $post) }}" method="post" style="margin: 0;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn-delete-post" type="submit" onclick="return confirm('⚠️ Apakah Anda yakin ingin menghapus postingan ini secara permanen?');">
-                                            <span>Hapus</span>
-                                        </button>
-                                    </form>
-                                    <button class="btn-detail" data-bs-toggle="modal" data-bs-target="#detailModal{{ $post->id }}">
-                                        <span>Lihat Detail</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Detail Modal -->
-                            <div class="modal fade" id="detailModal{{ $post->id }}" tabindex="-1">
-                                <div class="modal-dialog modal-lg modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Detail Pelanggaran</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <!-- All Photos -->
-                                            <div class="modal-section">
-                                                <div class="modal-section-label">Foto Postingan</div>
-                                                <div class="modal-photos-grid">
-                                                    @foreach($post->photos as $photo)
-                                                        <div class="modal-photo-item">
-                                                            <img src="{{ asset('storage/'.$photo->photo) }}" alt="Post photo">
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-
-                                            <!-- Caption -->
-                                            <div class="modal-section">
-                                                <div class="modal-section-label">Caption</div>
-                                                <div class="modal-caption-box">
-                                                    <p>{{ $post->caption ?? 'Tidak ada caption' }}</p>
-                                                </div>
-                                            </div>
-
-                                            <!-- Ban Info -->
-                                            <div class="modal-section">
-                                                <div class="ban-info-alert">
-                                                    <div class="ban-info-title">
-                                                        <span>Informasi Ban</span>
-                                                    </div>
-                                                    <div class="ban-info-item">
-                                                        <strong>Alasan:</strong> {{ $post->bans->first()->reason }}
-                                                    </div>
-                                                    @if($post->bans->first()->notes)
-                                                        <div class="ban-info-item">
-                                                            <strong>Catatan:</strong> {{ $post->bans->first()->notes }}
-                                                        </div>
-                                                    @endif
-                                                    <div class="ban-info-item">
-                                                        <strong>Dibanned oleh:</strong> {{ $post->bans->first()->admin->name }}
-                                                    </div>
-                                                    <div class="ban-info-item">
-                                                        <strong>Tanggal:</strong> {{ $post->bans->first()->created_at->format('d M Y') }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer d-flex justify-content-between">
-                                            <form action="{{ route('user.postingan.destroy', $post) }}" method="post" class="m-0">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger" type="submit" onclick="return confirm('⚠️ Apakah Anda yakin ingin menghapus postingan ini secara permanen?');">
-                                                    Hapus Postingan
-                                                </button>
-                                            </form>
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                Tutup
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="empty-state">
-                                <div class="empty-icon">📭</div>
-                                <h5 class="empty-title">Tidak Ada Notifikasi</h5>
-                                <p class="empty-text">Tidak ada postingan yang dibanned</p>
-                            </div>
-                        @endforelse
+                            @endif {{-- Tutup pengecekan --}}
+                        @endforeach
                     </div>
+                @else
+                    <div class="empty-state">
+                        <div class="empty-icon">❤️</div>
+                        <h3 class="empty-title">Belum Ada Postingan Disukai</h3>
+                        <p class="empty-text">Anda belum menyukai postingan apapun.</p>
+                    </div>
+                @endif
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- JavaScript untuk Like Button -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.modal-action-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const postId = this.dataset.postId;
+
+            fetch(`{{ route('user.post.like', ':id') }}`.replace(':id', postId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Ganti icon
+                this.innerHTML = data.liked ? '❤️' : '🤍';
+                this.dataset.liked = data.liked ? '1' : '0';
+
+                // Update jumlah like
+                const countEl = document.querySelector(
+                    `.like-count[data-post-id="${postId}"]`
+                );
+
+                if (countEl) {
+                    countEl.textContent = data.total;
+                }
+            })
+            .catch(err => console.error(err));
+        });
+    });
+});
+</script>
+
 @endsection

@@ -42,4 +42,25 @@ class Comment extends Model
     {
         return $this->hasMany(Report::class, 'comment_id');
     }
+
+    public function bans()
+    {
+        return $this->hasMany(Banned::class, 'comment_id');
+    }
+
+    /**
+     * Scope untuk comment yang aktif
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    /**
+     * Scope untuk comment yang di-ban
+     */
+    public function scopeBanned($query)
+    {
+        return $query->where('status', 'banned');
+    }
 }

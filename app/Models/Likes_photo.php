@@ -27,4 +27,9 @@ class Likes_photo extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function photo()
+    {
+        return $this->belongsTo(Photo::class, 'post_id');
+    }
 }

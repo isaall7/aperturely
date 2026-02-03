@@ -1064,8 +1064,8 @@
         @if($posts->count() > 0)
             <div class="masonry-grid">
                 @foreach($posts as $post)
-                    <div class="post-card" data-bs-toggle="modal" data-bs-target="#detailModal{{ $post->id }}">
-                        <div class="post-image-container">
+                    <div class="post-card">
+                        <div class="post-image-container" data-bs-toggle="modal" data-bs-target="#detailModal{{ $post->id }}">
                             @if($post->photos && $post->photos->first())
                                 <img src="{{ asset('storage/' . $post->photos->first()->photo) }}" alt="Post" loading="lazy">
                             @else
@@ -1120,24 +1120,24 @@
                         @if($post->caption || $post->user)
                             <div class="post-info">
                                 <div class="post-user">
-                                    <img 
-                                        src="{{ $post->user?->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" 
-                                        alt="Avatar" 
-                                        class="user-avatar"
-                                    >
-                                    <span class="user-name">{{ $post->user->username ?? $post->user->name }}</span>
+                                    <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}">
+                                        <img src="{{ $post->user->avatar_display }}" alt="Avatar" class="user-avatar">
+                                    </a>
+                                    <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}" class="user-name">
+                                        {{ $post->user->username ?? $post->user->name }}
+                                    </a>
                                 </div>  
                                 @if($post->caption)
                                     <div class="post-caption">{{ $post->caption }}</div>
                                 @endif
                                 <div class="post-stats">
-                                    <span>❤️ {{ number_format($post->likes->count() ?? 0) }}</span>
+                                    <span>❤️ {{ $post->likes->count() }}</span>
                                     <span>💬 {{ number_format($post->comments->count() ?? 0) }}</span>
                                 </div>
                             </div>
                         @endif
                     </div>
-                                    <div class="modal fade detail-modal" id="detailModal{{ $post->id }}" tabindex="-1">
+                    <div class="modal fade detail-modal" id="detailModal{{ $post->id }}" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-body">
@@ -1180,7 +1180,9 @@
                                         <div class="modal-details-section">
                                             <div class="modal-header-custom">
                                                 <div class="modal-header-actions">
-                                                    <button class="modal-action-btn" onclick="toggleLike(this)">🤍</button>
+                                                    <button type="button" class="modal-action-btn" data-post-id="{{ $post->id }}" data-liked="{{ $post->isLikedBy(auth()->id()) ? '1' : '0' }}">
+                                                            {{ $post->isLikedBy(auth()->id()) ? '❤️' : '🤍' }}
+                                                    </button>
                                                     <button class="modal-action-btn">📤</button>
                                                     <button class="modal-action-btn" type="button" data-bs-dismiss="modal">✖️</button>
                                                     <div class="dropdown">
@@ -1261,7 +1263,7 @@
                                                     <div>
                                                         <a href="{{ route('user.profile.username', ['name' => $comment->user->username ?? $comment->user->name]) }}" class="comment-username-link">
                                                             <span class="comment-username">{{ $comment->user->username ?? $comment->user->name }}</span>
-                                                        </a>
+                                                        </a><br>
                                                         <span class="comment-text">{{ $comment->comment }}</span>
                                                     </div>
                                                     <div class="comment-actions">
@@ -1316,7 +1318,7 @@
                                                                 <div>
                                                                     <a href="{{ route('user.profile.username', ['name' => $reply->user->username ?? $reply->user->name]) }}" class="comment-username-link">
                                                                         <span class="comment-username">{{ $reply->user->username ?? $reply->user->name }}</span>
-                                                                    </a>
+                                                                    </a><br>
                                                                     <span class="comment-text">{{ $reply->comment }}</span>
                                                                 </div>
                                                                 <div class="comment-actions">
@@ -1399,7 +1401,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title">🚩 Laporkan Postingan</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal">✖️</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <form action="{{ route('user.report.post', $post->id) }}" method="POST">
                                     @csrf
@@ -1444,7 +1446,7 @@
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title">🚩 Laporkan Komentar</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal">✖️</button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <form action="{{ route('user.report.comment', $comment->id) }}" method="POST">
                                         @csrf
@@ -1495,15 +1497,36 @@
 </div>
 
 <script>
-function toggleLike(button) {
-    if (button.classList.contains('liked')) {
-        button.innerHTML = '🤍';
-        button.classList.remove('liked');
-    } else {
-        button.innerHTML = '❤️';
-        button.classList.add('liked');
-    }
-}
+    // ajax like photo
+document.querySelectorAll('.modal-action-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        const postId = this.dataset.postId;
+
+            fetch(`{{ route('user.post.like', ':id') }}`.replace(':id', postId), {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Ganti icon
+            this.innerHTML = data.liked ? '❤️' : '🤍';
+            this.dataset.liked = data.liked ? '1' : '0';
+
+            // Update jumlah like
+            const countEl = document.querySelector(
+                `.like-count[data-post-id="${postId}"]`
+            );
+
+            if (countEl) {
+                countEl.textContent = data.total;
+            }
+        })
+        .catch(err => console.error(err));
+    });
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     // ==================== AJAX COMMENT FUNCTIONALITY ====================

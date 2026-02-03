@@ -10,11 +10,43 @@ use App\Models\Posts;
 use App\Models\Likes_photo;
 use App\Models\Photo;
 use App\Models\Comment;
+use App\Models\Follow;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
+    // ini buat fitur followers dan following
+    public function follow($userId)
+    {
+        $user = User::findOrFail($userId); 
+        
+        if (Auth::id() == $userId) {
+            return response()->json(['error' => 'Tidak bisa follow diri sendiri'], 400);
+        }
+
+        $follow = Follow::where('follower_id', Auth::id())
+            ->where('followed_id', $userId)
+            ->first();
+
+        if ($follow) {
+            $follow->delete();
+
+            return response()->json([
+                'following' => false
+            ]);
+        }
+
+        Follow::create([
+            'follower_id' => Auth::id(),
+            'followed_id' => $userId,
+        ]);
+
+        return response()->json([
+            'following' => true
+        ]);
+    }
+
     // masuk ke dalam profile sendiri
     public function index()
     {
@@ -75,28 +107,37 @@ class ProfileController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'bio' => 'nullable|string|max:500',
         ]);
 
+        $user = auth()->user();
+
         if ($request->hasFile('avatar')) {
 
-            if (auth()->user()->avatar) {
-                Storage::disk('public')->delete(auth()->user()->avatar);
+            // hapus avatar lama kalau ada
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
             }
 
+            // simpan avatar baru
             $path = $request->file('avatar')->store('avatars', 'public');
 
-            auth()->user()->update(['avatar' => $path]);
+            $user->update([
+                'avatar' => $path,
+            ]);
         }
 
         Profile::updateOrCreate(
-            ['user_id' => auth()->id()],
+            ['user_id' => $user->id],
             ['bio' => $request->bio]
         );
 
-        return redirect()->route('user.profile')->with('success', 'Profile Berhasil Dibuat.');
+        return redirect()
+            ->route('user.profile')
+            ->with('success', 'Profil berhasil diperbarui.');
     }
+
 
     /**
      * Display the specified resource.

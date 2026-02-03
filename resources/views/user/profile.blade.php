@@ -921,8 +921,14 @@
                                 </a>
                             @else
                                 <!-- Other's Profile -->
-                                <button class="btn-primary-action btn-follow" id="followBtn" onclick="toggleFollow()">
-                                    <span>Mengikuti</span> 
+                                <button class="btn-primary-action btn-follow"  data-user-id="{{ $user->id }}">
+                                    <span>
+                                        @if(auth()->user()->isFollowing($user->id))
+                                            Berhenti Mengikuti
+                                        @else
+                                            Ikuti
+                                        @endif                        
+                                    </span> 
                                 </button>
                                 <button class="btn-secondary-action">
                                     <span>Pesan</span> 
@@ -943,16 +949,16 @@
                         <span class="stat-label">Postingan</span>
                     </div>
                     <div class="stat-box">
-                        <span class="stat-number">0</span>
+                        <span class="stat-number">{{ $user->followers->count() }}</span>
                         <span class="stat-label">Mengikuti</span>
                     </div>
                     <div class="stat-box">
-                        <span class="stat-number">0</span>
+                        <span class="stat-number">{{ $user->following->count() }}</span>
                         <span class="stat-label">Diikuti</span>
                     </div>
                     <div class="stat-box">
                         <span class="stat-number">{{ $totalLike }}</span>
-                        <span class="stat-label">Menyukai</span>
+                        <span class="stat-label">Disukai</span>
                     </div>
                 </div>
 
@@ -1053,7 +1059,9 @@
                                         <div class="modal-details-section">
                                             <div class="modal-header-custom">
                                                 <div class="modal-header-actions">
-                                                    <button class="modal-action-btn" onclick="toggleLike(this)">🤍</button>
+                                                    <button type="button" class="modal-action-btn" data-post-id="{{ $post->id }}" data-liked="{{ $post->isLikedBy(auth()->id()) ? '1' : '0' }}">
+                                                        {{ $post->isLikedBy(auth()->id()) ? '❤️' : '🤍' }}        
+                                                    </button>      
                                                     <button class="modal-action-btn">📤</button>
                                                     <button class="modal-action-btn" type="button" data-bs-dismiss="modal">✖️</button>
                                                     @auth
@@ -1252,15 +1260,58 @@
 </div>
 
 <script>
-function toggleLike(button) {
-    if (button.classList.contains('liked')) {
-        button.innerHTML = '🤍';
-        button.classList.remove('liked');
-    } else {
-        button.innerHTML = '❤️';
-        button.classList.add('liked');
-    }
-}
+ // ajax like photo
+document.querySelectorAll('.modal-action-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        const postId = this.dataset.postId;
+
+            fetch(`{{ route('user.post.like', ':id') }}`.replace(':id', postId), {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Ganti icon
+            this.innerHTML = data.liked ? '❤️' : '🤍';
+            this.dataset.liked = data.liked ? '1' : '0';
+
+            // Update jumlah like
+            const countEl = document.querySelector(
+                `.like-count[data-post-id="${postId}"]`
+            );
+
+            if (countEl) {
+                countEl.textContent = data.total;
+            }
+        })
+        .catch(err => console.error(err));
+    });
+});
+
+// follow button
+document.querySelectorAll('.btn-follow').forEach(button => {
+    button.addEventListener('click', function () {
+        const userId = this.dataset.userId;
+
+        fetch(`{{ route('user.profile.follow', ':id') }}`.replace(':id', userId), {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+        })
+        .then(res => res.json())
+        .then(data => {
+            this.querySelector('span').textContent =
+                data.following ? 'Berhenti Mengikuti' : 'Ikuti';
+        })
+        .catch(err => console.error(err));
+    });
+});
+
 
 function toggleFollow() {
     const btn = document.getElementById('followBtn');

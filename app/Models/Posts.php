@@ -62,6 +62,10 @@ class Posts extends Model
         return $this->hasMany(Likes_photo::class, 'post_id');
     }
 
+    public function isLikedBy($userId)
+    {
+        return $this->likes()->where('user_id', $userId)->exists();
+    }
     // --- REPORTING ---
 
     public function reports()

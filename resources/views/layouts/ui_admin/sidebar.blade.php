@@ -81,18 +81,6 @@
 
           <li class="sidebar-item">
               <a class="sidebar-link primary-hover-bg justify-content-between"
-                href="#" aria-expanded="false">
-                  <div class="d-flex align-items-center gap-6">
-                      <span class="d-flex">
-                          <iconify-icon icon="solar:chat-round-line-duotone"></iconify-icon>
-                      </span>
-                      <span class="hide-menu">Komentar</span>
-                  </div>
-              </a>
-          </li>
-
-          <li class="sidebar-item">
-              <a class="sidebar-link primary-hover-bg justify-content-between"
                 href="{{ route('admin.report.post') }}" aria-expanded="false">
                   <div class="d-flex align-items-center gap-6">
                       <span class="d-flex">

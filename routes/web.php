@@ -12,6 +12,7 @@ use App\Http\Controllers\User\PostsController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ReportController;
 use App\Http\Controllers\User\CommentController;
+use App\Http\Controllers\User\LikesPhotoController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -30,7 +31,7 @@ Route::prefix('dashboard')->name('admin.')->middleware(['auth', 'role:admin'])->
 
     Route::get('/post', [DashboardAdmin::class, 'userPosts'])->name('user.posts');
     Route::patch('/post/{post}/ban', [DashboardAdmin::class, 'banPost'])->name('post.ban');
-    Route::patch('/post/{comment}/ban', [DashboardAdmin::class, 'banComment'])->name('post.bancomment');
+    Route::patch('/post/{id}/ban-comment', [DashboardAdmin::class, 'banComment'])->name('post.bancomment');
 
     Route::resource('/category', CategoryController::class);
     Route::resource('/typecategory', TypeCategoryController::class);
@@ -54,9 +55,18 @@ Route::prefix('/')->name('user.')->group(function () {
     // profile user lain
     Route::get('/users/{name}', [ProfileController::class, 'show'])->name('profile.username');
 
-    Route::get('/notifikasi', [DashboardUser::class, 'notifikasi'])->name('riwayat.notifikasi');
+    Route::get('/notifikasi', [DashboardUser::class, 'BanPostUser'])->name('riwayat.postingan');
+    Route::get('/riwayat-komentar', [DashboardUser::class, 'BanAndShowComment'])->name('riwayat.komentar');
 
     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+
+    Route::post('/post-like/{post}', [LikesPhotoController::class, 'likePhoto'])->name('post.like');
+
+    Route::post('/follow/{userId}', [ProfileController::class, 'follow'])->name('profile.follow');
+    Route::get('riwayat-menyukai', [DashboardUser::class, 'showLikesPhoto'])->name('riwayat.like');
+
+    Route::get('riwayat-diikuti', [DashboardUser::class, 'showFollowers'])->name('riwayat.diikuti');
+    Route::get('riwayat-mengikuti', [DashboardUser::class, 'showFollowing'])->name('riwayat.mengikuti');
 
 });

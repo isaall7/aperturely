@@ -20,7 +20,7 @@
           </a>
         </li>
         <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifikasi">
-          <a class="nav-link" href="{{route('user.riwayat.notifikasi')}}">
+          <a class="nav-link" href="{{route('user.riwayat.postingan')}}">
             <iconify-icon icon="solar:bell-line-duotone" width="24"></iconify-icon>
           </a>
         </li>
@@ -46,12 +46,12 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-center">
             <li>
-              <a class="dropdown-item" href="#">
+              <a class="dropdown-item" href="{{ route('user.riwayat.komentar') }}">
                 <i class="ti ti-message-circle me-2"></i>Komentar
               </a>
             </li>
             <li>
-              <a class="dropdown-item" href="#">
+              <a class="dropdown-item" href="{{ route('user.riwayat.like') }}">
                 <i class="ti ti-thumb-up me-2"></i>Menyukai
               </a>
             </li>
@@ -77,7 +77,7 @@
               <i class="ti ti-user fs-6 me-2"></i>
               <span>Profile</span>
             </a>
-            <a href="#" class="dropdown-item">
+            <a href="{{ route('user.riwayat.postingan') }}" class="dropdown-item">
               <i class="ti ti-mail fs-6 me-2"></i>
               <span>Notifikasi</span>
             </a>

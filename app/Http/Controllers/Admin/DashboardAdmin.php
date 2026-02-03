@@ -18,6 +18,7 @@ class DashboardAdmin extends Controller
      * Display a listing of the resource.
      */
 
+    // ini buat nampilin semua postingan user di halaman admin
     public function userPosts(Request $request)
     {
         $totalPosts = Posts::count();
@@ -43,6 +44,7 @@ class DashboardAdmin extends Controller
         return view('admin.user.posts', compact('posts', 'search', 'totalPosts', 'userId'));
     }
 
+    // ini buat nampilin semua akun user di halaman admin
     public function userAccount(Request $request)
     {
         $search = request()->search;
@@ -60,6 +62,7 @@ class DashboardAdmin extends Controller
         return view('admin.user.index', compact('users', 'search'));
     }
 
+    // ini buat nampilin laporan postingan dari pengguna di halaman admin
     public function reportPosts(Request $request)
     {
         $search = $request->search;
@@ -88,9 +91,7 @@ class DashboardAdmin extends Controller
         return view('admin.report.posts', compact('reports', 'search'));
     }
 
-    /**
-     * Halaman laporan komentar
-     */
+    // ini buat nampilin laporan komentar dari pengguna di halaman admin
     public function reportComments(Request $request)
     {
         $search = $request->search;
@@ -125,49 +126,7 @@ class DashboardAdmin extends Controller
         return view('admin.dashboard');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
+    // ini buat hapus akun user di halaman admin
     public function destroyUser(string $id)
     {
         $users = User::findOrFail($id);
@@ -175,6 +134,7 @@ class DashboardAdmin extends Controller
         return redirect()->route('admin.user.index')->with('success', 'Akun pengguna berhasil dihapus.');
     }
 
+    // ini buat ban postingan user di halaman admin
     public function banPost(Request $request, Posts $post)
     {
         $request->validate([
@@ -202,21 +162,19 @@ class DashboardAdmin extends Controller
         return back()->with('success', 'Postingan berhasil dibanned 🚫');
     }
 
-    public function banComment(Request $request, Comment $comment)
+    // ini buat ban komentar user di halaman admin
+    public function banComment(Request $request, $id)
     {
+        $comment = Comment::findOrFail($id);
+
         $request->validate([
             'reason' => 'required|string|max:255',
             'notes' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($comment, $request) {
+            $comment->update(['status' => 'banned']);
 
-            // update status comment
-            $comment->update([
-                'status' => 'banned'
-            ]);
-
-            // simpan histori ban
             Banned::create([
                 'admin_id' => auth()->id(),
                 'user_id' => $comment->user_id,

@@ -51,6 +51,34 @@ class User extends Authenticatable
     
     // --- RELASI ---
 
+    // orang yang aku follow
+    public function following()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'follows',
+            'follower_id',
+            'followed_id'
+        );
+    }
+
+    // orang yang follow aku
+    public function followers()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'follows',
+            'followed_id',
+            'follower_id'
+        );
+    }
+
+    // cek apakah aku follow dia
+    public function isFollowing($userId)
+    {
+        return $this->following()->where('followed_id', $userId)->exists();
+    }
+
     public function profile()
     {
         return $this->hasOne(Profile::class);
@@ -94,19 +122,19 @@ class User extends Authenticatable
     }
 
     public function getAvatarDisplayAttribute()
-{
-    if (!$this->avatar) {
-        return asset('ui/images/profile/user3.jpg');
-    }
+    {
+        if (!$this->avatar) {
+            return asset('ui/images/profile/user3.jpg');
+        }
 
-    // kalau avatar URL (Google)
-    if (str_starts_with($this->avatar, 'http')) {
-        return $this->avatar;
-    }
+        // kalau avatar URL (Google)
+        if (str_starts_with($this->avatar, 'http')) {
+            return $this->avatar;
+        }
 
-    // kalau avatar file lokal
-    return asset('storage/' . $this->avatar);
-}
+        // kalau avatar file lokal
+        return asset('storage/' . $this->avatar);
+    }
 
 
 }
