@@ -30,7 +30,7 @@
           </a>
         </li>
         <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Trending">
-          <a class="nav-link" href="#">
+          <a class="nav-link" href="{{ route('user.explore.trending') }}">
             <iconify-icon icon="solar:chart-line-duotone" width="24"></iconify-icon>
           </a>
         </li>
@@ -81,6 +81,12 @@
               <i class="ti ti-mail fs-6 me-2"></i>
               <span>Notifikasi</span>
             </a>
+            @auth
+            <a href="#" class="dropdown-item">
+              <i class="ti ti-settings fs-6 me-2"></i>
+              <span>Akun</span>
+            </a>
+            @endauth
             @auth
               <a href="{{ route('logout') }}" 
                  onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 

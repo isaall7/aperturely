@@ -75,7 +75,7 @@
                 <div class="post-image" 
                      data-bs-toggle="modal" 
                      data-bs-target="#postModal{{ $post->id }}">
-                    <img src="{{ asset('storage/'.$post->photos->first()->photo) }}" 
+                    <img src="{{ asset('storage/'.$post->photo->first()->photo) }}" 
                          alt="Post image"
                          loading="lazy">
                     

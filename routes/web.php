@@ -20,6 +20,7 @@ Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleController:
 
 Auth::routes();
 
+
 Route::prefix('dashboard')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/', [DashboardAdmin::class, 'index'])->name('dashboard');
 
@@ -67,8 +68,17 @@ Route::prefix('/')->name('user.')->group(function () {
     Route::get('/explore', [ExploreController::class, 'index'])->name('explore.halaman');
     Route::get('/explore/category/{id}', [ExploreController::class, 'filterByCategory'])->name('explore.category');
     Route::get('/explore/search', [ExploreController::class, 'search'])->name('explore.search');
+    Route::get('/trending', [ExploreController::class, 'trending'])->name('explore.trending');
 
     Route::get('riwayat-diikuti', [DashboardUser::class, 'showFollowers'])->name('riwayat.diikuti');
     Route::get('riwayat-mengikuti', [DashboardUser::class, 'showFollowing'])->name('riwayat.mengikuti');
 
 });
+
+Route::get('/cek-vision', function () {
+    return class_exists('Google\\Cloud\\Vision\\V1\\ImageAnnotatorClient')
+        ? 'VISION OK'
+        : 'VISION NOT FOUND';
+});
+
+

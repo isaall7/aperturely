@@ -15,13 +15,13 @@ class ExploreController extends Controller
 {
     public function index()
     {
-        // Ambil posts dengan relasi lengkap termasuk replies
+        // Ambil posts dengan relasi lengkap
         $posts = Posts::with([
             'user',
             'photos',
             'likes',
             'comments.user',
-            'comments.replies.user' // Tambahkan replies
+            'comments.replies.user'
         ])
         ->where('status', 'active')
         ->withCount(['likes', 'comments'])
@@ -32,24 +32,9 @@ class ExploreController extends Controller
         // Ambil semua kategori untuk filter
         $categories = Categories::all();
 
-        // Ambil posts trending dengan relasi lengkap
-        $trendingPosts = Posts::with([
-            'user',
-            'photos',
-            'likes',
-            'comments.user',
-            'comments.replies.user'
-        ])
-        ->where('status', 'active')
-        ->withCount(['likes', 'comments'])
-        ->orderByRaw('(likes_count + comments_count * 2) DESC')
-        ->limit(5)
-        ->get();
-
         return view('user.explore.index', [
             'posts'         => $posts,
             'categories'    => $categories,
-            'trendingPosts' => $trendingPosts,
         ]);
     }
 
@@ -74,25 +59,10 @@ class ExploreController extends Controller
         $categories       = Categories::all();
         $selectedCategory = Categories::find($categoryId);
 
-        // Trending posts tetap global, tidak berdasarkan kategori
-        $trendingPosts = Posts::with([
-            'user',
-            'photos',
-            'likes',
-            'comments.user',
-            'comments.replies.user'
-        ])
-        ->where('status', 'active')
-        ->withCount(['likes', 'comments'])
-        ->orderByRaw('(likes_count + comments_count * 2) DESC')
-        ->limit(5)
-        ->get();
-
         return view('user.explore.index', [
             'posts'            => $posts,
             'categories'       => $categories,
             'selectedCategory' => $selectedCategory,
-            'trendingPosts'    => $trendingPosts,
         ]);
     }
 
@@ -103,14 +73,12 @@ class ExploreController extends Controller
         $posts = Posts::when($query, function ($q, $query) {
             $q->where(function ($sub) use ($query) {
                 $sub->where('caption', 'like', "%{$query}%")
-
                     ->orWhereHas('category', function ($qCat) use ($query) {
                         $qCat->where('name', 'like', "%{$query}%")
                             ->orWhereHas('typecategories', function ($qType) use ($query) {
                                 $qType->where('name', 'like', "%{$query}%");
                             });
                     })
-
                     ->orWhereHas('user', function ($qUser) use ($query) {
                         $qUser->where('name', 'like', "%{$query}%");
                     });
@@ -130,6 +98,16 @@ class ExploreController extends Controller
 
         $categories = Categories::all();
 
+        return view('user.explore.index', [
+            'posts'         => $posts,
+            'categories'    => $categories,
+            'searchQuery'   => $query,
+        ]);
+    }
+
+    public function trending()
+    {
+        // Ambil 10 posts terpopuler berdasarkan likes dan comments
         $trendingPosts = Posts::with([
             'user',
             'photos',
@@ -140,15 +118,10 @@ class ExploreController extends Controller
         ->where('status', 'active')
         ->withCount(['likes', 'comments'])
         ->orderByRaw('(likes_count + comments_count * 2) DESC')
-        ->limit(5)
-        ->get();
+        ->paginate(10);
 
-        return view('user.explore.index', [
-            'posts'         => $posts,
-            'categories'    => $categories,
-            'searchQuery'   => $query,
+        return view('user.explore.trending', [
             'trendingPosts' => $trendingPosts,
         ]);
     }
-
 }

@@ -36,7 +36,7 @@
         border-radius: 10px;
     }
 
-    .category-card, .trending-card {
+    .category-card {
         background: white;
         border-radius: 20px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -44,7 +44,7 @@
         overflow: hidden;
     }
 
-    .category-card-header, .trending-card-header {
+    .category-card-header {
         padding: 20px;
         border-bottom: 1px solid #efefef;
         font-weight: 700;
@@ -137,68 +137,6 @@
     .search-btn:hover {
         background: #4a7de8;
         transform: scale(1.05);
-    }
-
-    .trending-item {
-        display: flex;
-        gap: 12px;
-        padding: 12px 16px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        border-radius: 12px;
-        margin: 8px 12px;
-    }
-
-    .trending-item:hover {
-        background: #f8f8f8;
-    }
-
-    .trending-thumbnail {
-        width: 80px;
-        height: 80px;
-        border-radius: 12px;
-        object-fit: cover;
-    }
-
-    .trending-info {
-        flex: 1;
-    }
-
-    .trending-user {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 6px;
-    }
-
-    .trending-avatar {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .trending-username {
-        font-weight: 600;
-        font-size: 13px;
-        color: #262626;
-    }
-
-    .trending-stats {
-        display: flex;
-        gap: 12px;
-        font-size: 12px;
-        color: #8e8e8e;
-        margin-bottom: 4px;
-    }
-
-    .trending-caption {
-        font-size: 12px;
-        color: #8e8e8e;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
     }
 
     /* Feed Container - From Dashboard */
@@ -975,10 +913,10 @@
     }
 </style>
 
-<div class="explore-container mt-1 py-1">
-    <div class="container py-1">
+<div class="explore-container py-1 mt-1">
+    <div class="container">
         <div class="row">
-            <!-- Sidebar: Kategori & Trending -->
+            <!-- Sidebar: Kategori saja -->
             <div class="col-lg-3 mb-4">
                 <div class="explore-sidebar">
                     <!-- Search Card (Mobile) -->
@@ -1014,43 +952,6 @@
                             @endforeach
                         </div>
                     </div>
-
-                    <!-- Trending Posts -->
-                    <div class="trending-card">
-                        <div class="trending-card-header">
-                            <i class="fas fa-fire text-danger"></i> Trending
-                        </div>
-                        @foreach($trendingPosts as $trendingPost)
-                        <div class="trending-item" 
-                             data-bs-toggle="modal" 
-                             data-bs-target="#detailModal{{ $trendingPost->id }}">
-                            @if($trendingPost->photos && $trendingPost->photos->first())
-                            <img src="{{ asset('storage/' . $trendingPost->photos->first()->photo) }}" 
-                                 alt="Trending" 
-                                 class="trending-thumbnail">
-                            @else
-                            <div class="trending-thumbnail" style="background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-image" style="color: #ccc;"></i>
-                            </div>
-                            @endif
-                            <div class="trending-info">
-                                <div class="trending-user">
-                                    <img src="{{ $trendingPost->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" 
-                                         alt="{{ $trendingPost->user->name }}" 
-                                         class="trending-avatar">
-                                    <span class="trending-username">{{ Str::limit($trendingPost->user->username ?? $trendingPost->user->name, 15) }}</span>
-                                </div>
-                                <div class="trending-stats">
-                                    <span>❤️ {{ $trendingPost->likes->count() }}</span>
-                                    <span>💬 {{ $trendingPost->comments->count() }}</span>
-                                </div>
-                                <div class="trending-caption">
-                                    {{ Str::limit($trendingPost->caption ?? 'Tidak ada caption', 50) }}
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
                 </div>
             </div>
 
@@ -1080,7 +981,6 @@
                                 @include('partials.post-modal', ['post' => $post])
                             @endforeach
                         </div>
-
                     @else
                         <div class="empty-feed">
                             <i>📷</i>
