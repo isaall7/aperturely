@@ -65,16 +65,23 @@ class DashboardUser extends Controller
     // ini buat nampilin foto yang di like di halaman riwayat likes photo user
     public function showLikesPhoto()
     {
+        // 1️⃣ Ambil semua post_id yang disukai user, unik
+        $likedPostIds = Likes_photo::where('user_id', auth()->id())
+            ->pluck('post_id')
+            ->unique();
 
-        $likesPhotos = Likes_photo::with(['photo', 'user'])
-            ->where('user_id', auth()->id())
+        // 2️⃣ Ambil data post beserta satu foto utama dan user
+        $likedPosts = Posts::with(['mainPhoto', 'user'])
+            ->whereIn('id', $likedPostIds)
             ->latest()
             ->get();
 
+        // 3️⃣ Ambil total statistik
         $totals = $this->totalSemua();
 
-        return view('user.riwayat.like',  [
-            'likesPhotos'    => $likesPhotos,
+        // 4️⃣ Kirim ke view
+        return view('user.riwayat.like', [
+            'likedPosts'     => $likedPosts,
             'totalPosts'     => $totals['posts'],
             'totalComments'  => $totals['comments'],
             'totalLikes'     => $totals['likes'],
@@ -82,6 +89,7 @@ class DashboardUser extends Controller
             'totalFollowers' => $totals['followers'],
         ]);
     }
+
 
     // ini buat nampilin komentar yang di ban sama yang aktif dihalaman riwayat komentar user
     public function BanAndShowComment()

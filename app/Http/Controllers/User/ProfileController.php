@@ -107,15 +107,16 @@ class ProfileController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-            'bio' => 'nullable|string|max:500',
+            'avatar'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'bio'      => 'nullable|string|max:500',
+            'username' => 'nullable|string|max:50|unique:users,username,' . auth()->id(),
         ]);
 
         $user = auth()->user();
 
         if ($request->hasFile('avatar')) {
 
-            // hapus avatar lama kalau ada
+            // hapus avatar lama
             if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
                 Storage::disk('public')->delete($user->avatar);
             }
@@ -123,10 +124,14 @@ class ProfileController extends Controller
             // simpan avatar baru
             $path = $request->file('avatar')->store('avatars', 'public');
 
-            $user->update([
-                'avatar' => $path,
-            ]);
+            $user->avatar = $path;
         }
+
+        if ($request->filled('username')) {
+            $user->username = $request->username;
+        }
+
+        $user->save();
 
         Profile::updateOrCreate(
             ['user_id' => $user->id],
@@ -137,12 +142,6 @@ class ProfileController extends Controller
             ->route('user.profile')
             ->with('success', 'Profil berhasil diperbarui.');
     }
-
-
-    /**
-     * Display the specified resource.
-     */
-
 
     /**
      * Show the form for editing the specified resource.

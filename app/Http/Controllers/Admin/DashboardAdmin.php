@@ -43,7 +43,7 @@ class DashboardAdmin extends Controller
 
         return view('admin.user.posts', compact('posts', 'search', 'totalPosts', 'userId'));
     }
-
+    
     // ini buat nampilin semua akun user di halaman admin
     public function userAccount(Request $request)
     {

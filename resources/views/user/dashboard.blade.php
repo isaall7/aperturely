@@ -2,60 +2,6 @@
 
 @section('content')
 <style>
-
-    .navbar-search {
-    position: fixed; /* supaya tidak terpengaruh padding container */
-    top: 70px;       /* sesuaikan dengan tinggi navbar Anda */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 500px;
-    padding: 0 20px;
-    z-index: 1;
-    }
-
-    .search-form {
-    width: 100%;
-    }
-
-    .search-input-wrapper {
-    position: relative;
-    width: 100%;
-    }
-
-    .search-icon {
-    position: absolute;
-    left: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
-    color: #8e8e8e;
-    pointer-events: none;
-    z-index: 1;
-    }
-
-    .search-input {
-    width: 100%;
-    padding: 12px 20px 12px 50px;
-    border: 2px solid #efefef;
-    border-radius: 28px;
-    font-size: 15px;
-    outline: none;
-    transition: all 0.3s ease;
-    background: #fafafa;
-    color: #262626;
-    }
-
-    .search-input:focus {
-    border-color: #5d87ff;
-    background: white;
-    box-shadow: 0 4px 12px rgba(93, 135, 255, 0.15);
-    }
-
-    .search-input::placeholder {
-    color: #8e8e8e;
-    }
-
     /* Logo tetap di kiri */
     .navbar-brand {
     margin-right: auto;
@@ -1042,22 +988,6 @@
     }
 </style>
 
-<!-- search -->
- <div class="navbar-search">
-      <form action="{{ route('user.dashboard') }}" method="GET" class="search-form">
-        <div class="search-input-wrapper">
-          <iconify-icon icon="solar:magnifer-linear" class="search-icon"></iconify-icon>
-          <input 
-            type="text" 
-            name="search" 
-            class="search-input" 
-            placeholder="Cari postingan, pengguna..."
-            value="{{ request('search') }}"
-            autocomplete="off"
-          >
-        </div>
-      </form>
-    </div>
 <!-- feed -->
 <div class="feed-container">
     <div class="container px-0">

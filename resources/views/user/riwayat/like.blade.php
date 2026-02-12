@@ -9,6 +9,12 @@
         padding: 0;
         box-sizing: border-box;
     }
+    .user-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
 
     /* Card Footer - Updated */
     .card-footer-custom {
@@ -724,8 +730,8 @@
                                 <span class="nav-label">Pengikut</span>
                                 <span class="nav-desc">Pengguna yang diikuti</span>
                             </div>
-                            @if($totalFollowing > 0)
-                                <span class="nav-badge">{{ $totalFollowing }}</span>
+                            @if($totalFollowers > 0)
+                                <span class="nav-badge">{{ $totalFollowers }}</span>
                             @endif
                         </a>
                         
@@ -736,9 +742,10 @@
                                 <span class="nav-label">Mengikuti</span>
                                 <span class="nav-desc">Pengguna yang mengikuti</span>
                             </div>
-                            @if($totalFollowers > 0)
-                                <span class="nav-badge">{{ $totalFollowers }}</span>
+                            @if($totalFollowing > 0)
+                                <span class="nav-badge">{{ $totalFollowing }}</span>
                             @endif
+                            
                         </a>
                     </div>
                 </div>
@@ -748,22 +755,19 @@
             <div class="col-lg-9">
                 <div class="main-content">
                     <div class="page-header">
-                        <h2 class="page-title">
-                            Riwayat Menyukai
-                        </h2>
+                        <h2 class="page-title">Riwayat Menyukai</h2>
                         <p class="page-subtitle">Lihat postingan yang telah Anda sukai.</p>
                     </div>
 
-                    @if($likesPhotos->count() > 0)
-                    <div class="notifications-list">
-                        @foreach($likesPhotos as $like)
-                            @if($like->photo) {{-- Tambahkan pengecekan ini --}}
+                    @if($likedPosts->count() > 0)
+                        <div class="notifications-list">
+                            @foreach($likedPosts as $post)
                                 <div class="notification-card">
                                     <!-- Card Header -->
                                     <div class="card-header-custom">
                                         <div class="header-text">
                                             <h6>Postingan Disukai</h6>
-                                            <small>{{ $like->created_at->diffForHumans() }}</small>
+                                            <small>{{ $post->created_at->diffForHumans() }}</small>
                                         </div>
                                     </div>
 
@@ -772,13 +776,8 @@
                                         <div class="post-preview-section">
                                             <!-- Post Image -->
                                             <div class="post-image-wrapper">
-                                                @if($like->photo->photo)
-                                                    <img src="{{ asset('storage/' . $like->photo->photo) }}" 
-                                                        alt="Post Image">
-                                                @else
-                                                    <img src="{{ asset('images/default-post.jpg') }}" 
-                                                        alt="Default Image">
-                                                @endif
+                                                <img src="{{ asset('storage/'.optional($post->mainPhoto)->photo ?? 'images/default-post.jpg') }}" 
+                                                    alt="Post Image">
                                             </div>
 
                                             <!-- Post Details -->
@@ -787,17 +786,13 @@
                                                 <div class="detail-item">
                                                     <span class="detail-label">Pemilik Postingan</span>
                                                     <div class="user-info">
-                                                        @if($like->photo->user)
-                                                            @if($like->profile->user)
-                                                                <img src="{{ $likw->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" 
-                                                                    alt="{{ $like->photo->user->name }}" 
-                                                                    class="user-avatar">
-                                                            @else
-                                                                <img src="{{ asset('images/default-avatar.png') }}" 
-                                                                    alt="Default Avatar" 
-                                                                    class="user-avatar">
-                                                            @endif
-                                                            <span class="username">{{ $like->photo->user->name }}</span>
+                                                        @if($post->user)
+                                                        <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}">
+                                                            <img src="{{ $post->user->avatar_display ?? 'https://ui-avatars.com/api/?name='.$post->user->name }}" 
+                                                                alt="{{ $post->user->name }}" class="user-avatar">
+                                                        
+                                                            <span class="username text-dark">{{ $post->user->name }}</span>
+                                                        </a>
                                                         @else
                                                             <span class="detail-value muted">Pengguna tidak ditemukan</span>
                                                         @endif
@@ -805,31 +800,26 @@
                                                 </div>
 
                                                 <!-- Caption -->
-                                                <div class="detail-item">
+                                                <div class="detail-item mt-2">
                                                     <span class="detail-label">Caption</span>
                                                     <p class="detail-value">
-                                                        {{ $like->post->bio ?? 'Tidak ada caption' }}
+                                                        {{ $post->caption ?? 'Tidak ada caption' }}
                                                     </p>
                                                 </div>
 
                                                 <!-- Tanggal Disukai -->
-                                                <div class="detail-item">
-                                                    <span class="detail-label">Disukai Pada</span>
-                                                    <p class="detail-value">
-                                                        {{ $like->created_at->format('d M Y') }}
-                                                    </p>
-                                                </div>
+                        
 
                                                 <!-- Like Actions -->
                                                 <div class="post-actions">
                                                     <button type="button" 
                                                             class="modal-action-btn" 
-                                                            data-post-id="{{ $like->photo->id }}" 
-                                                            data-liked="{{ $like->photo->isLikedBy(auth()->id()) ? '1' : '0' }}">
-                                                        {{ $like->photo->isLikedBy(auth()->id()) ? '❤️' : '🤍' }}
+                                                            data-post-id="{{ $post->id }}" 
+                                                            data-liked="{{ $post->isLikedBy(auth()->id()) ? '1' : '0' }}">
+                                                        {{ $post->isLikedBy(auth()->id()) ? '❤️' : '🤍' }}
                                                     </button>
-                                                    <span class="like-count" data-post-id="{{ $like->photo->id }}">
-                                                        {{ $like->photo->likesCount() }}
+                                                    <span class="like-count" data-post-id="{{ $post->id }}">
+                                                        {{ $post->likesCount() }}
                                                     </span>
                                                     <span style="font-size: 14px; color: #8e8e8e;">suka</span>
                                                 </div>
@@ -837,16 +827,15 @@
                                         </div>
                                     </div>
                                 </div>
-                            @endif {{-- Tutup pengecekan --}}
-                        @endforeach
-                    </div>
-                @else
-                    <div class="empty-state">
-                        <div class="empty-icon">❤️</div>
-                        <h3 class="empty-title">Belum Ada Postingan Disukai</h3>
-                        <p class="empty-text">Anda belum menyukai postingan apapun.</p>
-                    </div>
-                @endif
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="empty-state">
+                            <div class="empty-icon">❤️</div>
+                            <h3 class="empty-title">Belum Ada Postingan Disukai</h3>
+                            <p class="empty-text">Anda belum menyukai postingan apapun.</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

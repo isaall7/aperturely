@@ -513,9 +513,10 @@
                                 <span class="nav-label">Pengikut</span>
                                 <span class="nav-desc">Pengguna yang diikuti</span>
                             </div>
-                            @if($totalFollowing > 0)
-                                <span class="nav-badge">{{ $totalFollowing ?? '-'}}</span>
+                            @if($totalFollowers > 0)
+                                <span class="nav-badge">{{ $totalFollowers ?? '-'}}</span>
                             @endif
+                            
                         </a>
                         
                         <a href="{{ route('user.riwayat.mengikuti') }}" class="nav-item active">
@@ -526,8 +527,8 @@
                                 <span class="nav-label">Mengikuti</span>
                                 <span class="nav-desc">Pengguna yang mengikuti</span>
                             </div>
-                            @if($totalFollowers > 0)
-                                <span class="nav-badge">{{ $totalFollowers ?? '-'}}</span>
+                            @if($totalFollowing > 0)
+                                <span class="nav-badge">{{ $totalFollowing ?? '-'}}</span>
                             @endif
                         </a>
                     </div>
@@ -559,7 +560,7 @@
                                         <h6 class="user-name">{{ $follow->followed->name }}</h6>
                                     </a>
 
-                                    <p class="user-username">{{ '@' . $follow->followed->name }}</p>
+                                    <p class="user-username">{{ '@' . $follow->followed->username }}</p>
                                 </div>
 
                                 <div class="user-card-body">

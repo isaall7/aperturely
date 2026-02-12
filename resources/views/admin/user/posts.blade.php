@@ -75,7 +75,7 @@
                 <div class="post-image" 
                      data-bs-toggle="modal" 
                      data-bs-target="#postModal{{ $post->id }}">
-                    <img src="{{ asset('storage/'.$post->photo->first()->photo) }}" 
+                    <img src="{{ asset('storage/'.$post->photos->first()->photo) ?? 'default.jpg' }}" 
                          alt="Post image"
                          loading="lazy">
                     
@@ -180,7 +180,7 @@
                                         </div>
                                     </div>
                                 @else
-                                    <img src="{{ asset('storage/'.$post->photos->first()->photo) }}" 
+                                    <img src="{{ asset('storage/'.$post->photos->first()->photo) ?? 'default.jpg' }}" 
                                          class="w-100 h-100" 
                                          style="object-fit: contain;">
                                 @endif

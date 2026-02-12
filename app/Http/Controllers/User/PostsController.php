@@ -7,17 +7,13 @@ use App\Models\Categories;
 use App\Models\Photo;
 use App\Models\Posts;
 use App\Models\TypeCategories;
-use Google\Cloud\Vision\V1\ImageAnnotatorClient;
-use Google\Cloud\Vision\V1\Feature;
-use Google\Cloud\Vision\V1\Feature\Type;
-use Google\Cloud\Vision\V1\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
-
 
 class PostsController extends Controller
 {
@@ -29,7 +25,7 @@ class PostsController extends Controller
         ]);
     }
 
-  public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'photos'           => 'required|array|min:1|max:10',
@@ -39,65 +35,54 @@ class PostsController extends Controller
             'type_category_id' => 'nullable|exists:type_categories,id',
         ]);
 
-        $post = Posts::create([
-            'user_id'          => Auth::id(),
-            'caption'          => $request->caption,
-            'category_id'      => $request->category_id,
-            'type_category_id' => $request->type_category_id,
-            'status'           => 'active',
-        ]);
+        DB::beginTransaction();
+        try {
+            $post = Posts::create([
+                'user_id'          => Auth::id(),
+                'caption'          => $request->caption,
+                'category_id'      => $request->category_id,
+                'type_category_id' => $request->type_category_id,
+                'status'           => 'active',
+            ]);
 
-        foreach ($request->file('photos') as $file) {
-
-            // 🔧 Compress image
             $manager = new ImageManager(new Driver());
-            $image   = $manager
-                ->read($file->getPathname())
-                ->scaleDown(1920)
-                ->toJpeg(75);
 
-            $filename = uniqid() . '.jpg';
-            $path     = "posts/{$filename}";
+            foreach ($request->file('photos') as $file) {
 
-            Storage::disk('public')->put($path, (string) $image);
+                // Compress & resize
+                $image = $manager->read($file->getPathname())
+                    ->scaleDown(1920)
+                    ->toJpeg(75);
 
-            // 🔍 AI SCAN
-            $scan = $this->scanWithGoogleVision($path);
+                $filename = uniqid() . '.jpg';
+                $path     = "posts/{$filename}";
 
-            Log::info('Vision Scan Result', $scan);
+                Storage::disk('public')->put($path, (string) $image);
 
-            /**
-             * ❗ STRICT TAPI WARAS
-             * - Reject HANYA jika VERY_LIKELY
-             * - Design / ilustrasi aman
-             */
-            $isRejected =
-                $scan['adult'] === 5 ||
-                $scan['violence'] === 5 ||
-                $scan['racy'] === 5;
-
-            if ($isRejected) {
-                Storage::disk('public')->delete($path);
-
-                $post->update([
-                    'status'    => 'rejected_ai',
-                    'ai_reason' => 'Konten terdeteksi sensitif oleh AI',
+                Photo::create([
+                    'post_id' => $post->id,
+                    'photo'   => $path,
                 ]);
-
-                return back()
-                    ->withInput()
-                    ->with('error', 'Postingan ditolak oleh sistem AI.');
             }
 
-            Photo::create([
-                'post_id' => $post->id,
-                'photo'   => $path,
-            ]);
-        }
+            DB::commit();
 
-        return redirect()
-            ->route('user.dashboard')
-            ->with('success', 'Postingan berhasil diupload 🎉');
+            return redirect()
+                ->route('user.dashboard')
+                ->with('success', 'Postingan berhasil diupload 🎉');
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            Log::error('Store Post Error', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat mengupload postingan.');
+        }
     }
 
     public function show(Posts $post)
@@ -125,53 +110,5 @@ class PostsController extends Controller
         return redirect()
             ->route('user.dashboard')
             ->with('success', 'Postingan berhasil dihapus 🗑️');
-    }
-
-    /**
-     * 🔐 Google Vision AI Scan (STRICT MODE)
-     */
-     private function scanWithGoogleVision(string $imagePath): array
-    {
-        try {
-            $client = new ImageAnnotatorClient();
-
-            $imageContent = file_get_contents(
-                storage_path("app/public/{$imagePath}")
-            );
-
-            $image = new Image();
-            $image->setContent($imageContent);
-
-            $feature = new Feature();
-            $feature->setType(Type::SAFE_SEARCH_DETECTION);
-
-            $response = $client->annotateImage($image, [$feature]);
-            $safe     = $response->getSafeSearchAnnotation();
-
-            $client->close();
-
-            return [
-                'adult'    => $safe->getAdult(),
-                'violence' => $safe->getViolence(),
-                'racy'     => $safe->getRacy(),
-            ];
-
-        } catch (\Throwable $e) {
-
-            Log::error('Google Vision Error', [
-                'message' => $e->getMessage(),
-            ]);
-
-            /**
-             * ❗ PENTING
-             * AI ERROR ≠ USER SALAH
-             * JANGAN AUTO REJECT
-             */
-            return [
-                'adult'    => 0,
-                'violence' => 0,
-                'racy'     => 0,
-            ];
-        }
     }
 }

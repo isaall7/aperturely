@@ -42,6 +42,11 @@ class Posts extends Model
         return $this->hasMany(Photo::class, 'post_id');
     }
 
+    public function mainPhoto()
+    {
+        return $this->hasOne(Photo::class, 'post_id')->latest(); // foto terbaru
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

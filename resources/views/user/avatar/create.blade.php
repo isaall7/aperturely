@@ -2,205 +2,237 @@
 
 @section('content')
 <style>
-    .create-profile-container {
-        background: #f8f9fa;
+    .profile-container {
         min-height: 100vh;
-        padding: 40px 0;
-    }
-    
-    .profile-card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-    
-    .card-header {
-        background: #4a90e2;
-        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fafafa;
         padding: 20px;
-        border-radius: 12px 12px 0 0;
     }
     
-    .card-header h5 {
-        margin: 0;
+    .profile-box {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        max-width: 500px;
+        width: 100%;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    
+    .profile-title {
+        font-size: 24px;
         font-weight: 600;
-        border-radius: 12px 12px 0 0;
-    }
-    
-    .card-body {
-        padding: 30px;
-    }
-    
-    .avatar-section {
+        color: #1a1a1a;
+        margin-bottom: 32px;
         text-align: center;
-        margin-bottom: 25px;
+    }
+    
+    .avatar-wrapper {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 32px;
     }
     
     .avatar-preview {
-        width: 120px;
-        height: 120px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
         object-fit: cover;
-        border: 3px solid #4a90e2;
-        margin-bottom: 15px;
+        background: #f5f5f5;
+        border: 2px solid #e5e5e5;
+    }
+    
+    .avatar-upload {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 32px;
+        height: 32px;
+        background: #1a1a1a;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .avatar-upload:hover {
+        background: #333;
+    }
+    
+    .avatar-upload svg {
+        width: 16px;
+        height: 16px;
+        color: white;
+    }
+    
+    .avatar-input {
+        display: none;
+    }
+    
+    .form-group {
+        margin-bottom: 24px;
     }
     
     .form-label {
-        font-weight: 600;
-        color: #1a1a1a;
+        font-size: 14px;
+        font-weight: 500;
+        color: #4a4a4a;
         margin-bottom: 8px;
         display: block;
     }
     
-    .form-control {
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 10px 15px;
+    .form-input {
         width: 100%;
-        transition: all 0.3s;
-    }
-    
-    .form-control:focus {
-        border-color: #4a90e2;
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-    }
-    
-    .form-control.is-invalid {
-        border-color: #e74c3c;
-    }
-    
-    .invalid-feedback {
-        color: #e74c3c;
-        font-size: 13px;
-        margin-top: 5px;
-        display: block;
-    }
-    
-    textarea.form-control {
-        resize: vertical;
-        min-height: 100px;
-    }
-    
-    .btn {
-        padding: 10px 25px;
+        padding: 12px 16px;
+        border: 1px solid #e5e5e5;
         border-radius: 8px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s;
+        font-size: 14px;
+        transition: border-color 0.2s;
+        font-family: inherit;
     }
     
-    .btn-primary {
-        background: #4a90e2;
+    .form-input:focus {
+        outline: none;
+        border-color: #1a1a1a;
+    }
+    
+    .form-input.error {
+        border-color: #ef4444;
+    }
+    
+    .error-message {
+        color: #ef4444;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 14px;
+        background: #1a1a1a;
         color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
     }
     
-    .btn-primary:hover {
-        background: #357abd;
-        transform: translateY(-2px);
+    .submit-btn:hover {
+        background: #333;
+    }
+    
+    .alert {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        font-size: 14px;
     }
     
     .alert-success {
-        background: #d4edda;
-        color: #155724;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-    
-    .mb-3 {
-        margin-bottom: 20px;
-    }
-    
-    .d-flex {
-        display: flex;
-    }
-    
-    .justify-content-end {
-        justify-content: flex-end;
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
     }
 </style>
 
-<div class="create-profile-container mt-5">
-    <div class="container">
-        <div class="profile-card">
-            <div class="card-header">
-                <h5 class="text-white text-center">Buat Profile</h5>
+<div class="profile-container">
+    <div class="profile-box">
+        <h1 class="profile-title">Buat Profil</h1>
+
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <form action="{{ route('user.avatar.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+
+            <!-- Avatar -->
+            <div class="avatar-wrapper">
+                <img
+                    src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('ui/images/profile/default.jpg') }}"
+                    class="avatar-preview"
+                    id="avatarPreview"
+                    alt="Avatar"
+                >
+                <label for="avatarInput" class="avatar-upload">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </label>
+                <input
+                    type="file"
+                    name="avatar"
+                    id="avatarInput"
+                    class="avatar-input"
+                    accept="image/*"
+                    onchange="previewAvatar(event)"
+                >
             </div>
 
-            <div class="card-body">
-                {{-- ALERT --}}
-                @if(session('success'))
-                    <div class="alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
+            @error('avatar')
+                <div class="error-message" style="text-align: center; margin-top: -24px; margin-bottom: 24px;">
+                    {{ $message }}
+                </div>
+            @enderror
 
-                {{-- FORM --}}
-                <form action="{{ route('user.avatar.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
+            <!-- Username -->
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input
+                    type="text"
+                    name="username"
+                    class="form-input @error('username') error @enderror"
+                    placeholder="username"
+                    value="{{ old('username', auth()->user()->username) }}"
+                >
 
-                    {{-- AVATAR --}}
-                    <div class="mb-3 avatar-section">
-                        <img
-                            src="{{ asset('ui/images/profile/default.jpg') }}"
-                            class="avatar-preview"
-                            id="avatarPreview"
-                            alt="Avatar"
-                        >
-
-                        <input
-                            type="file"
-                            name="avatar"
-                            class="form-control @error('avatar') is-invalid @enderror"
-                            accept="image/*"
-                            onchange="previewAvatar(event)"
-                        >
-
-                        @error('avatar')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    {{-- BIO --}}
-                    <div class="mb-3">
-                        <label class="form-label">Bio</label>
-                        <textarea
-                            name="bio"
-                            rows="4"
-                            class="form-control @error('bio') is-invalid @enderror"
-                            placeholder="Ceritakan tentang dirimu..."
-                        >{{ old('bio') }}</textarea>
-
-                        @error('bio')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    {{-- BUTTON --}}
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">
-                            Simpan Profile
-                        </button>
-                    </div>
-
-                </form>
+                @error('username')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
             </div>
-        </div>
+
+            <!-- Bio -->
+            <div class="form-group">
+                <label class="form-label">Bio</label>
+                <textarea
+                    name="bio"
+                    rows="4"
+                    class="form-input @error('bio') error @enderror"
+                    placeholder="Ceritakan tentang dirimu..."
+                >{{ old('bio', auth()->user()->profile->bio ?? '') }}</textarea>
+
+                @error('bio')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="submit-btn">
+                Simpan Profil
+            </button>
+        </form>
     </div>
 </div>
 
-{{-- PREVIEW AVATAR --}}
 <script>
 function previewAvatar(event) {
-    const reader = new FileReader();
-    reader.onload = function(){
-        document.getElementById('avatarPreview').src = reader.result;
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('avatarPreview').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
     }
-    reader.readAsDataURL(event.target.files[0]);
 }
 </script>
 @endsection

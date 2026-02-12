@@ -514,8 +514,8 @@
                                 <span class="nav-label">Pengikut</span>
                                 <span class="nav-desc">Pengguna yang diikuti</span>
                             </div>
-                            @if($totalFollowing > 0)
-                                <span class="nav-badge">{{ $totalFollowing }}</span>
+                            @if($totalFollowers > 0)
+                                <span class="nav-badge">{{ $totalFollowers }}</span>
                             @endif
                         </a>
                         
@@ -528,8 +528,8 @@
                                 <span class="nav-label">Mengikuti</span>
                                 <span class="nav-desc">Pengguna yang mengikuti</span>
                             </div>
-                            @if($totalFollowers > 0)
-                                <span class="nav-badge">{{ $totalFollowers }}</span>
+                            @if($totalFollowing > 0)
+                                <span class="nav-badge">{{ $totalFollowing }}</span>
                             @endif
                         </a>
                     </div>
@@ -541,7 +541,7 @@
                 <div class="main-content">
                     <div class="page-header">
                         <h2 class="page-title">
-                            Riwayat Diikuti
+                            Riwayat Pengikut
                         </h2>
                         <p class="page-subtitle">Lihat semua pengikut anda.</p>
                     </div>
@@ -559,7 +559,7 @@
                                         <a href="{{ route('user.profile.username', ['name' => $follow->follower->name]) }}">
                                             <h6 class="user-name">{{ $follow->follower->name }}</h6>
                                         </a>
-                                        <p class="user-username">{{ '@' . $follow->follower->name }}</p>
+                                        <p class="user-username">{{ '@' . $follow->follower->username }}</p>
                                     </div>
 
                                     <div class="user-card-body">

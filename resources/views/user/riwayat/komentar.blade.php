@@ -496,8 +496,8 @@
                                 <span class="nav-label">Pengikut</span>
                                 <span class="nav-desc">Pengguna yang diikuti</span>
                             </div>
-                            @if($totalFollowing > 0)
-                                <span class="nav-badge">{{ $totalFollowing ?? '-'}}</span>
+                            @if($totalFollowers > 0)
+                                <span class="nav-badge">{{ $totalFollowers ?? '-'}}</span>
                             @endif
                         </a>
                         
@@ -509,9 +509,10 @@
                                 <span class="nav-label">Mengikuti</span>
                                 <span class="nav-desc">Pengguna yang mengikuti</span>
                             </div>
-                            @if($totalFollowers > 0)
-                                <span class="nav-badge">{{ $totalFollowers ?? '-'}}</span>
+                            @if($totalFollowing > 0)
+                                <span class="nav-badge">{{ $totalFollowing ?? '-'}}</span>
                             @endif
+                            
                         </a>
                     </div>
                 </div>
@@ -563,7 +564,7 @@
                                                         data-id="{{ $comment->id }}"
                                                         data-url="{{ route('user.comments.destroy', $comment->id) }}"
                                                         onclick="deleteComment(this)">
-                                                    🗑️ Hapus
+                                                    Hapus
                                                 </button>
                                             </div>
                                         @endif
@@ -630,7 +631,7 @@
                                                         data-id="{{ $comment->id }}"
                                                         data-url="{{ route('user.comments.destroy', $comment->id) }}"
                                                         onclick="deleteComment(this)">
-                                                    🗑️ Hapus
+                                                    Hapus
                                                 </button>
                                             </div>
                                         @endif

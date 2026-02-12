@@ -906,7 +906,7 @@
             <div class="profile-info-main">
                 <div class="profile-header-row">
                     <div class="profile-name-section">
-                        <h1>{{ $user->name ?? 'username' }}</h1>
+                        <h1>{{ $user->username ?? $user->name }}</h1>
                     </div>
 
                     <div class="profile-action-buttons">

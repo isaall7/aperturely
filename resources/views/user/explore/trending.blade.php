@@ -1187,9 +1187,9 @@
         <div class="trending-header">
             <div class="trending-header-content">
                 <h1 class="text-white">
-                    Trending Now
+                    Trending Sekarang
                 </h1>
-                <p>Postingan paling populer berdasarkan jumlah likes dan komentar</p>
+                <p>Postingan paling populer berdasarkan jumlah suka dan komentar</p>
             </div>
         </div>
 
@@ -1202,7 +1202,7 @@
             </div>
             <div class="stat-item">
                 <div class="stat-number">{{ $trendingPosts->sum('likes_count') }}</div>
-                <div class="stat-label">Total Likes</div>
+                <div class="stat-label">Total suka</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number">{{ $trendingPosts->sum('comments_count') }}</div>

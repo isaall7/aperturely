@@ -15,10 +15,16 @@ use App\Http\Controllers\User\CommentController;
 use App\Http\Controllers\User\LikesPhotoController;
 use App\Http\Controllers\User\ExploreController;
 
+use Google\Cloud\Vision\V1\Client\ImageAnnotatorClient;
+
+use Illuminate\Http\Request;
+
+
 Route::get('/auth/google-redirect', [App\Http\Controllers\Auth\GoogleController::class, 'google_redirect']);
 Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleController::class, 'google_callback']);
 
 Auth::routes();
+
 
 
 Route::prefix('dashboard')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
@@ -76,7 +82,7 @@ Route::prefix('/')->name('user.')->group(function () {
 });
 
 Route::get('/cek-vision', function () {
-    return class_exists('Google\\Cloud\\Vision\\V1\\ImageAnnotatorClient')
+    return class_exists(ImageAnnotatorClient::class)
         ? 'VISION OK'
         : 'VISION NOT FOUND';
 });
