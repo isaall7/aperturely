@@ -1,975 +1,830 @@
 @extends('layouts.index2')
 
 @section('content')
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-    .profile-container {
-        background: #ffffff;
-        min-height: 80vh;
-        padding: 0;
-        margin-top: -25px;
+    /* ===================== RESET ===================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+        --black:       #0a0a0a;
+        --white:       #ffffff;
+        --cream:       #f9f7f4;
+        --warm-gray:   #e8e4df;
+        --mid-gray:    #b8b3ac;
+        --muted:       #888077;
+        --accent:      #c8533a;
+        --accent-h:    #a83f28;
+        --accent-soft: #f5ece9;
+        --shadow-sm:   0 1px 3px rgba(10,10,10,0.07);
+        --shadow-md:   0 4px 16px rgba(10,10,10,0.10);
+        --shadow-lg:   0 12px 40px rgba(10,10,10,0.14);
+        --r-sm:  8px;
+        --r-md:  14px;
+        --r-lg:  20px;
+        --r-xl:  28px;
+        font-family: 'DM Sans', sans-serif;
     }
 
-    .profile-banner {
-        height: 140px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* ===================== LAYOUT ===================== */
+    .pr-page {
+        background: var(--cream);
+        min-height: calc(100vh - 64px);
+        padding-bottom: 80px;
+    }
+
+    /* ===================== BANNER ===================== */
+    .pr-banner {
+        height: 200px;
+        background: var(--black);
         position: relative;
         overflow: hidden;
-        border-radius: 5px 5px 0 0;
     }
 
-    .profile-banner::before {
+    /* Subtle grain pattern */
+    .pr-banner::after {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,133.3C672,139,768,181,864,181.3C960,181,1056,139,1152,133.3C1248,128,1344,160,1392,176L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-        background-size: cover;
+        inset: 0;
+        background:
+            repeating-linear-gradient(
+                45deg,
+                rgba(255,255,255,0.015) 0px,
+                rgba(255,255,255,0.015) 1px,
+                transparent 1px,
+                transparent 12px
+            );
     }
 
-    .profile-main-info {
-        max-width: 1200px;
-        margin: -80px auto 0;
+    .pr-banner-inner {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2420 50%, #1a1a1a 100%);
+    }
+
+    /* decorative lines */
+    .pr-banner-lines {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        opacity: 0.06;
+    }
+
+    .pr-banner-lines::before,
+    .pr-banner-lines::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        border: 1px solid var(--white);
+    }
+
+    .pr-banner-lines::before {
+        width: 500px; height: 500px;
+        top: -250px; right: -100px;
+    }
+
+    .pr-banner-lines::after {
+        width: 300px; height: 300px;
+        bottom: -150px; left: 10%;
+    }
+    /* ── Reset layout dari index2 ── */
+    .container-fluid { padding: 0 !important; max-width: 100% !important; }
+    .body-wrapper { margin-top: 0 !important; }
+
+    /* ── Profile tweaks ── */
+    .pr-banner { height: 160px; }
+    .pr-card-wrap, .pr-posts { max-width: 1300px; padding: 0 40px; }
+    /* ===================== PROFILE CARD ===================== */
+    .pr-card-wrap {
+        max-width: 1300px;
+        margin: 0 auto;
         padding: 0 40px;
+    }
+
+    .pr-card {
+        background: var(--white);
+        border-radius: var(--r-xl);
+        box-shadow: var(--shadow-lg);
+        margin-top: -56px;
         position: relative;
-        z-index: 1;
+        z-index: 2;
+        overflow: hidden;
     }
 
-    .profile-card-top {
-        background: white;
-        border-radius: 20px;
-        padding: 40px 40px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    /* Top strip — accent bar */
+    .pr-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent), #e07a5f, var(--accent));
+    }
+
+    .pr-card-body {
+        padding: 32px 36px 28px;
         display: flex;
+        gap: 28px;
         align-items: flex-start;
-        gap: 30px;
-        margin-bottom: 30px;
     }
 
-    .profile-avatar-wrapper {
+    /* ── Avatar ── */
+    .pr-avatar-wrap {
         flex-shrink: 0;
         position: relative;
+        margin-top: 20px;
     }
 
-    .profile-avatar {
-        width: 180px;
-        height: 180px;
-        border-radius: 20px;
+    .pr-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: var(--r-lg);
         object-fit: cover;
-        border: 5px solid white;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-    }
-
-    .profile-avatar-badge {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        background: #4a90e2;
-        color: white;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        border: 3px solid white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-
-    .profile-info-main {
-        flex: 1;
-        padding-top: 0px;
-    }
-
-    .profile-header-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 20px;
-    }
-
-    .profile-name-section h1 {
-        font-size: 32px;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin: 0 0 5px 0;
-    }
-
-    .profile-username {
-        font-size: 16px;
-        color: #666;
-        margin: 0;
-    }
-
-    .profile-action-buttons {
-        display: flex;
-        gap: 12px;
-    }
-
-    .btn-primary-action {
-        background: #4a90e2;
-        color: white;
-        border: none;
-        padding: 12px 32px;
-        border-radius: 12px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-    }
-
-    .btn-primary-action:hover {
-        background: #357abd;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
-        color: white;
-    }
-
-    .btn-secondary-action {
-        background: #f0f5f9;
-        color: #1a1a1a;
-        border: 2px solid #e0e7ed;
-        padding: 12px 32px;
-        border-radius: 12px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-    }
-
-    .btn-secondary-action:hover {
-        background: #e0e7ed;
-        border-color: #d0d7dd;
-        transform: translateY(-2px);
-        color: #1a1a1a;
-    }
-
-    .btn-follow {
-        background: #e60023;
-        color: white;
-    }
-
-    .btn-follow:hover {
-        background: #ad081b;
-        color: white;
-    }
-
-    .btn-following {
-        background: #f0f5f9;
-        color: #4a90e2;
-        border-color: #4a90e2;
-    }
-
-    .btn-following:hover {
-        background: #ffe8e8;
-        color: #e74c3c;
-        border-color: #e74c3c;
-    }
-
-    .profile-stats-row {
-        display: flex;
-        gap: 40px;
-        padding: 20px 0;
-        border-top: 2px solid #f0f5f9;
-        border-bottom: 2px solid #f0f5f9;
-        margin-bottom: 20px;
-    }
-
-    .stat-box {
-        text-align: center;
-    }
-
-    .stat-number {
-        font-size: 28px;
-        font-weight: 700;
-        color: #1a1a1a;
+        border: 4px solid var(--white);
+        box-shadow: var(--shadow-md);
         display: block;
     }
 
-    .stat-label {
-        font-size: 14px;
-        color: #666;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-top: 5px;
-    }
+    /* ── Info ── */
+    .pr-info { flex: 1; min-width: 0; }
 
-    .profile-bio {
-        line-height: 1.8;
-    }
-
-    .profile-bio p {
-        color: #4a4a4a;
-        font-size: 15px;
-        margin: 0;
-    }
-
-    .profile-meta {
+    .pr-info-top {
         display: flex;
-        gap: 25px;
-        margin-top: 15px;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 20px;
         flex-wrap: wrap;
     }
 
-    .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #666;
-        font-size: 14px;
-    }
-
-    .meta-item i {
-        font-size: 16px;
-    }
-
-    .posts-section {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 40px 40px;
-    }
-
-    .section-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 30px;
-    }
-
-    .section-title {
-        font-size: 24px;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin: 0;
-    }
-
-    .view-toggle {
-        display: flex;
-        gap: 8px;
-        background: #f0f5f9;
-        padding: 4px;
-        border-radius: 10px;
-    }
-
-    .toggle-btn {
-        padding: 8px 16px;
-        border: none;
-        background: transparent;
-        color: #666;
-        font-size: 14px;
+    .pr-name {
+        font-size: 26px;
         font-weight: 600;
+        color: var(--black);
+        letter-spacing: -0.4px;
+        line-height: 1.2;
+        margin-bottom: 4px;
+    }
+
+    .pr-handle {
+        font-size: 14px;
+        color: var(--muted);
+        font-weight: 400;
+    }
+
+    /* ── Action buttons ── */
+    .pr-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .pr-btn {
+        height: 38px;
+        padding: 0 22px;
+        border-radius: 38px;
+        font-size: 13.5px;
+        font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
         cursor: pointer;
-        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        text-decoration: none;
         transition: all 0.2s;
+        border: none;
+        white-space: nowrap;
     }
 
-    .toggle-btn.active {
-        background: white;
-        color: #4a90e2;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    .pr-btn-primary {
+        background: var(--black);
+        color: var(--white);
     }
 
-    .posts-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 15px;
+    .pr-btn-primary:hover {
+        background: #222;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(10,10,10,0.2);
+        color: var(--white);
     }
 
-    .post-item {
-        position: relative;
-        aspect-ratio: 1;
-        cursor: pointer;
-        border-radius: 12px;
-        overflow: hidden;
-        transition: all 0.3s;
-        background: #f0f0f0;
+    .pr-btn-follow {
+        background: var(--accent);
+        color: var(--white);
     }
 
-    .post-item:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    .pr-btn-follow:hover {
+        background: var(--accent-h);
+        transform: translateY(-1px);
+        color: var(--white);
     }
 
-    .post-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+    .pr-btn-following {
+        background: var(--cream);
+        color: var(--black);
+        border: 1.5px solid var(--warm-gray);
     }
 
-    .post-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6));
+    .pr-btn-following:hover {
+        background: #fdf2f2;
+        color: #c0392b;
+        border-color: #c0392b;
+    }
+
+    .pr-btn-secondary {
+        background: var(--cream);
+        color: var(--black);
+        border: 1.5px solid var(--warm-gray);
+    }
+
+    .pr-btn-secondary:hover {
+        background: var(--warm-gray);
+        transform: translateY(-1px);
+        color: var(--black);
+    }
+
+    /* ── Stats ── */
+    .pr-stats {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 30px;
-        opacity: 0;
-        transition: opacity 0.3s;
-        color: white;
-        font-weight: 600;
-    }
-
-    .post-item:hover .post-overlay {
-        opacity: 1;
-    }
-
-    .overlay-stat {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 16px;
-    }
-
-    .multi-photo-indicator {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        background: rgba(0,0,0,0.7);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .empty-posts {
-        text-align: center;
-        padding: 100px 20px;
-        background: #f8f9fa;
-        border-radius: 20px;
-    }
-
-    .empty-posts i {
-        font-size: 80px;
+        gap: 0;
+        border-top: 1px solid var(--warm-gray);
+        border-bottom: 1px solid var(--warm-gray);
         margin-bottom: 20px;
-        opacity: 0.3;
     }
 
-    .empty-posts h4 {
-        color: #1a1a1a;
-        font-size: 20px;
+    .pr-stat {
+        flex: 1;
+        text-align: center;
+        padding: 16px 8px;
+        position: relative;
+    }
+
+    .pr-stat + .pr-stat::before {
+        content: '';
+        position: absolute;
+        left: 0; top: 20%; bottom: 20%;
+        width: 1px;
+        background: var(--warm-gray);
+    }
+
+    .pr-stat-num {
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--black);
+        display: block;
+        letter-spacing: -0.5px;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+
+    .pr-stat-label {
+        font-size: 11.5px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-weight: 500;
+    }
+
+    /* ── Bio ── */
+    .pr-bio p {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.7;
         margin-bottom: 10px;
     }
 
-    .empty-posts p {
-        color: #8e8e8e;
-        font-size: 15px;
-    }
-
-    /* Modal Styles */
-    .detail-modal .modal-dialog {
-        max-width: 1200px;
-        height: 90vh;
-        margin: 5vh auto;
-    }
-    
-    .detail-modal .modal-content {
-        border-radius: 16px;
-        overflow: hidden;
-        border: none;
-        height: 100%;
+    .pr-meta {
         display: flex;
-        flex-direction: column;
-    }
-    
-    .detail-modal .modal-body {
-        padding: 0;
-        flex: 1;
-        overflow: hidden;
-    }
-    
-    .modal-container {
-        display: flex;
-        height: 100%;
-    }
-    
-    .modal-image-section {
-        flex: 1;
-        background: #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .modal-image-section img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
+        gap: 18px;
+        flex-wrap: wrap;
     }
 
-    .modal-carousel {
-        width: 100%;
-        height: 100%;
-    }
-
-    .modal-carousel .carousel-inner {
-        height: 100%;
-    }
-
-    .modal-carousel .carousel-item {
-        height: 100%;
-        display: none !important;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-    }
-
-    .modal-carousel .carousel-item.active {
-        display: flex !important;
-        position: relative;
-    }
-
-    .modal-carousel .carousel-item img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
-
-    .modal-carousel .carousel-control-prev,
-    .modal-carousel .carousel-control-next {
-        width: 50px;
-        height: 50px;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 50%;
-        top: 50%;
-        transform: translateY(-50%);
-        opacity: 1;
-        transition: all 0.3s;
-        z-index: 10;
-    }
-
-    .modal-carousel .carousel-control-prev:hover,
-    .modal-carousel .carousel-control-next:hover {
-        background: rgba(255, 255, 255, 1);
-        transform: translateY(-50%) scale(1.1);
-    }
-
-    .modal-carousel .carousel-control-prev {
-        left: 20px;
-    }
-
-    .modal-carousel .carousel-control-next {
-        right: 20px;
-    }
-
-    .modal-carousel .carousel-control-prev-icon,
-    .modal-carousel .carousel-control-next-icon {
-        width: 24px;
-        height: 24px;
-        filter: invert(1);
-    }
-
-    .modal-carousel .carousel-indicators {
-        bottom: 20px;
-    }
-
-    .modal-carousel .carousel-indicators button {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.5);
-        border: none;
-        margin: 0 4px;
-    }
-
-    .modal-carousel .carousel-indicators button.active {
-        background-color: #fff;
-    }
-    
-    .modal-details-section {
-        width: 450px;
-        background: white;
-        display: flex;
-        flex-direction: column;
-        border-left: 1px solid #e0e0e0;
-    }
-    
-    .modal-header-custom {
-        padding: 20px;
-        border-bottom: 1px solid #e0e0e0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .modal-header-actions {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-    }
-    
-    .modal-action-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 24px;
-        padding: 8px;
-        border-radius: 50%;
-        transition: all 0.2s;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .modal-action-btn:hover {
-        background: #f0f0f0;
-    }
-    
-    .modal-save-btn {
-        background: #e60023;
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 24px;
-        font-weight: 600;
-        font-size: 14px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .modal-save-btn:hover {
-        background: #ad081b;
-        transform: scale(1.05);
-    }
-    
-    .modal-user-section {
-        padding: 20px;
-        border-bottom: 1px solid #e0e0e0;
-    }
-    
-    .modal-user-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 15px;
-    }
-    
-    .modal-user-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-    
-    .modal-user-details h6 {
-        margin: 0;
-        font-weight: 600;
-        color: #1a1a1a;
-        font-size: 16px;
-    }
-    
-    .modal-user-details span {
-        font-size: 13px;
-        color: #666;
-    }
-    
-    .modal-caption {
-        font-size: 14px;
-        color: #333;
-        line-height: 1.6;
-    }
-    
-    .modal-stats {
-        display: flex;
-        gap: 20px;
-        margin-top: 12px;
-        font-size: 14px;
-        color: #666;
-    }
-    
-    .modal-stats span {
+    .pr-meta-item {
         display: flex;
         align-items: center;
         gap: 6px;
-    }
-    
-    .modal-comments-section {
-        flex: 1;
-        overflow-y: auto;
-        padding: 20px;
-    }
-    
-    /* Comment Styles with Profile Links */
-    .comment-wrapper {
-        margin-bottom: 20px;
-    }
-
-    .comment-item {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 0;
-    }
-    
-    .comment-avatar-link {
-        display: block;
-        line-height: 0;
-        transition: opacity 0.2s ease;
-        flex-shrink: 0;
-    }
-    
-    .comment-avatar-link:hover {
-        opacity: 0.7;
-    }
-
-    .comment-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        object-fit: cover;
-        flex-shrink: 0;
-    }
-    
-    .comment-content {
-        flex: 1;
-    }
-    
-    .comment-username-link {
-        text-decoration: none;
-        color: inherit;
-    }
-    
-    .comment-username-link:hover .comment-username {
-        text-decoration: underline;
-        color: #000;
-    }
-    
-    .comment-username {
-        font-weight: 600;
-        color: #1a1a1a;
-        font-size: 14px;
-        margin-right: 8px;
-        transition: all 0.2s ease;
-        cursor: pointer;
-    }
-    
-    .comment-text {
-        color: #333;
-        font-size: 14px;
-        line-height: 1.5;
-    }
-    
-    .comment-actions {
-        display: flex;
-        gap: 15px;
-        margin-top: 8px;
-        font-size: 12px;
-        color: #666;
-    }
-    
-    .comment-actions button {
-        background: none;
-        border: none;
-        color: #666;
-        cursor: pointer;
-        padding: 0;
-        font-weight: 600;
-        font-size: 12px;
-        transition: color 0.2s ease;
-    }
-    
-    .comment-actions button:hover {
-        color: #000;
-    }
-
-    .comment-actions .delete-comment-btn {
-        color: #ed4956;
-    }
-
-    .comment-actions .delete-comment-btn:hover {
-        color: #c91f2e;
-    }
-
-    /* Replies Container */
-    .replies-container {
-        margin-left: 48px;
-        margin-top: 12px;
-        padding-left: 12px;
-        border-left: 2px solid #efefef;
-    }
-
-    .reply-item {
-        margin-bottom: 12px;
-    }
-    
-    .modal-comment-input-section {
-        padding: 20px;
-        border-top: 1px solid #e0e0e0;
-    }
-    
-    .modal-comment-input {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-    }
-    
-    .modal-comment-input input {
-        flex: 1;
-        border: 2px solid #e0e0e0;
-        border-radius: 24px;
-        padding: 12px 20px;
-        outline: none;
-        font-size: 14px;
-        transition: all 0.2s;
-    }
-    
-    .modal-comment-input input:focus {
-        border-color: #4a90e2;
-    }
-    
-    .modal-comment-input button {
-        background: #4a90e2;
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 24px;
-        font-weight: 600;
-        cursor: pointer;
-        font-size: 14px;
-        transition: all 0.2s;
-    }
-    
-    .modal-comment-input button:hover {
-        background: #357abd;
-    }
-    
-    .modal-comment-input button:disabled {
-        background: #ccc;
-        cursor: not-allowed;
-    }
-
-    /* Reply Info Banner */
-    .reply-info {
-        display: none;
-        padding: 8px 12px;
-        background: #f0f5f9;
-        border-radius: 8px;
-        margin-top: 8px;
         font-size: 13px;
-        color: #666;
+        color: var(--muted);
     }
 
-    .reply-info small {
+    /* ===================== POSTS SECTION ===================== */
+    .pr-posts {
+        max-width: 1300px;
+        margin: 28px auto 0;
+        padding: 0 32px;
+    }
+
+    .pr-posts-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        margin-bottom: 20px;
     }
 
-    .cancel-reply {
-        background: none;
+    .pr-posts-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 22px;
+        font-weight: 400;
+        color: var(--black);
+    }
+
+    .pr-view-toggle {
+        display: flex;
+        gap: 4px;
+        background: var(--white);
+        border: 1px solid var(--warm-gray);
+        border-radius: var(--r-sm);
+        padding: 4px;
+    }
+
+    .pr-toggle-btn {
+        height: 30px;
+        padding: 0 14px;
         border: none;
-        color: #e74c3c;
+        background: transparent;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 500;
+        font-family: 'DM Sans', sans-serif;
         cursor: pointer;
+        border-radius: 5px;
+        transition: all 0.2s;
+    }
+
+    .pr-toggle-btn.active {
+        background: var(--black);
+        color: var(--white);
+    }
+
+    /* ===================== POSTS GRID ===================== */
+    .pr-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+    }
+
+    @media (max-width: 900px)  { .pr-grid { grid-template-columns: repeat(3,1fr); } }
+    @media (max-width: 640px)  { .pr-grid { grid-template-columns: repeat(2,1fr); gap: 10px; } }
+
+    .pr-post-item {
+        position: relative;
+        aspect-ratio: 1;
+        cursor: pointer;
+        border-radius: var(--r-md);
+        overflow: hidden;
+        background: var(--warm-gray);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .pr-post-item:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .pr-post-item img {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .pr-post-item:hover img { transform: scale(1.05); }
+
+    .pr-post-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, rgba(10,10,10,0.05), rgba(10,10,10,0.6));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        color: var(--white);
         font-weight: 600;
+        font-size: 15px;
+    }
+
+    .pr-post-item:hover .pr-post-overlay { opacity: 1; }
+
+    .pr-overlay-stat {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .pr-multi-badge {
+        position: absolute;
+        top: 8px; right: 8px;
+        background: rgba(10,10,10,0.6);
+        color: var(--white);
+        font-size: 11px;
+        font-weight: 500;
+        padding: 3px 9px;
+        border-radius: 20px;
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* ===================== EMPTY STATE ===================== */
+    .pr-empty {
+        text-align: center;
+        padding: 80px 24px;
+        background: var(--white);
+        border-radius: var(--r-xl);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .pr-empty-icon {
+        width: 64px; height: 64px;
+        background: var(--cream);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 20px;
+    }
+
+    .pr-empty h4 {
+        font-family: 'Playfair Display', serif;
+        font-size: 20px;
+        font-weight: 400;
+        color: var(--black);
+        margin-bottom: 8px;
+    }
+
+    .pr-empty p {
+        font-size: 14px;
+        color: var(--muted);
+        margin-bottom: 24px;
+    }
+
+    /* ===================== DETAIL MODAL ===================== */
+    .ap-detail-modal .modal-dialog {
+        max-width: 1040px;
+        margin: 3vh auto;
+        height: 94vh;
+    }
+
+    .ap-detail-modal .modal-content {
+        border: none;
+        border-radius: var(--r-xl);
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 30px 80px rgba(10,10,10,0.3);
+    }
+
+    .ap-detail-modal .modal-body {
         padding: 0;
-        margin-left: 10px;
+        flex: 1;
+        overflow: hidden;
+        display: flex;
     }
 
-    .cancel-reply:hover {
-        color: #c0392b;
+    .ap-modal-media {
+        flex: 1;
+        background: var(--black);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
     }
 
-    .modal-comments-section::-webkit-scrollbar {
-        width: 6px;
+    .ap-modal-media img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+    .ap-modal-media .carousel { width: 100%; height: 100%; }
+    .ap-modal-media .carousel-inner { height: 100%; }
+    .ap-modal-media .carousel-item {
+        height: 100%;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        position: absolute; top: 0; left: 0; width: 100%;
+        opacity: 0;
+        transition: opacity 0.35s ease;
     }
-    
-    .modal-comments-section::-webkit-scrollbar-track {
-        background: #f1f1f1;
+    .ap-modal-media .carousel-item.active { position: relative; opacity: 1; }
+
+    .ap-modal-media .carousel-control-prev,
+    .ap-modal-media .carousel-control-next {
+        width: 44px; height: 44px;
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(8px);
+        border-radius: 50%;
+        top: 50%; transform: translateY(-50%);
+        opacity: 1; z-index: 10;
+        transition: background 0.2s, transform 0.2s;
     }
-    
-    .modal-comments-section::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 10px;
+    .ap-modal-media .carousel-control-prev { left: 16px; }
+    .ap-modal-media .carousel-control-next { right: 16px; }
+    .ap-modal-media .carousel-control-prev:hover,
+    .ap-modal-media .carousel-control-next:hover {
+        background: var(--white);
+        transform: translateY(-50%) scale(1.1);
     }
-    
-    .modal-comments-section::-webkit-scrollbar-thumb:hover {
-        background: #a8a8a8;
+    .ap-modal-media .carousel-control-prev-icon,
+    .ap-modal-media .carousel-control-next-icon { width: 20px; height: 20px; filter: invert(1); }
+    .ap-modal-media .carousel-indicators { bottom: 16px; gap: 6px; margin: 0; }
+    .ap-modal-media .carousel-indicators button {
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.5);
+        border: none; transition: all 0.2s; padding: 0; margin: 0;
+    }
+    .ap-modal-media .carousel-indicators button.active { background: var(--white); transform: scale(1.4); }
+
+    /* Sidebar */
+    .ap-modal-sidebar {
+        width: 380px; flex-shrink: 0;
+        background: var(--white);
+        display: flex; flex-direction: column;
+        border-left: 1px solid var(--warm-gray);
+    }
+
+    .ap-modal-header {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--warm-gray);
+        display: flex; align-items: center;
+        justify-content: space-between; gap: 10px;
+    }
+
+    .ap-modal-header-left { display: flex; align-items: center; gap: 6px; }
+
+    .ap-modal-action {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        background: var(--cream);
+        border: none; cursor: pointer;
+        display: grid; place-items: center;
+        transition: background 0.2s, transform 0.2s;
+    }
+    .ap-modal-action:hover { background: var(--warm-gray); transform: scale(1.08); }
+
+    .ap-modal-save {
+        height: 34px; padding: 0 18px;
+        background: var(--accent); color: var(--white);
+        border: none; border-radius: 34px;
+        font-size: 13.5px; font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer; transition: background 0.2s;
+    }
+    .ap-modal-save:hover { background: var(--accent-h); }
+
+    .ap-modal-author {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--warm-gray);
+    }
+
+    .ap-author-row { display: flex; align-items: center; gap: 11px; margin-bottom: 10px; }
+
+    .ap-author-avatar {
+        width: 42px; height: 42px;
+        border-radius: 50%; object-fit: cover;
+        border: 2px solid var(--warm-gray); flex-shrink: 0;
+    }
+
+    .ap-author-name {
+        font-size: 14.5px; font-weight: 600;
+        color: var(--black); text-decoration: none;
+    }
+    .ap-author-name:hover { color: var(--accent); }
+    .ap-author-time { font-size: 12px; color: var(--muted); display: block; margin-top: 1px; }
+
+    .ap-modal-caption { font-size: 14px; color: #444; line-height: 1.6; margin-bottom: 10px; }
+
+    .ap-modal-stats { display: flex; gap: 16px; }
+    .ap-modal-stat {
+        display: flex; align-items: center; gap: 5px;
+        font-size: 13px; font-weight: 600; color: var(--muted);
+    }
+
+    /* Comments */
+    .ap-modal-comments {
+        flex: 1; overflow-y: auto; padding: 14px 18px;
+    }
+    .ap-modal-comments::-webkit-scrollbar { width: 4px; }
+    .ap-modal-comments::-webkit-scrollbar-thumb { background: var(--warm-gray); border-radius: 10px; }
+
+    .ap-comment { display: flex; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--cream); }
+    .ap-comment:last-child { border-bottom: none; }
+
+    .ap-comment-avatar {
+        width: 32px; height: 32px;
+        border-radius: 50%; object-fit: cover;
+        flex-shrink: 0; border: 1.5px solid var(--warm-gray);
+    }
+
+    .ap-comment-body { flex: 1; }
+
+    .ap-comment-author { font-size: 13px; font-weight: 600; color: var(--black); text-decoration: none; }
+    .ap-comment-author:hover { color: var(--accent); }
+
+    .ap-comment-text { font-size: 13px; color: #444; line-height: 1.5; margin-top: 2px; display: block; }
+
+    .ap-comment-meta { display: flex; align-items: center; gap: 12px; margin-top: 5px; }
+    .ap-comment-time { font-size: 11px; color: var(--muted); }
+
+    .ap-comment-action-btn {
+        background: none; border: none;
+        font-size: 11.5px; font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        color: var(--muted); cursor: pointer; padding: 0;
+        transition: color 0.2s;
+    }
+    .ap-comment-action-btn:hover { color: var(--black); }
+    .ap-comment-action-btn.danger { color: #c0392b; }
+
+    .ap-replies-nest {
+        margin-left: 42px; margin-top: 8px;
+        padding-left: 12px;
+        border-left: 2px solid var(--warm-gray);
+    }
+
+    /* Comment input */
+    .ap-comment-form-wrap {
+        padding: 12px 18px;
+        border-top: 1px solid var(--warm-gray);
+    }
+
+    .ap-reply-indicator {
+        display: none;
+        background: var(--accent-soft);
+        border-radius: var(--r-sm);
+        padding: 5px 11px;
+        margin-bottom: 8px;
+        font-size: 12px; color: var(--accent); font-weight: 500;
+        align-items: center; justify-content: space-between;
+    }
+    .ap-reply-indicator.show { display: flex; }
+    .ap-cancel-reply { background: none; border: none; font-size: 11.5px; color: var(--accent); cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 600; }
+
+    .ap-comment-input-row { display: flex; align-items: center; gap: 8px; }
+    .ap-comment-input-row input {
+        flex: 1; height: 38px;
+        background: var(--cream);
+        border: 1.5px solid transparent;
+        border-radius: 38px;
+        padding: 0 16px;
+        font-size: 13px;
+        font-family: 'DM Sans', sans-serif;
+        outline: none;
+        transition: border-color 0.2s, background 0.2s;
+        color: var(--black);
+    }
+    .ap-comment-input-row input::placeholder { color: var(--muted); }
+    .ap-comment-input-row input:focus { background: var(--white); border-color: var(--accent); }
+
+    .ap-comment-submit {
+        height: 38px; padding: 0 16px;
+        background: var(--accent); color: var(--white);
+        border: none; border-radius: 38px;
+        font-size: 13px; font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer; transition: background 0.2s;
+        white-space: nowrap;
+    }
+    .ap-comment-submit:hover:not(:disabled) { background: var(--accent-h); }
+    .ap-comment-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Dropdown */
+    .dropdown-menu {
+        border: 1px solid var(--warm-gray);
+        border-radius: var(--r-md);
+        box-shadow: var(--shadow-md);
+        padding: 6px;
+        font-family: 'DM Sans', sans-serif;
+    }
+    .dropdown-item { border-radius: var(--r-sm); padding: 8px 13px; font-size: 13.5px; color: var(--black); transition: background 0.15s; }
+    .dropdown-item:hover { background: var(--cream); }
+    .dropdown-item.text-danger { color: #c0392b !important; }
+    .dropdown-item.text-danger:hover { background: #fdf2f2; }
+
+    /* Toast */
+    .ap-toast {
+        position: fixed; top: 80px; right: 24px;
+        z-index: 99999; padding: 12px 18px;
+        border-radius: var(--r-md); font-size: 13.5px;
+        font-weight: 500; font-family: 'DM Sans', sans-serif;
+        box-shadow: var(--shadow-lg);
+        animation: toastIn 0.3s ease; max-width: 300px;
+    }
+    .ap-toast.success { background: #1a7431; color: var(--white); }
+    .ap-toast.error   { background: #c0392b; color: var(--white); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(20px); }
+        to   { opacity: 1; transform: translateX(0); }
     }
 
     /* Responsive */
-    @media (max-width: 1200px) {
-        .posts-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
+    @media (max-width: 768px) {
+        .pr-card-wrap, .pr-posts { padding: 0 16px; }
+        .pr-card-body { flex-direction: column; align-items: center; text-align: center; padding: 24px 20px 20px; gap: 16px; }
+        .pr-avatar-wrap { margin-top: -52px; }
+        .pr-avatar { width: 96px; height: 96px; }
+        .pr-info-top { flex-direction: column; align-items: center; }
+        .pr-actions { justify-content: center; }
+        .pr-stats { justify-content: center; }
+        .ap-detail-modal .modal-body { flex-direction: column; }
+        .ap-modal-media { height: 48vh; }
+        .ap-modal-sidebar { width: 100%; flex: 1; }
     }
 
-    @media (max-width: 768px) {
-        .profile-banner {
-            height: 200px;
-        }
-
-        .profile-main-info {
-            padding: 0 20px;
-            margin-top: -60px;
-        }
-
-        .profile-card-top {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 30px 20px;
-        }
-
-        .profile-avatar {
-            width: 140px;
-            height: 140px;
-        }
-
-        .profile-header-row {
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .profile-action-buttons {
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .btn-primary-action,
-        .btn-secondary-action {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .profile-stats-row {
-            justify-content: center;
-            gap: 30px;
-        }
-
-        .posts-section {
-            padding: 0 20px 40px;
-        }
-
-        .posts-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .modal-container {
-            flex-direction: column;
-        }
-        
-        .modal-details-section {
-            width: 100%;
-        }
-        
-        .modal-image-section {
-            height: 50vh;
-        }
+    @media (max-width: 480px) {
+        .ap-detail-modal .modal-dialog { margin: 0; height: 100vh; max-width: 100%; }
+        .ap-detail-modal .modal-content { border-radius: 0; }
     }
 </style>
 
-<div class="profile-container">
-    <!-- Banner Section -->
-    <div class="profile-banner">
+<div class="pr-page">
 
+    {{-- ── Banner ── --}}
+    <div class="pr-banner">
+        <div class="pr-banner-inner"></div>
+        <div class="pr-banner-lines"></div>
     </div>
-    <!-- Main Profile Info -->
-    <div class="profile-main-info">
-        <div class="profile-card-top">
-            <div class="profile-avatar-wrapper">
-          <img
-            src="{{ $user?->avatar_display
-                ?? 'https://ui-avatars.com/api/?name=User' }}"
-            alt="Avatar"
-            class="profile-avatar"
-        />
 
-                <!-- gunakan ini jika follower lebih dari 100 follower -->
-                <!-- <div class="profile-avatar-badge">✓</div> -->
-            </div>
+    {{-- ── Profile Card ── --}}
+    <div class="pr-card-wrap">
+        <div class="pr-card">
+            <div class="pr-card-body">
 
-            <div class="profile-info-main">
-                <div class="profile-header-row">
-                    <div class="profile-name-section">
-                        <h1>{{ $user->username ?? $user->name }}</h1>
-                    </div>
+                {{-- Avatar --}}
+                <div class="pr-avatar-wrap">
+                    <img src="{{ $user?->avatar_display ?? 'https://ui-avatars.com/api/?name=User&background=0a0a0a&color=fff' }}"
+                         alt="Avatar" class="pr-avatar">
+                </div>
 
-                    <div class="profile-action-buttons">
-                        @auth
-                            @if(auth()->id() === $user->id)
-                                <!-- Own Profile -->
-                                <a href="{{ route('user.postingan.create') }}" class="btn-primary-action">
-                                    <span>Buat Postingan</span> 
-                                </a>
-                                <a href="{{ route('user.avatar.create') }}" class="btn-secondary-action">
-                                    <span>Edit Profile</span> 
-                                </a>
-                            @else
-                                <!-- Other's Profile -->
-                                <button class="btn-primary-action btn-follow"  data-user-id="{{ $user->id }}">
-                                    <span>
+                {{-- Info --}}
+                <div class="pr-info">
+                    <div class="pr-info-top">
+                        <div>
+                            <div class="pr-name">{{ $user->name ?? $user->username }}</div>
+                            <div class="pr-handle">{{ strtolower(str_replace(' ', '', $user->username ?? $user->name)) }}</div>
+                        </div>
+
+                        <div class="pr-actions">
+                            @auth
+                                @if(auth()->id() === $user->id)
+                                    <a href="{{ route('user.postingan.create') }}" class="pr-btn pr-btn-primary">
+                                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                            <path d="M6.5 2v9M2 6.5h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        </svg>
+                                        Buat Postingan
+                                    </a>
+                                    <a href="{{ route('user.avatar.create') }}" class="pr-btn pr-btn-secondary">
+                                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                            <path d="M9.5 2.5l1 1-7 7H2.5v-1l7-7z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Edit Profil
+                                    </a>
+                                @else
+                                    <button class="pr-btn pr-btn-follow btn-follow-ajax" data-user-id="{{ $user->id }}">
                                         @if(auth()->user()->isFollowing($user->id))
                                             Berhenti Mengikuti
                                         @else
                                             Ikuti
-                                        @endif                        
-                                    </span> 
-                                </button>
-                                <button class="btn-secondary-action">
-                                    <span>Pesan</span> 
-                                </button>
-                            @endif
-                        @else
-                            <!-- Not Logged In -->
-                            <a href="{{ route('login') }}" class="btn-primary-action btn-follow">
-                                <span>Login</span> 
-                            </a>
-                        @endauth
+                                        @endif
+                                    </button>
+                                    <button class="pr-btn pr-btn-secondary">Pesan</button>
+                                @endif
+                            @else
+                                <a href="{{ route('login') }}" class="pr-btn pr-btn-follow">Masuk untuk Mengikuti</a>
+                            @endauth
+                        </div>
                     </div>
-                </div>
 
-                <div class="profile-stats-row">
-                    <div class="stat-box">
-                        <span class="stat-number">{{ $totalPost }}</span>
-                        <span class="stat-label">Postingan</span>
+                    {{-- Stats --}}
+                    <div class="pr-stats">
+                        <div class="pr-stat">
+                            <span class="pr-stat-num">{{ $totalPost }}</span>
+                            <span class="pr-stat-label">Postingan</span>
+                        </div>
+                        <div class="pr-stat">
+                            <span class="pr-stat-num">{{ $user->followers->count() }}</span>
+                            <span class="pr-stat-label">Pengikut</span>
+                        </div>
+                        <div class="pr-stat">
+                            <span class="pr-stat-num">{{ $user->following->count() }}</span>
+                            <span class="pr-stat-label">Mengikuti</span>
+                        </div>
+                        <div class="pr-stat">
+                            <span class="pr-stat-num">{{ $totalLike }}</span>
+                            <span class="pr-stat-label">Disukai</span>
+                        </div>
                     </div>
-                    <div class="stat-box">
-                        <span class="stat-number">{{ $user->followers->count() }}</span>
-                        <span class="stat-label">Mengikuti</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-number">{{ $user->following->count() }}</span>
-                        <span class="stat-label">Diikuti</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-number">{{ $totalLike }}</span>
-                        <span class="stat-label">Disukai</span>
-                    </div>
-                </div>
 
-                <div class="profile-bio">
-                    <p>{{ $user->profile->bio ?? 'Belum ada bio.' }}</p>
-                    
-                    <div class="profile-meta">
-
-                        <div class="meta-item">
-                            <i>📅</i>
-                            <span>Bergabung {{ optional($user->created_at)->format('F Y') ?? '-' }}</span>
+                    {{-- Bio --}}
+                    <div class="pr-bio">
+                        <p>{{ $user->profile->bio ?? 'Belum ada bio.' }}</p>
+                        <div class="pr-meta">
+                            <div class="pr-meta-item">
+                                <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                    <rect x="1.5" y="2" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
+                                    <path d="M1.5 5h10M4 1v2M9 1v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                                </svg>
+                                Bergabung {{ optional($user->created_at)->format('F Y') ?? '-' }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -977,271 +832,238 @@
         </div>
     </div>
 
-    <!-- Posts Section -->
-    <div class="posts-section">
-        <div class="section-header">
-            <h2 class="section-title">Postingan</h2>
-            <div class="view-toggle">
-                <button class="toggle-btn active">Grid</button>
-                <button class="toggle-btn">List</button>
-            </div>
+    {{-- ── Posts Section ── --}}
+    <div class="pr-posts">
+        <div class="pr-posts-header">
+            <h2 class="pr-posts-title">Postingan</h2>
+            <!-- <div class="pr-view-toggle">
+                <button class="pr-toggle-btn active">Grid</button>
+                <button class="pr-toggle-btn">List</button>
+            </div> -->
         </div>
 
         @if($posts->count() > 0)
-            <div class="posts-grid">
+            <div class="pr-grid">
                 @foreach($posts as $post)
-                    <div class="post-item" data-bs-toggle="modal" data-bs-target="#postModal{{ $post->id }}">
+                    <div class="pr-post-item" data-bs-toggle="modal" data-bs-target="#postModal{{ $post->id }}">
                         @if($post->photos && $post->photos->first())
-                            <img src="{{ asset('storage/' . $post->photos->first()->photo) }}" alt="Post">
+                            <img src="{{ asset('storage/' . $post->photos->first()->photo) }}" alt="" loading="lazy">
                         @else
-                            <img src="https://via.placeholder.com/300x300?text=No+Image" alt="No Image">
+                            <img src="https://via.placeholder.com/300x300/e8e4df/b8b3ac?text=No+Image" alt="">
                         @endif
-                        
+
                         @if($post->photos && $post->photos->count() > 1)
-                            <div class="multi-photo-indicator">
-                                <span>📸</span> {{ $post->photos->count() }}
+                            <div class="pr-multi-badge">
+                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                    <rect x="1" y="3" width="6" height="6" rx="1" stroke="white" stroke-width="1.2"/>
+                                    <path d="M3 3V2a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H7" stroke="white" stroke-width="1.2"/>
+                                </svg>
+                                {{ $post->photos->count() }}
                             </div>
                         @endif
-                        
-                        <div class="post-overlay">
-                            <div class="overlay-stat">
-                                <span>❤️</span>
-                                <span>{{ $post->likes->count() ?? 0 }}</span>
+
+                        <div class="pr-post-overlay">
+                            <div class="pr-overlay-stat">
+                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                    <path d="M7.5 12.5S2 9.5 2 5.5A3.5 3.5 0 017.5 3 3.5 3.5 0 0113 5.5C13 9.5 7.5 12.5 7.5 12.5z" stroke="white" stroke-width="1.4" fill="white"/>
+                                </svg>
+                                {{ $post->likes->count() }}
                             </div>
-                            <div class="overlay-stat">
-                                <span>💬</span>
-                                <span>{{ $post->comments->count() ?? 0 }}</span>
+                            <div class="pr-overlay-stat">
+                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                    <path d="M12 1.5H3a.5.5 0 00-.5.5v7a.5.5 0 00.5.5H5l2.5 2.5L10 9.5h2a.5.5 0 00.5-.5V2a.5.5 0 00-.5-.5z" stroke="white" stroke-width="1.4" fill="white"/>
+                                </svg>
+                                {{ $post->comments->count() }}
                             </div>
                         </div>
                     </div>
 
-                    <!-- Post Detail Modal -->
-                    <div class="modal fade detail-modal" id="postModal{{ $post->id }}" tabindex="-1">
+                    {{-- ── Detail Modal ── --}}
+                    <div class="modal fade ap-detail-modal" id="postModal{{ $post->id }}" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-body">
-                                    <div class="modal-container">
-                                        <div class="modal-image-section">
-                                            @if($post->photos && $post->photos->count() > 1)
-                                                <div id="modalCarousel{{ $post->id }}" class="carousel slide modal-carousel" data-bs-ride="false">
-                                                    <div class="carousel-inner">
-                                                        @foreach($post->photos as $index => $photo)
-                                                            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                                                <img src="{{ asset('storage/' . $photo->photo) }}" alt="Post {{ $index + 1 }}">
+
+                                    {{-- Media --}}
+                                    <div class="ap-modal-media">
+                                        @if($post->photos && $post->photos->count() > 1)
+                                            <div id="apCarousel{{ $post->id }}" class="carousel slide" data-bs-ride="false">
+                                                <div class="carousel-inner">
+                                                    @foreach($post->photos as $i => $photo)
+                                                        <div class="carousel-item {{ $i==0?'active':'' }}">
+                                                            <img src="{{ asset('storage/'.$photo->photo) }}" alt="">
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                                <button class="carousel-control-prev" type="button" data-bs-target="#apCarousel{{ $post->id }}" data-bs-slide="prev">
+                                                    <span class="carousel-control-prev-icon"></span>
+                                                </button>
+                                                <button class="carousel-control-next" type="button" data-bs-target="#apCarousel{{ $post->id }}" data-bs-slide="next">
+                                                    <span class="carousel-control-next-icon"></span>
+                                                </button>
+                                                <div class="carousel-indicators">
+                                                    @foreach($post->photos as $i => $photo)
+                                                        <button type="button" data-bs-target="#apCarousel{{ $post->id }}" data-bs-slide-to="{{ $i }}" class="{{ $i==0?'active':'' }}"></button>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @elseif($post->photos && $post->photos->first())
+                                            <img src="{{ asset('storage/'.$post->photos->first()->photo) }}" alt="">
+                                        @else
+                                            <img src="https://via.placeholder.com/600x600/1a1a1a/444?text=No+Image" alt="">
+                                        @endif
+                                    </div>
+
+                                    {{-- Sidebar --}}
+                                    <div class="ap-modal-sidebar">
+                                        <div class="ap-modal-header">
+                                            <div class="ap-modal-header-left">
+                                                <button class="ap-modal-action like-modal-btn"
+                                                        data-post-id="{{ $post->id }}"
+                                                        data-liked="{{ $post->isLikedBy(auth()->id()) ? '1' : '0' }}">
+                                                    @if($post->isLikedBy(auth()->id()))
+                                                        <svg width="17" height="17" viewBox="0 0 17 17" fill="#c8533a"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z"/></svg>
+                                                    @else
+                                                        <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z" stroke="#888" stroke-width="1.6"/></svg>
+                                                    @endif
+                                                </button>
+                                                <button class="ap-modal-action">
+                                                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                                        <circle cx="12" cy="3" r="1.5" stroke="#888" stroke-width="1.4"/>
+                                                        <circle cx="3" cy="7.5" r="1.5" stroke="#888" stroke-width="1.4"/>
+                                                        <circle cx="12" cy="12" r="1.5" stroke="#888" stroke-width="1.4"/>
+                                                        <path d="M4.5 8.5l6 3M4.5 6.5l6-3" stroke="#888" stroke-width="1.4"/>
+                                                    </svg>
+                                                </button>
+                                                @auth
+                                                    @if(auth()->id() === $post->user_id)
+                                                        <div class="dropdown">
+                                                            <button class="ap-modal-action" type="button" data-bs-toggle="dropdown">
+                                                                <svg width="14" height="4" viewBox="0 0 14 4" fill="#888">
+                                                                    <circle cx="2" cy="2" r="1.3"/><circle cx="7" cy="2" r="1.3"/><circle cx="12" cy="2" r="1.3"/>
+                                                                </svg>
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="#">✏️ Edit</a></li>
+                                                                <form action="{{ route('user.postingan.destroy', $post) }}" method="POST">
+                                                                    @csrf @method('DELETE')
+                                                                    <li><button class="dropdown-item text-danger" onclick="return confirm('Hapus postingan?')">🗑️ Hapus</button></li>
+                                                                </form>
+                                                            </ul>
+                                                        </div>
+                                                    @endif
+                                                @endauth
+                                                <button class="ap-modal-action" data-bs-dismiss="modal">
+                                                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                                        <path d="M1 1l11 11M12 1L1 12" stroke="#888" stroke-width="1.7" stroke-linecap="round"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <button class="ap-modal-save">Simpan</button>
+                                        </div>
+
+                                        <div class="ap-modal-author">
+                                            <div class="ap-author-row">
+                                                <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}">
+                                                    <img src="{{ $post->user->avatar_display }}" alt="" class="ap-author-avatar">
+                                                </a>
+                                                <div>
+                                                    <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}" class="ap-author-name">
+                                                        {{ $post->user->username ?? $post->user->name }}
+                                                    </a>
+                                                    <span class="ap-author-time">{{ $post->created_at->diffForHumans() }}</span>
+                                                </div>
+                                            </div>
+                                            @if($post->caption)
+                                                <p class="ap-modal-caption">{{ $post->caption }}</p>
+                                            @endif
+                                            <div class="ap-modal-stats">
+                                                <span class="ap-modal-stat">
+                                                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                                        <path d="M6.5 11S1.5 8 1.5 4.5A2.5 2.5 0 016.5 2.7 2.5 2.5 0 0111.5 4.5C11.5 8 6.5 11 6.5 11z" stroke="#c8533a" stroke-width="1.4"/>
+                                                    </svg>
+                                                    {{ $post->likes->count() }} suka
+                                                </span>
+                                                <span class="ap-modal-stat">
+                                                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                                        <path d="M10.5 1.5h-8a.5.5 0 00-.5.5v6a.5.5 0 00.5.5H4l2.5 2.5 2.5-2.5h1.5a.5.5 0 00.5-.5V2a.5.5 0 00-.5-.5z" stroke="#888" stroke-width="1.3"/>
+                                                    </svg>
+                                                    {{ $post->comments->count() }} komentar
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="ap-modal-comments" id="comments-container-{{ $post->id }}">
+                                            @forelse($post->comments->where('reply_id', null) as $comment)
+                                                <div class="comment-wrapper" id="cw-{{ $comment->id }}">
+                                                    <div class="ap-comment" id="c-{{ $comment->id }}">
+                                                        <a href="{{ route('user.profile.username', ['name' => $comment->user->username ?? $comment->user->name]) }}">
+                                                            <img src="{{ $comment->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" class="ap-comment-avatar" alt="">
+                                                        </a>
+                                                        <div class="ap-comment-body">
+                                                            <a href="{{ route('user.profile.username', ['name' => $comment->user->username ?? $comment->user->name]) }}" class="ap-comment-author">{{ $comment->user->username ?? $comment->user->name }}</a>
+                                                            <span class="ap-comment-text">{{ $comment->comment }}</span>
+                                                            <div class="ap-comment-meta">
+                                                                <span class="ap-comment-time">{{ $comment->created_at->diffForHumans() }}</span>
+                                                                @auth
+                                                                    <button class="ap-comment-action-btn reply-btn" data-id="{{ $comment->id }}" data-username="{{ $comment->user->username ?? $comment->user->name }}">Balas</button>
+                                                                    @if(auth()->id() === $comment->user_id || auth()->user()->role === 'admin')
+                                                                        <button class="ap-comment-action-btn danger delete-comment-btn" data-id="{{ $comment->id }}" data-url="{{ route('user.comments.destroy', $comment->id) }}">Hapus</button>
+                                                                    @endif
+                                                                @endauth
                                                             </div>
-                                                        @endforeach
+                                                        </div>
                                                     </div>
-                                                    @if($post->photos->count() > 1)
-                                                        <button class="carousel-control-prev" type="button" data-bs-target="#modalCarousel{{ $post->id }}" data-bs-slide="prev">
-                                                            <span class="carousel-control-prev-icon"></span>
-                                                        </button>
-                                                        <button class="carousel-control-next" type="button" data-bs-target="#modalCarousel{{ $post->id }}" data-bs-slide="next">
-                                                            <span class="carousel-control-next-icon"></span>
-                                                        </button>
-                                                        <div class="carousel-indicators">
-                                                            @foreach($post->photos as $index => $photo)
-                                                                <button type="button" 
-                                                                        data-bs-target="#modalCarousel{{ $post->id }}" 
-                                                                        data-bs-slide-to="{{ $index }}" 
-                                                                        class="{{ $index == 0 ? 'active' : '' }}">
-                                                                </button>
+                                                    @if($comment->replies->count() > 0)
+                                                        <div class="ap-replies-nest">
+                                                            @foreach($comment->replies as $reply)
+                                                                <div class="ap-comment" id="c-{{ $reply->id }}">
+                                                                    <a href="{{ route('user.profile.username', ['name' => $reply->user->username ?? $reply->user->name]) }}">
+                                                                        <img src="{{ $reply->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" class="ap-comment-avatar" alt="">
+                                                                    </a>
+                                                                    <div class="ap-comment-body">
+                                                                        <a href="{{ route('user.profile.username', ['name' => $reply->user->username ?? $reply->user->name]) }}" class="ap-comment-author">{{ $reply->user->username ?? $reply->user->name }}</a>
+                                                                        <span class="ap-comment-text">{{ $reply->comment }}</span>
+                                                                        <div class="ap-comment-meta">
+                                                                            <span class="ap-comment-time">{{ $reply->created_at->diffForHumans() }}</span>
+                                                                            @auth
+                                                                                @if(auth()->id() === $reply->user_id || auth()->user()->role === 'admin')
+                                                                                    <button class="ap-comment-action-btn danger delete-comment-btn" data-id="{{ $reply->id }}" data-url="{{ route('user.comments.destroy', $reply->id) }}">Hapus</button>
+                                                                                @endif
+                                                                            @endauth
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             @endforeach
                                                         </div>
                                                     @endif
                                                 </div>
-                                            @elseif($post->photos && $post->photos->first())
-                                                <img src="{{ asset('storage/' . $post->photos->first()->photo) }}" alt="Post">
-                                            @else
-                                                <img src="https://via.placeholder.com/600x600?text=No+Image" alt="No Image">
-                                            @endif
+                                            @empty
+                                                <p class="text-center" style="color:var(--muted);font-size:13.5px;padding:28px 0;" id="nc-{{ $post->id }}">Belum ada komentar.</p>
+                                            @endforelse
                                         </div>
-                                        
-                                        <div class="modal-details-section">
-                                            <div class="modal-header-custom">
-                                                <div class="modal-header-actions">
-                                                    <button type="button" class="modal-action-btn" data-post-id="{{ $post->id }}" data-liked="{{ $post->isLikedBy(auth()->id()) ? '1' : '0' }}">
-                                                        {{ $post->isLikedBy(auth()->id()) ? '❤️' : '🤍' }}        
-                                                    </button>      
-                                                    <button class="modal-action-btn">📤</button>
-                                                    <button class="modal-action-btn" type="button" data-bs-dismiss="modal">✖️</button>
-                                                    @auth
-                                                        @if(auth()->id() === $post->user_id)
-                                                            <form action="{{ route('user.postingan.destroy', $post) }}" method="POST" style="display: inline;">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button class="modal-action-btn" type="submit" onclick="return confirm('Yakin ingin hapus postingan ini?')">🗑️</button>
-                                                            </form>
-                                                        @endif
-                                                    @endauth
-                                                </div>
-                                                <button class="modal-save-btn">Save</button>
-                                            </div>
-                                            
-                                            <div class="modal-user-section">
-                                                <div class="modal-user-info">
-                                                    <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}">
-                                                        <img 
-                                                            src="{{ $post->user->avatar_display }}" 
-                                                            alt="Avatar" 
-                                                            class="modal-user-avatar"
-                                                        >
-                                                    </a>
-                                                    <div class="modal-user-details">
-                                                        <h6>
-                                                            <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}" class="text-dark text-decoration-none">
-                                                                {{ $post->user->username ?? $post->user->name }}
-                                                            </a>
-                                                        </h6>
-                                                        <span>{{ $post->created_at->diffForHumans() }}</span>
-                                                    </div>
-                                                </div>
-                                                
-                                                @if($post->caption)
-                                                    <div class="modal-caption">{{ $post->caption }}</div>
-                                                @endif
-                                                
-                                                <div class="modal-stats">
-                                                    <span>❤️ {{ $post->likes->count() ?? 0 }} likes</span>
-                                                    <span>💬 {{ $post->comments->count() ?? 0 }} comments</span>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="modal-comments-section" id="comments-container-{{ $post->id }}">
-                                                @forelse($post->comments->where('reply_id', null) as $comment)
-                                                    <div class="comment-wrapper" id="comment-wrapper-{{ $comment->id }}">
-                                                        <div class="comment-item" id="comment-{{ $comment->id }}">
-                                                            <a href="{{ route('user.profile.username', ['name' => $comment->user->username ?? $comment->user->name]) }}" class="comment-avatar-link">
-                                                                <img src="{{ $comment->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" 
-                                                                     alt="{{ $comment->user->name ?? 'User' }}" 
-                                                                     class="comment-avatar">
-                                                            </a>
-                                                            <div class="comment-content">
-                                                                <div>
-                                                                    <a href="{{ route('user.profile.username', ['name' => $comment->user->username ?? $comment->user->name]) }}" class="comment-username-link">
-                                                                        <span class="comment-username">{{ $comment->user->username ?? $comment->user->name }}</span>
-                                                                    </a>
-                                                                    <span class="comment-text">{{ $comment->comment }}</span>
-                                                                </div>
-                                                                <div class="comment-actions">
-                                                                    <span>{{ $comment->created_at->diffForHumans() }}</span>
-                                                                    
-                                                                    @auth
-                                                                        <button type="button" 
-                                                                                class="reply-btn" 
-                                                                                data-id="{{ $comment->id }}"
-                                                                                data-username="{{ $comment->user->username ?? $comment->user->name }}">
-                                                                            Reply
-                                                                        </button>
-                                                                        
-                                                                        @if(auth()->id() === $comment->user_id || auth()->user()->role === 'admin')
-                                                                            <button type="button" 
-                                                                                    class="delete-comment-btn" 
-                                                                                    data-id="{{ $comment->id }}"
-                                                                                    data-url="{{ route('user.comments.destroy', $comment->id) }}">
-                                                                                Hapus
-                                                                            </button>
-                                                                        @endif
-                                                                        
-                                                                        @if(auth()->id() !== $comment->user_id)
-                                                                            <button data-bs-toggle="modal" 
-                                                                                    data-bs-target="#reportCommentModal{{ $comment->id }}">
-                                                                                Report
-                                                                            </button>
-                                                                        @endif
-                                                                    @else
-                                                                        <button data-bs-toggle="modal" 
-                                                                                data-bs-target="#reportCommentModal{{ $comment->id }}">
-                                                                            Report
-                                                                        </button>
-                                                                    @endauth
-                                                                </div>
-                                                            </div>
-                                                        </div>
 
-                                                        @if($comment->replies->count() > 0)
-                                                            <div class="replies-container">
-                                                                @foreach($comment->replies as $reply)
-                                                                    <div class="comment-item reply-item" id="comment-{{ $reply->id }}">
-                                                                        <a href="{{ route('user.profile.username', ['name' => $reply->user->username ?? $reply->user->name]) }}" class="comment-avatar-link">
-                                                                            <img src="{{ $reply->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" 
-                                                                                 alt="{{ $reply->user->name ?? 'User' }}" 
-                                                                                 class="comment-avatar">
-                                                                        </a>
-                                                                        <div class="comment-content">
-                                                                            <div>
-                                                                                <a href="{{ route('user.profile.username', ['name' => $reply->user->username ?? $reply->user->name]) }}" class="comment-username-link">
-                                                                                    <span class="comment-username">{{ $reply->user->username ?? $reply->user->name }}</span>
-                                                                                </a>
-                                                                                <span class="comment-text">{{ $reply->comment }}</span>
-                                                                            </div>
-                                                                            <div class="comment-actions">
-                                                                                <span>{{ $reply->created_at->diffForHumans() }}</span>
-                                                                                
-                                                                                @auth
-                                                                                    <button type="button" 
-                                                                                            class="reply-btn" 
-                                                                                            data-id="{{ $reply->id }}"
-                                                                                            data-username="{{ $reply->user->username ?? $reply->user->name }}">
-                                                                                        Reply
-                                                                                    </button>
-                                                                                    
-                                                                                    @if(auth()->id() === $reply->user_id || auth()->user()->role === 'admin')
-                                                                                        <button type="button" 
-                                                                                                class="delete-comment-btn" 
-                                                                                                data-id="{{ $reply->id }}"
-                                                                                                data-url="{{ route('user.comments.destroy', $reply->id) }}">
-                                                                                            Hapus
-                                                                                        </button>
-                                                                                    @endif
-                                                                                    
-                                                                                    @if(auth()->id() !== $reply->user_id)
-                                                                                        <button data-bs-toggle="modal" 
-                                                                                                data-bs-target="#reportCommentModal{{ $reply->id }}">
-                                                                                            Report
-                                                                                        </button>
-                                                                                    @endif
-                                                                                @else
-                                                                                    <button data-bs-toggle="modal" 
-                                                                                            data-bs-target="#reportCommentModal{{ $reply->id }}">
-                                                                                        Report
-                                                                                    </button>
-                                                                                @endauth
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                @endforeach
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                @empty
-                                                    <p class="text-center text-muted" id="no-comments-{{ $post->id }}">Belum ada komentar</p>
-                                                @endforelse
-                                            </div>
-                                            
-                                            @auth
+                                        @auth
+                                        <div class="ap-comment-form-wrap">
                                             <form class="comment-form-ajax" data-post-id="{{ $post->id }}">
                                                 @csrf
-                                                <div class="modal-comment-input-section">
-                                                    <div class="modal-comment-input">
-                                                        <input type="hidden" name="post_id" value="{{ $post->id }}">
-                                                        <input type="hidden" name="reply_id" class="reply-id-input" value="">
-                                                        <input type="text" name="comment" class="comment-input" placeholder="Tambah komentar...">
-                                                        <button type="submit">Kirim</button>
-                                                    </div>
-                                                    <div class="reply-info">
-                                                        <small>
-                                                            Membalas: <span class="reply-to-username"></span>
-                                                            <button type="button" class="cancel-reply">✕ Batal</button>
-                                                        </small>
-                                                    </div>
+                                                <input type="hidden" name="post_id" value="{{ $post->id }}">
+                                                <input type="hidden" name="reply_id" class="reply-id-input" value="">
+                                                <div class="ap-reply-indicator" id="ri-{{ $post->id }}">
+                                                    <span>Membalas: <strong class="reply-to-username"></strong></span>
+                                                    <button type="button" class="ap-cancel-reply">Batal</button>
+                                                </div>
+                                                <div class="ap-comment-input-row">
+                                                    <input type="text" name="comment" class="comment-input" placeholder="Tulis komentar…" autocomplete="off" required>
+                                                    <button type="submit" class="ap-comment-submit" disabled>Kirim</button>
                                                 </div>
                                             </form>
-                                            @else
-                                            <div class="modal-comment-input-section">
-                                                <p class="text-center text-muted">Silakan login untuk berkomentar</p>
-                                            </div>
-                                            @endauth
                                         </div>
+                                        @else
+                                        <div style="padding:12px 18px;text-align:center;border-top:1px solid var(--warm-gray);">
+                                            <a href="{{ route('login') }}" style="font-size:13px;color:var(--accent);font-weight:600;">Masuk untuk berkomentar</a>
+                                        </div>
+                                        @endauth
                                     </div>
                                 </div>
                             </div>
@@ -1250,298 +1072,177 @@
                 @endforeach
             </div>
         @else
-            <div class="empty-posts">
-                <i>📷</i>
+            <div class="pr-empty">
+                <div class="pr-empty-icon">
+                    <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                        <rect x="2" y="4" width="22" height="18" rx="3" stroke="#b8b3ac" stroke-width="1.6"/>
+                        <circle cx="13" cy="13" r="4" stroke="#b8b3ac" stroke-width="1.6"/>
+                        <circle cx="19.5" cy="8" r="1.2" fill="#b8b3ac"/>
+                    </svg>
+                </div>
                 <h4>Belum Ada Postingan</h4>
-                <p>{{ auth()->check() && auth()->id() === $user->id ? 'Mulai berbagi momen Anda dengan membuat postingan pertama!' : 'User ini belum membuat postingan.' }}</p>
+                <p>{{ auth()->check() && auth()->id() === $user->id ? 'Mulai bagikan momen pertamamu!' : 'User ini belum membuat postingan.' }}</p>
+                @auth @if(auth()->id() === $user->id)
+                    <a href="{{ route('user.postingan.create') }}" class="pr-btn pr-btn-primary" style="margin:0 auto;">
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                            <path d="M6.5 2v9M2 6.5h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Unggah Foto
+                    </a>
+                @endif @endauth
             </div>
         @endif
     </div>
 </div>
 
 <script>
- // ajax like photo
-document.querySelectorAll('.modal-action-btn').forEach(button => {
-    button.addEventListener('click', function () {
-        const postId = this.dataset.postId;
+document.addEventListener('DOMContentLoaded', function () {
 
-            fetch(`{{ route('user.post.like', ':id') }}`.replace(':id', postId), {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Ganti icon
-            this.innerHTML = data.liked ? '❤️' : '🤍';
-            this.dataset.liked = data.liked ? '1' : '0';
-
-            // Update jumlah like
-            const countEl = document.querySelector(
-                `.like-count[data-post-id="${postId}"]`
-            );
-
-            if (countEl) {
-                countEl.textContent = data.total;
-            }
-        })
-        .catch(err => console.error(err));
-    });
-});
-
-// follow button
-document.querySelectorAll('.btn-follow').forEach(button => {
-    button.addEventListener('click', function () {
-        const userId = this.dataset.userId;
-
-        fetch(`{{ route('user.profile.follow', ':id') }}`.replace(':id', userId), {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-            },
-        })
-        .then(res => res.json())
-        .then(data => {
-            this.querySelector('span').textContent =
-                data.following ? 'Berhenti Mengikuti' : 'Ikuti';
-        })
-        .catch(err => console.error(err));
-    });
-});
-
-
-function toggleFollow() {
-    const btn = document.getElementById('followBtn');
-    
-    if (btn.classList.contains('btn-follow')) {
-        btn.classList.remove('btn-follow');
-        btn.classList.add('btn-following');
-        btn.innerHTML = '<span>✓</span> Following';
-        
-        const followersStat = document.querySelectorAll('.stat-number')[1];
-        const currentCount = parseInt(followersStat.textContent);
-        followersStat.textContent = currentCount + 1;
-    } else {
-        btn.classList.remove('btn-following');
-        btn.classList.add('btn-follow');
-        btn.innerHTML = '<span>➕</span> Follow';
-        
-        const followersStat = document.querySelectorAll('.stat-number')[1];
-        const currentCount = parseInt(followersStat.textContent);
-        followersStat.textContent = currentCount - 1;
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    // ==================== AJAX COMMENT FUNCTIONALITY ====================
-    document.querySelectorAll('.comment-form-ajax').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const commentInput = this.querySelector('.comment-input');
-            const postId = this.dataset.postId;
-            
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Mengirim...';
-
-            fetch('{{ route("user.comments.store") }}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const commentsContainer = document.getElementById('comments-container-' + postId);
-                    const noComments = document.getElementById('no-comments-' + postId);
-                    
-                    if (noComments) {
-                        noComments.remove();
-                    }
-
-                    if (data.comment.reply_id) {
-                        const parentWrapper = document.getElementById('comment-wrapper-' + data.comment.reply_id);
-                        if (parentWrapper) {
-                            let repliesContainer = parentWrapper.querySelector('.replies-container');
-                            if (!repliesContainer) {
-                                repliesContainer = document.createElement('div');
-                                repliesContainer.className = 'replies-container';
-                                parentWrapper.appendChild(repliesContainer);
-                            }
-                            repliesContainer.insertAdjacentHTML('beforeend', data.html);
-                        }
-                    } else {
-                        commentsContainer.insertAdjacentHTML('afterbegin', data.html);
-                    }
-
-                    commentInput.value = '';
-                    const replyIdInput = form.querySelector('.reply-id-input');
-                    const replyInfo = form.querySelector('.reply-info');
-                    replyIdInput.value = '';
-                    replyInfo.style.display = 'none';
-                    
-                    showAlert('success', 'Komentar berhasil ditambahkan!');
-                } else {
-                    showAlert('error', data.message || 'Terjadi kesalahan');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert('error', 'Terjadi kesalahan saat mengirim komentar');
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Kirim';
-            });
-        });
-    });
-
-    // Handle reply button
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('reply-btn')) {
-            const commentId = e.target.getAttribute('data-id');
-            const username = e.target.getAttribute('data-username');
-            
-            const modal = e.target.closest('.modal');
-            if (modal) {
-                const form = modal.querySelector('.comment-form-ajax');
-                const replyIdInput = form.querySelector('.reply-id-input');
-                const replyInfo = form.querySelector('.reply-info');
-                const replyToUsername = form.querySelector('.reply-to-username');
-                const commentInput = form.querySelector('.comment-input');
-                
-                replyIdInput.value = commentId;
-                replyToUsername.textContent = username;
-                replyInfo.style.display = 'block';
-                commentInput.focus();
-            }
-        }
-    });
-
-    // Handle cancel reply
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('cancel-reply')) {
-            const form = e.target.closest('.comment-form-ajax');
-            const replyIdInput = form.querySelector('.reply-id-input');
-            const replyInfo = form.querySelector('.reply-info');
-            
-            replyIdInput.value = '';
-            replyInfo.style.display = 'none';
-        }
-    });
-
-    // Handle delete comment
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('delete-comment-btn')) {
-            if (confirm('Apakah Anda yakin ingin menghapus komentar ini?')) {
-                const commentId = e.target.getAttribute('data-id');
-                const deleteUrl = e.target.getAttribute('data-url');
-                
-                fetch(deleteUrl, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const commentElement = document.getElementById('comment-' + commentId);
-                        if (commentElement) {
-                            const commentWrapper = document.getElementById('comment-wrapper-' + commentId);
-                            if (commentWrapper) {
-                                commentWrapper.remove();
-                            } else {
-                                commentElement.remove();
-                            }
-                            
-                            const modal = e.target.closest('.modal');
-                            const commentsContainer = modal.querySelector('[id^="comments-container-"]');
-                            const remainingComments = commentsContainer.querySelectorAll('.comment-wrapper, .comment-item:not(.reply-item)');
-                            
-                            if (remainingComments.length === 0) {
-                                const postId = commentsContainer.id.replace('comments-container-', '');
-                                commentsContainer.innerHTML = '<p class="text-center text-muted" id="no-comments-' + postId + '">Belum ada komentar</p>';
-                            }
-                        }
-                        showAlert('success', 'Komentar berhasil dihapus!');
-                    } else {
-                        showAlert('error', data.message || 'Gagal menghapus komentar');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('error', 'Terjadi kesalahan saat menghapus komentar');
-                });
-            }
-        }
-    });
-
-    function showAlert(type, message) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
-        alertDiv.style.position = 'fixed';
-        alertDiv.style.top = '80px';
-        alertDiv.style.right = '20px';
-        alertDiv.style.zIndex = '99999';
-        alertDiv.style.minWidth = '300px';
-        alertDiv.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.body.appendChild(alertDiv);
-        
-        setTimeout(() => {
-            alertDiv.remove();
-        }, 3000);
-    }
-
-    // Comment input functionality
-    document.querySelectorAll('.modal-comment-input input').forEach(input => {
-        input.addEventListener('input', function() {
-            const button = this.nextElementSibling;
-            if (this.value.trim().length > 0) {
-                button.disabled = false;
-            } else {
-                button.disabled = true;
-            }
-        });
-    });
-
-    // View toggle functionality
-    const toggleBtns = document.querySelectorAll('.toggle-btn');
-    toggleBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            toggleBtns.forEach(b => b.classList.remove('active'));
+    // ── View toggle ──────────────────────────────────────────────────
+    document.querySelectorAll('.pr-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.pr-toggle-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
         });
     });
 
-    // Fix carousel functionality
-    const carousels = document.querySelectorAll('.carousel');
-    carousels.forEach(carousel => {
-        new bootstrap.Carousel(carousel, {
-            interval: false,
-            wrap: true,
-            touch: true
+    // ── Follow AJAX ──────────────────────────────────────────────────
+    document.querySelectorAll('.btn-follow-ajax').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const userId = this.dataset.userId;
+            fetch(`{{ route('user.profile.follow', ':id') }}`.replace(':id', userId), {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                this.textContent = data.following ? 'Berhenti Mengikuti' : 'Ikuti';
+                this.classList.toggle('pr-btn-follow', !data.following);
+                this.classList.toggle('pr-btn-following', data.following);
+            })
+            .catch(console.error);
         });
     });
 
-    // Prevent modal close when clicking carousel controls
-    document.querySelectorAll('.carousel-control-prev, .carousel-control-next').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.stopPropagation();
+    // ── Like AJAX ────────────────────────────────────────────────────
+    document.querySelectorAll('.like-modal-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const postId = this.dataset.postId;
+            fetch(`{{ route('user.post.like', ':id') }}`.replace(':id', postId), {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                this.innerHTML = data.liked
+                    ? `<svg width="17" height="17" viewBox="0 0 17 17" fill="#c8533a"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z"/></svg>`
+                    : `<svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z" stroke="#888" stroke-width="1.6"/></svg>`;
+            })
+            .catch(console.error);
         });
+    });
+
+    // ── Comment submit ───────────────────────────────────────────────
+    document.querySelectorAll('.comment-form-ajax').forEach(form => {
+        const input = form.querySelector('.comment-input');
+        const btn   = form.querySelector('.ap-comment-submit');
+        input.addEventListener('input', () => { btn.disabled = !input.value.trim(); });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!input.value.trim()) return;
+            btn.disabled = true; btn.textContent = '…';
+
+            fetch('{{ route("user.comments.store") }}', {
+                method: 'POST',
+                body: new FormData(this),
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const postId = this.dataset.postId;
+                    const container = document.getElementById('comments-container-' + postId);
+                    const noMsg = document.getElementById('nc-' + postId);
+                    if (noMsg) noMsg.remove();
+
+                    if (data.comment.reply_id) {
+                        let pw = document.getElementById('cw-' + data.comment.reply_id);
+                        if (pw) {
+                            let nest = pw.querySelector('.ap-replies-nest');
+                            if (!nest) { nest = document.createElement('div'); nest.className = 'ap-replies-nest'; pw.appendChild(nest); }
+                            nest.insertAdjacentHTML('beforeend', data.html);
+                        }
+                    } else {
+                        container.insertAdjacentHTML('afterbegin', data.html);
+                    }
+
+                    input.value = '';
+                    form.querySelector('.reply-id-input').value = '';
+                    const ri = document.getElementById('ri-' + postId);
+                    if (ri) ri.classList.remove('show');
+                    showToast('success', 'Komentar ditambahkan!');
+                } else {
+                    showToast('error', data.message || 'Terjadi kesalahan');
+                }
+            })
+            .catch(() => showToast('error', 'Gagal mengirim'))
+            .finally(() => { btn.disabled = false; btn.textContent = 'Kirim'; });
+        });
+    });
+
+    // ── Reply ────────────────────────────────────────────────────────
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('reply-btn')) {
+            const id = e.target.dataset.id, username = e.target.dataset.username;
+            const modal = e.target.closest('.ap-detail-modal');
+            if (!modal) return;
+            const form = modal.querySelector('.comment-form-ajax');
+            const postId = form.dataset.postId;
+            form.querySelector('.reply-id-input').value = id;
+            form.querySelector('.reply-to-username').textContent = username;
+            document.getElementById('ri-' + postId)?.classList.add('show');
+            form.querySelector('.comment-input').focus();
+        }
+        if (e.target.classList.contains('ap-cancel-reply')) {
+            const form = e.target.closest('.comment-form-ajax');
+            form.querySelector('.reply-id-input').value = '';
+            document.getElementById('ri-' + form.dataset.postId)?.classList.remove('show');
+        }
+    });
+
+    // ── Delete comment ───────────────────────────────────────────────
+    document.addEventListener('click', function (e) {
+        if (!e.target.classList.contains('delete-comment-btn')) return;
+        if (!confirm('Hapus komentar ini?')) return;
+        const id = e.target.dataset.id, url = e.target.dataset.url;
+        fetch(url, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const cw = document.getElementById('cw-' + id);
+                if (cw) cw.remove();
+                else document.getElementById('c-' + id)?.remove();
+                showToast('success', 'Komentar dihapus');
+            } else showToast('error', 'Gagal menghapus');
+        });
+    });
+
+    // ── Toast ────────────────────────────────────────────────────────
+    function showToast(type, msg) {
+        const t = document.createElement('div');
+        t.className = 'ap-toast ' + type;
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3200);
+    }
+
+    // ── Carousels ────────────────────────────────────────────────────
+    document.querySelectorAll('.carousel').forEach(el => {
+        new bootstrap.Carousel(el, { interval: false, wrap: true, touch: true });
     });
 });
 </script>

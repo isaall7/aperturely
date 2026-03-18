@@ -1,1516 +1,1076 @@
 @extends('layouts.index2')
 
 @section('content')
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-    /* Preserve all dashboard styling */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+        --black:       #0a0a0a;
+        --white:       #ffffff;
+        --cream:       #f9f7f4;
+        --warm-gray:   #e8e4df;
+        --mid-gray:    #b8b3ac;
+        --muted:       #888077;
+        --accent:      #c8533a;
+        --accent-h:    #a83f28;
+        --accent-soft: #f5ece9;
+        --shadow-sm:   0 1px 3px rgba(10,10,10,0.07);
+        --shadow-md:   0 4px 16px rgba(10,10,10,0.10);
+        --shadow-lg:   0 12px 40px rgba(10,10,10,0.14);
+        --r-sm:  8px;
+        --r-md:  14px;
+        --r-lg:  20px;
+        --r-xl:  28px;
+        font-family: 'DM Sans', sans-serif;
     }
 
-    /* Trending Page Specific */
-    .trending-container {
-        background: transparent;
-        min-height: calc(100vh - 60px);
-        padding: 30px 0;
+    /* ── Override layout ── */
+    .container-fluid { padding: 0 !important; max-width: 100% !important; }
+    .body-wrapper    { margin-top: 0 !important; }
+
+    /* ===================== PAGE ===================== */
+    .tr-page {
+        background: var(--cream);
+        min-height: calc(100vh - 64px);
+        padding: 36px 0 80px;
     }
 
-    .trending-header {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-        border-radius: 24px;
-        padding: 48px 40px;
-        margin-bottom: 40px;
-        color: white;
-        box-shadow: 0 8px 32px rgba(238, 90, 111, 0.3);
+    .tr-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 32px;
+    }
+
+    @media (max-width: 600px) { .tr-inner { padding: 0 16px; } }
+
+    /* ===================== HERO ===================== */
+    .tr-hero {
+        background: var(--black);
+        border-radius: var(--r-xl);
+        padding: 44px 48px;
+        margin-bottom: 28px;
         position: relative;
         overflow: hidden;
     }
 
-    .trending-header::before {
+    /* Subtle decorative circles */
+    .tr-hero::before,
+    .tr-hero::after {
         content: '';
         position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 400px;
-        height: 400px;
-        background: rgba(255, 255, 255, 0.1);
         border-radius: 50%;
+        background: rgba(200,83,58,.12);
     }
+    .tr-hero::before { width: 320px; height: 320px; top: -120px; right: -60px; }
+    .tr-hero::after  { width: 200px; height: 200px; bottom: -80px; left: -40px; background: rgba(255,255,255,.04); }
 
-    .trending-header::after {
-        content: '';
+    /* Diagonal line pattern */
+    .tr-hero-pattern {
         position: absolute;
-        bottom: -30%;
-        left: -5%;
-        width: 300px;
-        height: 300px;
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 50%;
+        inset: 0;
+        background: repeating-linear-gradient(
+            45deg,
+            rgba(255,255,255,.015) 0px,
+            rgba(255,255,255,.015) 1px,
+            transparent 1px,
+            transparent 14px
+        );
     }
 
-    .trending-header-content {
+    .tr-hero-content {
         position: relative;
         z-index: 1;
     }
 
-    .trending-header h1 {
-        font-size: 42px;
-        font-weight: 800;
-        margin-bottom: 12px;
-        display: flex;
+    .tr-hero-eyebrow {
+        display: inline-flex;
         align-items: center;
-        gap: 16px;
-    }
-
-    .trending-header h1 i {
-        font-size: 52px;
-        animation: flame 1.5s ease-in-out infinite;
-    }
-
-    @keyframes flame {
-        0%, 100% { transform: scale(1) rotate(-5deg); }
-        50% { transform: scale(1.1) rotate(5deg); }
-    }
-
-    .trending-header p {
-        font-size: 18px;
-        opacity: 0.95;
-        max-width: 600px;
-    }
-
-    /* Stats Card */
-    .trending-stats-card {
-        background: white;
-        border-radius: 20px;
-        padding: 24px;
-        margin-bottom: 32px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-        display: flex;
-        gap: 32px;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .stat-item {
-        text-align: center;
-        padding: 16px 32px;
-        border-right: 2px solid #f0f0f0;
-    }
-
-    .stat-item:last-child {
-        border-right: none;
-    }
-
-    .stat-number {
-        font-size: 36px;
-        font-weight: 800;
-        color: #ff6b6b;
-        margin-bottom: 8px;
-    }
-
-    .stat-label {
-        font-size: 14px;
-        color: #8e8e8e;
+        gap: 7px;
+        background: rgba(200,83,58,.18);
+        color: #e07a5f;
+        font-size: 12px;
         font-weight: 600;
-        text-transform: uppercase;
         letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 5px 14px;
+        border-radius: 20px;
+        margin-bottom: 18px;
+        border: 1px solid rgba(200,83,58,.25);
     }
 
-    /* Trending List Container */
-    .trending-list-container {
-        background: white;
-        border-radius: 24px;
-        padding: 32px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    .tr-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 36px;
+        font-weight: 400;
+        color: var(--white);
+        line-height: 1.2;
+        margin-bottom: 10px;
     }
 
-    /* Trending List Item */
-    .trending-list-item {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        padding: 20px;
-        margin-bottom: 16px;
-        background: #fafafa;
-        border-radius: 16px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
+    .tr-hero p {
+        font-size: 14.5px;
+        color: rgba(255,255,255,.55);
+        max-width: 480px;
     }
 
-    .trending-list-item::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 6px;
-        background: linear-gradient(135deg, #5d87ff, #4a7de8);
-        transform: scaleY(0);
-        transition: transform 0.3s ease;
+    @media (max-width: 600px) {
+        .tr-hero { padding: 32px 28px; }
+        .tr-hero h1 { font-size: 26px; }
     }
 
-    .trending-list-item:hover {
-        background: white;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        transform: translateX(8px);
-    }
-        /* Modal - From Dashboard */
-    .detail-modal .modal-dialog {
-        max-width: 1200px;
-        height: 92vh;
-        margin: 4vh auto;
+    /* ===================== STATS ===================== */
+    .tr-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 28px;
     }
 
-    .detail-modal .modal-content {
-        border-radius: 24px;
-        overflow: hidden;
-        border: none;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    @media (max-width: 500px) { .tr-stats { grid-template-columns: 1fr; gap: 8px; } }
+
+    .tr-stat-card {
+        background: var(--white);
+        border-radius: var(--r-lg);
+        padding: 20px 24px;
+        box-shadow: var(--shadow-sm);
+        text-align: center;
     }
 
-    .detail-modal .modal-body {
-        padding: 0;
-        flex: 1;
-        overflow: hidden;
-    }
-
-    .modal-container {
-        display: flex;
-        height: 100%;
-    }
-
-    .modal-image-section {
-        flex: 1.5;
-        background: #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .modal-image-section img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
-
-    /* Modal Carousel */
-    .modal-carousel {
-        width: 100%;
-        height: 100%;
-    }
-
-    .modal-carousel .carousel-inner {
-        height: 100%;
-    }
-
-    .modal-carousel .carousel-item {
-        height: 100%;
-        display: none !important;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-    }
-
-    .modal-carousel .carousel-item.active {
-        display: flex !important;
-        position: relative;
-    }
-
-    .modal-carousel .carousel-item img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
-
-    .modal-carousel .carousel-control-prev,
-    .modal-carousel .carousel-control-next {
-        width: 56px;
-        height: 56px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 50%;
-        top: 50%;
-        transform: translateY(-50%);
-        opacity: 1;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 10;
-    }
-
-    .modal-carousel .carousel-control-prev:hover,
-    .modal-carousel .carousel-control-next:hover {
-        background: white;
-        transform: translateY(-50%) scale(1.1);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    }
-
-    .modal-carousel .carousel-control-prev {
-        left: 24px;
-    }
-
-    .modal-carousel .carousel-control-next {
-        right: 24px;
-    }
-
-    .modal-carousel .carousel-control-prev-icon,
-    .modal-carousel .carousel-control-next-icon {
-        width: 28px;
-        height: 28px;
-        filter: invert(1);
-    }
-
-    .modal-carousel .carousel-indicators {
-        bottom: 24px;
-    }
-
-    .modal-carousel .carousel-indicators button {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.6);
-        border: none;
-        margin: 0 5px;
-        transition: all 0.3s ease;
-    }
-
-    .modal-carousel .carousel-indicators button.active {
-        background-color: #fff;
-        transform: scale(1.3);
-    }
-
-    /* Modal Details Section */
-    .modal-details-section {
-        width: 480px;
-        background: white;
-        display: flex;
-        flex-direction: column;
-        border-left: 1px solid #efefef;
-    }
-
-    .modal-header-custom {
-        padding: 24px;
-        border-bottom: 1px solid #efefef;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .modal-header-actions {
-        display: flex;
-        gap: 14px;
-        align-items: center;
-    }
-
-    .modal-action-btn {
-        background: #f8f8f8;
-        border: none;
-        cursor: pointer;
-        font-size: 26px;
-        padding: 10px;
-        border-radius: 50%;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        width: 44px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .modal-action-btn:hover {
-        background: #e8e8e8;
-        transform: scale(1.1) rotate(5deg);
-    }
-
-    .modal-save-btn {
-        background: linear-gradient(135deg, #e60023, #c4001d);
-        color: white;
-        border: none;
-        padding: 14px 32px;
-        border-radius: 28px;
-        font-weight: 700;
-        font-size: 15px;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 12px rgba(230, 0, 35, 0.3);
-    }
-
-    .modal-save-btn:hover {
-        background: linear-gradient(135deg, #ff0a37, #e60023);
-        transform: scale(1.05);
-        box-shadow: 0 6px 16px rgba(230, 0, 35, 0.4);
-    }
-        /* Comment Input */
-    .modal-comment-input-section {
-        padding: 24px;
-        border-top: 1px solid #efefef;
-    }
-
-    .modal-comment-input {
-        display: flex;
-        gap: 14px;
-        align-items: center;
-    }
-
-    .modal-comment-input input {
-        flex: 1;
-        border: 2px solid #efefef;
-        border-radius: 28px;
-        padding: 14px 24px;
-        outline: none;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        background: #fafafa;
-    }
-
-    .modal-comment-input input:focus {
-        border-color: #5d87ff;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(93, 135, 255, 0.1);
-    }
-
-    .modal-comment-input button {
-        background: #5d87ff;
-        color: white;
-        border: none;
-        padding: 14px 28px;
-        border-radius: 28px;
-        font-weight: 700;
-        cursor: pointer;
-        font-size: 15px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .modal-comment-input button:hover:not(:disabled) {
-        background: #4a7de8;
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(93, 135, 255, 0.3);
-    }
-
-    .modal-comment-input button:disabled {
-        background: #dbdbdb;
-        cursor: not-allowed;
-        opacity: 0.6;
-    }
-    .reply-info {
-        padding: 8px 12px;
-        background: #f0f7ff;
-        border-radius: 8px;
-        margin-top: 8px;
-        display: none;
-    }
-
-    .reply-info small {
-        color: #5d87ff;
+    .tr-stat-num {
+        font-size: 28px;
         font-weight: 600;
+        color: var(--black);
+        letter-spacing: -0.5px;
+        line-height: 1;
+        margin-bottom: 5px;
     }
 
-    .cancel-reply {
-        background: none;
-        border: none;
-        color: #8e8e8e;
-        cursor: pointer;
-        margin-left: 10px;
-        font-size: 14px;
-    }
-
-    .cancel-reply:hover {
-        color: #262626;
-    }
-    /* Dropdown Menu */
-    .dropdown-menu {
-        border: none;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-        border-radius: 16px;
-        padding: 10px;
-        min-width: 220px;
-        margin-top: 8px;
-    }
-
-    .dropdown-item {
-        padding: 12px 18px;
-        font-size: 15px;
-        color: #262626;
-        transition: all 0.2s ease;
-        border-radius: 10px;
+    .tr-stat-label {
+        font-size: 12px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
         font-weight: 500;
     }
 
-    .dropdown-item:hover {
-        background: #f0f7ff;
-        color: #5d87ff;
-        transform: translateX(4px);
+    /* ===================== LIST CONTAINER ===================== */
+    .tr-list-card {
+        background: var(--white);
+        border-radius: var(--r-xl);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
     }
 
-    .dropdown-item.text-danger:hover {
-        background: #fff0f0;
-        color: #e74c3c;
-    }
-
-    /* Report Modal */
-    .report-modal .modal-dialog {
-        max-width: 560px;
-    }
-
-    .report-modal .modal-content {
-        border-radius: 20px;
-        border: none;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-    }
-
-    .report-modal .modal-header {
-        border-bottom: 1px solid #f0f0f0;
-        padding: 28px;
-    }
-
-    .report-modal .modal-title {
-        font-weight: 700;
-        font-size: 20px;
-        color: #262626;
-    }
-
-    .report-modal .modal-body {
-        padding: 28px;
-    }
-
-    .report-modal .form-label {
-        font-weight: 700;
-        color: #262626;
-        margin-bottom: 10px;
-        font-size: 15px;
-    }
-
-    .report-modal .form-select,
-    .report-modal .form-control {
-        border: 2px solid #efefef;
-        border-radius: 14px;
-        padding: 14px 20px;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        background: #fafafa;
-    }
-
-    .report-modal .form-select:focus,
-    .report-modal .form-control:focus {
-        border-color: #e74c3c;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.1);
-    }
-
-    .report-modal .modal-footer {
-        border-top: 1px solid #f0f0f0;
-        padding: 24px 28px;
-        gap: 12px;
-    }
-
-    .report-modal .btn-submit-report {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-        color: white;
-        border: none;
-        padding: 14px 32px;
-        border-radius: 14px;
-        font-weight: 700;
-        font-size: 15px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        flex: 1;
-        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-    }
-
-    .report-modal .btn-submit-report:hover {
-        background: linear-gradient(135deg, #ff5a4a, #e74c3c);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4);
-    }
-
-    .report-modal .btn-cancel {
-        background: #f0f5f9;
-        color: #262626;
-        border: none;
-        padding: 14px 32px;
-        border-radius: 14px;
-        font-weight: 700;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        flex: 1;
-    }
-
-    .report-modal .btn-cancel:hover {
-        background: #e0e7ed;
-    }
-
-    /* Scrollbar */
-    .modal-comments-section::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    .modal-comments-section::-webkit-scrollbar-track {
-        background: #f8f8f8;
-        border-radius: 10px;
-    }
-
-    .modal-comments-section::-webkit-scrollbar-thumb {
-        background: #dbdbdb;
-        border-radius: 10px;
-    }
-
-    .modal-comments-section::-webkit-scrollbar-thumb:hover {
-        background: #b8b8b8;
-    }
-
-    .trending-list-item:hover::before {
-        transform: scaleY(1);
-    }
-
-    /* Top 3 special styling */
-    .trending-list-item.rank-1 {
-        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
-        border: 2px solid rgba(255, 215, 0, 0.3);
-    }
-
-    .trending-list-item.rank-1::before {
-        background: linear-gradient(135deg, #FFD700, #FFA500);
-    }
-
-    .trending-list-item.rank-2 {
-        background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), rgba(168, 168, 168, 0.05));
-        border: 2px solid rgba(192, 192, 192, 0.3);
-    }
-
-    .trending-list-item.rank-2::before {
-        background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
-    }
-
-    .trending-list-item.rank-3 {
-        background: linear-gradient(135deg, rgba(205, 127, 50, 0.1), rgba(139, 69, 19, 0.05));
-        border: 2px solid rgba(205, 127, 50, 0.3);
-    }
-
-    .trending-list-item.rank-3::before {
-        background: linear-gradient(135deg, #CD7F32, #8B4513);
-    }
-
-    /* Ranking Number */
-    .ranking-number {
-        min-width: 60px;
-        height: 60px;
+    .tr-list-header {
+        padding: 20px 28px 16px;
+        border-bottom: 1px solid var(--warm-gray);
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 28px;
-        font-weight: 800;
-        border-radius: 12px;
-        color: white;
+        justify-content: space-between;
+    }
+
+    .tr-list-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    .tr-list-count {
+        font-size: 13px;
+        color: var(--muted);
+        background: var(--cream);
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    /* ===================== TRENDING ITEM ===================== */
+    .tr-item {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px 28px;
+        border-bottom: 1px solid var(--warm-gray);
+        cursor: pointer;
+        transition: background .2s;
+        position: relative;
+    }
+
+    .tr-item:last-child { border-bottom: none; }
+
+    .tr-item:hover { background: var(--cream); }
+
+    /* rank accent bar */
+    .tr-item::before {
+        content: '';
+        position: absolute;
+        left: 0; top: 20%; bottom: 20%;
+        width: 3px;
+        border-radius: 0 3px 3px 0;
+        background: transparent;
+        transition: background .2s;
+    }
+
+    .tr-item:hover::before  { background: var(--accent); }
+    .tr-item.rank-1::before { background: #d4a017; }
+    .tr-item.rank-2::before { background: #9ca3af; }
+    .tr-item.rank-3::before { background: #b87c4c; }
+
+    /* ── Rank badge ── */
+    .tr-rank {
         flex-shrink: 0;
+        width: 44px; height: 44px;
+        border-radius: var(--r-sm);
+        display: grid; place-items: center;
+        font-size: 16px; font-weight: 700;
+        color: var(--white);
     }
 
-    .rank-1 .ranking-number {
-        background: linear-gradient(135deg, #FFD700, #FFA500);
-        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
-    }
+    .tr-item.rank-1 .tr-rank { background: #d4a017; }
+    .tr-item.rank-2 .tr-rank { background: #9ca3af; }
+    .tr-item.rank-3 .tr-rank { background: #b87c4c; }
+    .tr-rank.other  { background: var(--black); font-size: 14px; }
 
-    .rank-2 .ranking-number {
-        background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
-        box-shadow: 0 4px 12px rgba(192, 192, 192, 0.4);
-    }
-
-    .rank-3 .ranking-number {
-        background: linear-gradient(135deg, #CD7F32, #8B4513);
-        box-shadow: 0 4px 12px rgba(205, 127, 50, 0.4);
-    }
-
-    .ranking-number.other {
-        background: linear-gradient(135deg, #5d87ff, #4a7de8);
-        box-shadow: 0 4px 12px rgba(93, 135, 255, 0.3);
-    }
-
-    /* Post Thumbnail */
-    .trending-thumbnail {
-        width: 120px;
-        height: 120px;
-        border-radius: 12px;
+    /* ── Thumbnail ── */
+    .tr-thumb {
+        width: 88px; height: 88px;
+        border-radius: var(--r-md);
         object-fit: cover;
         flex-shrink: 0;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease;
+        background: var(--warm-gray);
+        transition: transform .3s;
     }
 
-    .trending-list-item:hover .trending-thumbnail {
-        transform: scale(1.05);
+    .tr-item:hover .tr-thumb { transform: scale(1.04); }
+
+    .tr-thumb-placeholder {
+        width: 88px; height: 88px;
+        border-radius: var(--r-md);
+        background: var(--warm-gray);
+        flex-shrink: 0;
+        display: grid; place-items: center;
     }
 
-    /* Post Details */
-    .trending-details {
-        flex: 1;
-        min-width: 0;
-    }
+    /* ── Details ── */
+    .tr-details { flex: 1; min-width: 0; }
 
-    .trending-user-info {
+    .tr-user-row {
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 10px;
+        gap: 9px;
+        margin-bottom: 7px;
     }
 
-    .trending-avatar {
-        width: 40px;
-        height: 40px;
+    .tr-avatar {
+        width: 26px; height: 26px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid white;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        border: 1.5px solid var(--warm-gray);
+        flex-shrink: 0;
     }
 
-    .trending-username {
-        font-weight: 700;
-        color: #262626;
-        font-size: 16px;
-        transition: color 0.3s ease;
-        text-decoration: none;
+    .tr-username {
+        font-size: 13px; font-weight: 600;
+        color: var(--black); text-decoration: none;
+        transition: color .2s;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    .trending-username:hover {
-        color: #5d87ff;
-    }
+    .tr-username:hover { color: var(--accent); }
 
-    .trending-caption {
-        font-size: 15px;
-        color: #262626;
+    .tr-caption {
+        font-size: 13.5px;
+        color: #555;
         line-height: 1.5;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
 
-    .trending-stats {
+    .tr-meta {
         display: flex;
-        gap: 24px;
+        gap: 14px;
         align-items: center;
     }
 
-    .stat-badge {
-        display: flex;
+    .tr-badge {
+        display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 6px 14px;
-        background: white;
-        border-radius: 20px;
-        font-size: 14px;
+        gap: 5px;
+        font-size: 12.5px;
         font-weight: 600;
-        color: #262626;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        color: var(--muted);
     }
 
-    .stat-badge i {
-        font-size: 16px;
-    }
+    .tr-badge.likes  { color: var(--accent); }
+    .tr-badge.comments { color: #3a6bc8; }
 
-    .stat-badge.likes {
-        color: #ff6b6b;
-    }
-
-    .stat-badge.comments {
-        color: #5d87ff;
-    }
-
-    /* Crown Icon for Top 3 */
-    .crown-icon {
+    /* ── Crown medals for top 3 ── */
+    .tr-medal {
         position: absolute;
-        top: -8px;
-        right: 20px;
-        font-size: 32px;
-        animation: float 2s ease-in-out infinite;
+        top: 14px; right: 20px;
+        font-size: 18px;
+        opacity: .7;
     }
 
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-8px); }
-    }
-
-    /* Modal Styles */
-    .detail-modal .modal-dialog {
-        max-width: 1200px;
-        height: 92vh;
-        margin: 4vh auto;
-    }
-
-    .detail-modal .modal-content {
-        border-radius: 24px;
-        overflow: hidden;
-        border: none;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-
-    .detail-modal .modal-body {
-        padding: 0;
-        flex: 1;
-        overflow: hidden;
-    }
-
-    .modal-container {
-        display: flex;
-        height: 100%;
-    }
-
-    .modal-image-section {
-        flex: 1.5;
-        background: #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .modal-image-section img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
-
-    .modal-carousel {
-        width: 100%;
-        height: 100%;
-    }
-
-    .modal-carousel .carousel-inner {
-        height: 100%;
-    }
-
-    .modal-carousel .carousel-item {
-        height: 100%;
-        display: none !important;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-    }
-
-    .modal-carousel .carousel-item.active {
-        display: flex !important;
-        position: relative;
-    }
-
-    .modal-carousel .carousel-item img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
-
-    .modal-carousel .carousel-control-prev,
-    .modal-carousel .carousel-control-next {
-        width: 56px;
-        height: 56px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 50%;
-        top: 50%;
-        transform: translateY(-50%);
-        opacity: 1;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 10;
-    }
-
-    .modal-carousel .carousel-control-prev:hover,
-    .modal-carousel .carousel-control-next:hover {
-        background: white;
-        transform: translateY(-50%) scale(1.1);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    }
-
-    .modal-carousel .carousel-control-prev {
-        left: 24px;
-    }
-
-    .modal-carousel .carousel-control-next {
-        right: 24px;
-    }
-
-    .modal-carousel .carousel-control-prev-icon,
-    .modal-carousel .carousel-control-next-icon {
-        width: 28px;
-        height: 28px;
-        filter: invert(1);
-    }
-
-    .modal-details-section {
-        width: 480px;
-        background: white;
-        display: flex;
-        flex-direction: column;
-        border-left: 1px solid #efefef;
-    }
-
-    .modal-header-custom {
-        padding: 24px;
-        border-bottom: 1px solid #efefef;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .modal-header-actions {
-        display: flex;
-        gap: 14px;
-        align-items: center;
-    }
-
-    .modal-action-btn {
-        background: #f8f8f8;
-        border: none;
-        cursor: pointer;
-        font-size: 26px;
-        padding: 10px;
-        border-radius: 50%;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        width: 44px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .modal-action-btn:hover {
-        background: #e8e8e8;
-        transform: scale(1.1) rotate(5deg);
-    }
-
-    .modal-user-section {
-        padding: 24px;
-        border-bottom: 1px solid #efefef;
-    }
-
-    .modal-user-info {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 16px;
-    }
-
-    .modal-user-avatar {
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid #f0f0f0;
-    }
-
-    .modal-user-details h6 {
-        margin: 0;
-        font-weight: 700;
-        color: #262626;
-        font-size: 17px;
-    }
-
-    .modal-caption {
-        font-size: 15px;
-        color: #262626;
-        line-height: 1.6;
-        margin-bottom: 14px;
-    }
-
-    .modal-stats {
-        display: flex;
-        gap: 24px;
-        font-size: 15px;
-        color: #8e8e8e;
-        font-weight: 600;
-    }
-
-    .modal-comments-section {
-        flex: 1;
-        overflow-y: auto;
-        padding: 24px;
-    }
-
-    .comment-item {
-        display: flex;
-        gap: 14px;
-        margin-bottom: 24px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid #f5f5f5;
-    }
-
-    .comment-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        flex-shrink: 0;
-        border: 2px solid #f0f0f0;
-    }
-
-    .comment-content {
-        flex: 1;
-    }
-
-    .comment-username {
-        font-weight: 700;
-        color: #262626;
-        font-size: 15px;
-        margin-right: 10px;
-    }
-
-    .comment-text {
-        color: #262626;
-        font-size: 15px;
-        line-height: 1.5;
-    }
-
-    .modal-comment-input-section {
-        padding: 24px;
-        border-top: 1px solid #efefef;
-    }
-
-    .modal-comment-input {
-        display: flex;
-        gap: 14px;
-        align-items: center;
-    }
-
-    .modal-comment-input input {
-        flex: 1;
-        border: 2px solid #efefef;
-        border-radius: 28px;
-        padding: 14px 24px;
-        outline: none;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        background: #fafafa;
-    }
-
-    .modal-comment-input input:focus {
-        border-color: #5d87ff;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(93, 135, 255, 0.1);
-    }
-
-    .modal-comment-input button {
-        background: #5d87ff;
-        color: white;
-        border: none;
-        padding: 14px 28px;
-        border-radius: 28px;
-        font-weight: 700;
-        cursor: pointer;
-        font-size: 15px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .modal-comment-input button:hover:not(:disabled) {
-        background: #4a7de8;
-        transform: scale(1.05);
-    }
-
-    /* Empty State */
-    .empty-trending {
+    /* ===================== EMPTY ===================== */
+    .tr-empty {
         text-align: center;
-        padding: 120px 40px;
-        background: white;
-        border-radius: 24px;
-        margin: 40px auto;
-        max-width: 600px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        padding: 80px 24px;
+        background: var(--white);
+        border-radius: var(--r-xl);
+        box-shadow: var(--shadow-sm);
     }
 
-    .empty-trending i {
-        font-size: 80px;
-        margin-bottom: 24px;
-        display: block;
-        opacity: 0.7;
+    .tr-empty-icon {
+        width: 64px; height: 64px;
+        background: var(--cream);
+        border-radius: 50%;
+        display: grid; place-items: center;
+        margin: 0 auto 20px;
     }
 
-    .empty-trending h4 {
-        color: #262626;
-        margin-bottom: 12px;
-        font-weight: 700;
-        font-size: 24px;
+    .tr-empty h4 {
+        font-family: 'Playfair Display', serif;
+        font-size: 20px; font-weight: 400;
+        color: var(--black); margin-bottom: 8px;
     }
 
-    .empty-trending p {
-        color: #8e8e8e;
-        font-size: 16px;
-    }
-    .comment-actions {
-    display: flex;
-    gap: 20px;
-    margin-top: 10px;
-    font-size: 13px;
-    color: #8e8e8e;
-    font-weight: 600;
+    .tr-empty p { font-size: 14px; color: var(--muted); }
+
+    /* ===================== PAGINATION ===================== */
+    .tr-pagination {
+        margin-top: 24px;
+        display: flex;
+        justify-content: center;
     }
 
-    .comment-actions button {
-        background: none;
+    .tr-pagination .pagination { gap: 6px; }
+
+    .tr-pagination .page-link {
         border: none;
-        color: #8e8e8e;
-        cursor: pointer;
-        padding: 0;
-        font-weight: 600;
-        font-size: 13px;
-        transition: color 0.3s ease;
-    }
-    .replies-container {
-        margin-left: 52px;
-        margin-top: 12px;
-        padding-left: 12px;
-        border-left: 2px solid #efefef;
-    }
-    .comment-avatar-link {
-        display: block;
-        line-height: 0;
-        transition: opacity 0.2s ease;
+        border-radius: var(--r-sm) !important;
+        padding: 8px 16px;
+        color: var(--black);
+        font-weight: 500;
+        font-size: 13.5px;
+        transition: all .2s;
+        background: var(--white);
+        box-shadow: var(--shadow-sm);
     }
 
-    .comment-avatar-link:hover {
-        opacity: 0.7;
+    .tr-pagination .page-link:hover {
+        background: var(--black);
+        color: var(--white);
+        transform: translateY(-1px);
     }
 
-    .comment-username-link {
-        text-decoration: none;
-        color: inherit;
+    .tr-pagination .page-item.active .page-link {
+        background: var(--black);
+        color: var(--white);
     }
 
-    .comment-username-link:hover .comment-username {
-        text-decoration: underline;
-        color: #000;
+    /* ===================== DETAIL MODAL ===================== */
+    .ap-detail-modal .modal-dialog {
+        max-width: 1060px;
+        margin: 3vh auto;
+        height: 94vh;
     }
 
-    .comment-actions button:hover {
-        color: #262626;
-    }
-    .modal-user-avatar:hover {
-        border-color: #5d87ff;
-        transform: scale(1.05);
-    }
-
-    .modal-user-details h6 a {
-        color: #262626;
-        text-decoration: none;
+    .ap-detail-modal .modal-content {
+        border: none;
+        border-radius: var(--r-xl);
+        overflow: hidden;
+        height: 100%;
+        display: flex; flex-direction: column;
+        box-shadow: 0 30px 80px rgba(10,10,10,.3);
     }
 
-    .modal-user-details h6 a:hover {
-        color: #5d87ff;
+    .ap-detail-modal .modal-body {
+        padding: 0; flex: 1;
+        overflow: hidden; display: flex;
     }
 
-    .modal-stats span:hover {
-        color: #262626;
-    }
-    /* Responsive */
-    @media (max-width: 992px) {
-        .trending-header h1 {
-            font-size: 32px;
-        }
-
-        .stat-item {
-            padding: 12px 20px;
-        }
-
-        .stat-number {
-            font-size: 28px;
-        }
-
-        .trending-list-item {
-            gap: 16px;
-        }
-
-        .trending-thumbnail {
-            width: 100px;
-            height: 100px;
-        }
+    .ap-modal-media {
+        flex: 1; background: var(--black);
+        display: flex; align-items: center; justify-content: center;
+        overflow: hidden; position: relative;
     }
 
-    @media (max-width: 768px) {
-        .trending-list-container {
-            padding: 20px;
-        }
+    .ap-modal-media img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        .trending-list-item {
-            flex-wrap: wrap;
-            gap: 12px;
-        }
+    .ap-modal-media .carousel { width: 100%; height: 100%; }
+    .ap-modal-media .carousel-inner { height: 100%; }
+    .ap-modal-media .carousel-item {
+        height: 100%; display: flex !important;
+        align-items: center; justify-content: center;
+        position: absolute; top: 0; left: 0; width: 100%;
+        opacity: 0; transition: opacity .35s ease;
+    }
+    .ap-modal-media .carousel-item.active { position: relative; opacity: 1; }
 
-        .ranking-number {
-            min-width: 50px;
-            height: 50px;
-            font-size: 24px;
-        }
+    .ap-modal-media .carousel-control-prev,
+    .ap-modal-media .carousel-control-next {
+        width: 44px; height: 44px;
+        background: rgba(255,255,255,.9);
+        backdrop-filter: blur(8px);
+        border-radius: 50%; top: 50%; transform: translateY(-50%);
+        opacity: 1; z-index: 10;
+    }
+    .ap-modal-media .carousel-control-prev { left: 16px; }
+    .ap-modal-media .carousel-control-next { right: 16px; }
+    .ap-modal-media .carousel-control-prev:hover,
+    .ap-modal-media .carousel-control-next:hover {
+        background: var(--white); transform: translateY(-50%) scale(1.1);
+    }
+    .ap-modal-media .carousel-control-prev-icon,
+    .ap-modal-media .carousel-control-next-icon { width: 20px; height: 20px; filter: invert(1); }
+    .ap-modal-media .carousel-indicators { bottom: 16px; gap: 6px; margin: 0; }
+    .ap-modal-media .carousel-indicators button {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: rgba(255,255,255,.5); border: none; padding: 0; margin: 0;
+    }
+    .ap-modal-media .carousel-indicators button.active { background: var(--white); transform: scale(1.4); }
 
-        .trending-thumbnail {
-            width: 80px;
-            height: 80px;
-        }
-
-        .trending-stats {
-            width: 100%;
-            justify-content: flex-start;
-        }
+    .ap-modal-sidebar {
+        width: 390px; flex-shrink: 0;
+        background: var(--white);
+        display: flex; flex-direction: column;
+        border-left: 1px solid var(--warm-gray);
     }
 
-    @media (max-width: 600px) {
-        .trending-stats-card {
-            flex-direction: column;
-            gap: 16px;
-        }
+    .ap-modal-header {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--warm-gray);
+        display: flex; align-items: center;
+        justify-content: space-between; gap: 10px;
+    }
 
-        .stat-item {
-            border-right: none;
-            border-bottom: 2px solid #f0f0f0;
-            padding: 16px;
-            width: 100%;
-        }
+    .ap-modal-header-left { display: flex; align-items: center; gap: 6px; }
 
-        .stat-item:last-child {
-            border-bottom: none;
-        }
+    .ap-modal-action {
+        width: 36px; height: 36px; border-radius: 50%;
+        background: var(--cream); border: none; cursor: pointer;
+        display: grid; place-items: center;
+        transition: background .2s, transform .2s;
+    }
+    .ap-modal-action:hover { background: var(--warm-gray); transform: scale(1.08); }
+
+    .ap-modal-save {
+        height: 34px; padding: 0 18px;
+        background: var(--accent); color: var(--white);
+        border: none; border-radius: 34px;
+        font-size: 13.5px; font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer; transition: background .2s;
+    }
+    .ap-modal-save:hover { background: var(--accent-h); }
+
+    .ap-modal-author { padding: 16px 18px; border-bottom: 1px solid var(--warm-gray); }
+    .ap-author-row { display: flex; align-items: center; gap: 11px; margin-bottom: 10px; }
+
+    .ap-author-avatar {
+        width: 42px; height: 42px; border-radius: 50%;
+        object-fit: cover; border: 2px solid var(--warm-gray); flex-shrink: 0;
+    }
+
+    .ap-author-name { font-size: 14.5px; font-weight: 600; color: var(--black); text-decoration: none; }
+    .ap-author-name:hover { color: var(--accent); }
+    .ap-author-time { font-size: 12px; color: var(--muted); display: block; margin-top: 1px; }
+
+    .ap-modal-caption { font-size: 14px; color: #444; line-height: 1.6; margin-bottom: 10px; }
+    .ap-modal-stats { display: flex; gap: 16px; }
+    .ap-modal-stat { display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: var(--muted); }
+
+    .ap-modal-comments { flex: 1; overflow-y: auto; padding: 14px 18px; }
+    .ap-modal-comments::-webkit-scrollbar { width: 4px; }
+    .ap-modal-comments::-webkit-scrollbar-thumb { background: var(--warm-gray); border-radius: 10px; }
+
+    .ap-comment { display: flex; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--cream); }
+    .ap-comment:last-child { border-bottom: none; }
+
+    .ap-comment-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1.5px solid var(--warm-gray); }
+    .ap-comment-body { flex: 1; }
+    .ap-comment-author { font-size: 13px; font-weight: 600; color: var(--black); text-decoration: none; }
+    .ap-comment-author:hover { color: var(--accent); }
+    .ap-comment-text { font-size: 13px; color: #444; line-height: 1.5; margin-top: 2px; display: block; }
+    .ap-comment-meta { display: flex; align-items: center; gap: 12px; margin-top: 5px; }
+    .ap-comment-time { font-size: 11px; color: var(--muted); }
+
+    .ap-comment-action-btn {
+        background: none; border: none;
+        font-size: 11.5px; font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        color: var(--muted); cursor: pointer; padding: 0; transition: color .2s;
+    }
+    .ap-comment-action-btn:hover { color: var(--black); }
+    .ap-comment-action-btn.danger { color: #c0392b; }
+
+    .ap-replies-nest { margin-left: 42px; margin-top: 8px; padding-left: 12px; border-left: 2px solid var(--warm-gray); }
+
+    .ap-comment-form-wrap { padding: 12px 18px; border-top: 1px solid var(--warm-gray); }
+
+    .ap-reply-indicator {
+        display: none;
+        background: var(--accent-soft); border-radius: var(--r-sm);
+        padding: 5px 11px; margin-bottom: 8px;
+        font-size: 12px; color: var(--accent); font-weight: 500;
+        align-items: center; justify-content: space-between;
+    }
+    .ap-reply-indicator.show { display: flex; }
+    .ap-cancel-reply { background: none; border: none; font-size: 11.5px; color: var(--accent); cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 600; }
+
+    .ap-comment-input-row { display: flex; align-items: center; gap: 8px; }
+    .ap-comment-input-row input {
+        flex: 1; height: 38px;
+        background: var(--cream); border: 1.5px solid transparent;
+        border-radius: 38px; padding: 0 16px;
+        font-size: 13px; font-family: 'DM Sans', sans-serif;
+        outline: none; transition: border-color .2s, background .2s; color: var(--black);
+    }
+    .ap-comment-input-row input::placeholder { color: var(--muted); }
+    .ap-comment-input-row input:focus { background: var(--white); border-color: var(--accent); }
+
+    .ap-comment-submit {
+        height: 38px; padding: 0 16px;
+        background: var(--accent); color: var(--white);
+        border: none; border-radius: 38px;
+        font-size: 13px; font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer; transition: background .2s; white-space: nowrap;
+    }
+    .ap-comment-submit:hover:not(:disabled) { background: var(--accent-h); }
+    .ap-comment-submit:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* Report modal */
+    .ap-report-modal .modal-dialog { max-width: 480px; }
+    .ap-report-modal .modal-content { border: none; border-radius: var(--r-xl); box-shadow: var(--shadow-lg); overflow: hidden; }
+    .ap-report-modal .modal-header { padding: 22px 26px 14px; border-bottom: 1px solid var(--warm-gray); }
+    .ap-report-modal .modal-title { font-size: 17px; font-weight: 600; color: var(--black); }
+    .ap-report-modal .modal-body { padding: 18px 26px; }
+    .ap-report-modal .form-label { font-size: 13.5px; font-weight: 600; color: var(--black); display: block; margin-bottom: 7px; }
+    .ap-report-modal .form-select, .ap-report-modal .form-control {
+        border: 1.5px solid var(--warm-gray); border-radius: var(--r-md);
+        padding: 10px 14px; font-size: 14px; font-family: 'DM Sans', sans-serif;
+        background: var(--cream); outline: none; transition: border-color .2s; width: 100%; color: var(--black);
+    }
+    .ap-report-modal .form-select:focus, .ap-report-modal .form-control:focus { border-color: var(--accent); background: var(--white); box-shadow: 0 0 0 3px rgba(200,83,58,.12); }
+    .ap-report-modal .modal-footer { padding: 12px 26px 22px; border-top: 1px solid var(--warm-gray); display: flex; gap: 10px; }
+    .ap-report-modal .btn-cancel { flex: 1; height: 40px; background: var(--cream); border: none; border-radius: var(--r-md); font-size: 13.5px; font-weight: 600; font-family: 'DM Sans', sans-serif; color: var(--black); cursor: pointer; }
+    .ap-report-modal .btn-cancel:hover { background: var(--warm-gray); }
+    .ap-report-modal .btn-submit-report { flex: 1; height: 40px; background: #c0392b; border: none; border-radius: var(--r-md); font-size: 13.5px; font-weight: 600; font-family: 'DM Sans', sans-serif; color: var(--white); cursor: pointer; }
+    .ap-report-modal .btn-submit-report:hover { background: #a93226; }
+
+    /* Dropdown */
+    .dropdown-menu { border: 1px solid var(--warm-gray); border-radius: var(--r-md); box-shadow: var(--shadow-md); padding: 6px; font-family: 'DM Sans', sans-serif; }
+    .dropdown-item { border-radius: var(--r-sm); padding: 8px 13px; font-size: 13.5px; color: var(--black); transition: background .15s; }
+    .dropdown-item:hover { background: var(--cream); }
+    .dropdown-item.text-danger { color: #c0392b !important; }
+    .dropdown-item.text-danger:hover { background: #fdf2f2; }
+
+    /* Toast */
+    .ap-toast { position: fixed; top: 80px; right: 24px; z-index: 99999; padding: 12px 18px; border-radius: var(--r-md); font-size: 13.5px; font-weight: 500; font-family: 'DM Sans', sans-serif; box-shadow: var(--shadow-lg); animation: toastIn .3s ease; max-width: 300px; }
+    .ap-toast.success { background: #1a7431; color: var(--white); }
+    .ap-toast.error   { background: #c0392b; color: var(--white); }
+    @keyframes toastIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+
+    /* Responsive modal */
+    @media (max-width: 860px) {
+        .ap-detail-modal .modal-body { flex-direction: column; }
+        .ap-modal-media { height: 48vh; }
+        .ap-modal-sidebar { width: 100%; flex: 1; }
+    }
+    @media (max-width: 480px) {
+        .ap-detail-modal .modal-dialog { margin: 0; height: 100vh; max-width: 100%; }
+        .ap-detail-modal .modal-content { border-radius: 0; }
     }
 </style>
 
-<div class="trending-container py-1 mt-1">
-    <div class="container">
-        <!-- Trending Header -->
-        <div class="trending-header">
-            <div class="trending-header-content">
-                <h1 class="text-white">
+<div class="tr-page">
+    <div class="tr-inner">
+
+        {{-- ── Hero ── --}}
+        <div class="tr-hero">
+            <div class="tr-hero-pattern"></div>
+            <div class="tr-hero-content">
+                <div class="tr-hero-eyebrow">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                        <path d="M6.5 1C6.5 1 4 4 4 6.5a2.5 2.5 0 005 0C9 4 6.5 1 6.5 1z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                        <path d="M6.5 9v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                    </svg>
                     Trending Sekarang
-                </h1>
-                <p>Postingan paling populer berdasarkan jumlah suka dan komentar</p>
+                </div>
+                <h1>Postingan Terpopuler</h1>
+                <p>Karya-karya yang paling banyak disukai dan dikomentari komunitas hari ini</p>
             </div>
         </div>
 
-        <!-- Stats Card -->
+        {{-- ── Stats ── --}}
         @if($trendingPosts->count() > 0)
-        <div class="trending-stats-card">
-            <div class="stat-item">
-                <div class="stat-number">{{ $trendingPosts->count() }}</div>
-                <div class="stat-label">Postingan</div>
+        <div class="tr-stats">
+            <div class="tr-stat-card">
+                <div class="tr-stat-num">{{ $trendingPosts->count() }}</div>
+                <div class="tr-stat-label">Postingan</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-number">{{ $trendingPosts->sum('likes_count') }}</div>
-                <div class="stat-label">Total suka</div>
+            <div class="tr-stat-card">
+                <div class="tr-stat-num">{{ number_format($trendingPosts->sum('likes_count')) }}</div>
+                <div class="tr-stat-label">Total Suka</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-number">{{ $trendingPosts->sum('comments_count') }}</div>
-                <div class="stat-label">Total Komentar</div>
+            <div class="tr-stat-card">
+                <div class="tr-stat-num">{{ number_format($trendingPosts->sum('comments_count')) }}</div>
+                <div class="tr-stat-label">Total Komentar</div>
             </div>
         </div>
         @endif
 
-        <!-- Trending List -->
+        {{-- ── Trending List ── --}}
         @if($trendingPosts->count() > 0)
-            <div class="trending-list-container">
+
+            <div class="tr-list-card">
+                <div class="tr-list-header">
+                    <span class="tr-list-title">Peringkat</span>
+                    <span class="tr-list-count">{{ $trendingPosts->total() ?? $trendingPosts->count() }} postingan</span>
+                </div>
+
                 @foreach($trendingPosts as $index => $post)
-                    <div class="trending-list-item {{ $index < 3 ? 'rank-' . ($index + 1) : '' }}" 
-                         data-bs-toggle="modal" 
-                         data-bs-target="#detailModal{{ $post->id }}">
-                        
-                        <!-- Crown for Top 3 -->
+                    <div class="tr-item {{ $index < 3 ? 'rank-'.($index+1) : '' }}"
+                         data-bs-toggle="modal"
+                         data-bs-target="#trModal{{ $post->id }}">
+
+                        {{-- Medal ── --}}
                         @if($index === 0)
-                            <span class="crown-icon">👑</span>
+                            <span class="tr-medal">🥇</span>
                         @elseif($index === 1)
-                            <span class="crown-icon">🥈</span>
+                            <span class="tr-medal">🥈</span>
                         @elseif($index === 2)
-                            <span class="crown-icon">🥉</span>
+                            <span class="tr-medal">🥉</span>
                         @endif
 
-                        <!-- Ranking Number -->
-                        <div class="ranking-number {{ $index >= 3 ? 'other' : '' }}">
-                            #{{ $index + 1 }}
-                        </div>
+                        {{-- Rank badge --}}
+                        <div class="tr-rank {{ $index >= 3 ? 'other' : '' }}">#{{ $index + 1 }}</div>
 
-                        <!-- Post Thumbnail -->
+                        {{-- Thumbnail --}}
                         @if($post->photos && $post->photos->first())
-                            <img src="{{ asset('storage/' . $post->photos->first()->photo) }}" 
-                                 alt="Post Thumbnail"
-                                 class="trending-thumbnail"
-                                 loading="lazy">
+                            <img src="{{ asset('storage/'.$post->photos->first()->photo) }}"
+                                 alt="" class="tr-thumb" loading="lazy">
                         @else
-                            <div class="trending-thumbnail" style="background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-image" style="color: #ccc; font-size: 32px;"></i>
+                            <div class="tr-thumb-placeholder">
+                                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                                    <rect x="2" y="4" width="18" height="14" rx="2.5" stroke="#b8b3ac" stroke-width="1.6"/>
+                                    <circle cx="11" cy="11" r="3.5" stroke="#b8b3ac" stroke-width="1.6"/>
+                                </svg>
                             </div>
                         @endif
 
-                        <!-- Post Details -->
-                        <div class="trending-details">
-                            <!-- User Info -->
-                            <div class="trending-user-info">
-                                <img src="{{ $post->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" 
-                                     alt="{{ $post->user->name }}" 
-                                     class="trending-avatar">
-                                <a href="{{ route('user.profile', $post->user->username ?? $post->user->id) }}" 
-                                   class="trending-username"
+                        {{-- Details --}}
+                        <div class="tr-details">
+                            <div class="tr-user-row">
+                                <img src="{{ $post->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}"
+                                     alt="" class="tr-avatar">
+                                <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}"
+                                   class="tr-username"
                                    onclick="event.stopPropagation()">
                                     {{ $post->user->username ?? $post->user->name }}
                                 </a>
+                                <span style="font-size:12px;color:var(--muted);">·</span>
+                                <span style="font-size:12px;color:var(--muted);">{{ $post->created_at->diffForHumans() }}</span>
                             </div>
 
-                            <!-- Caption -->
                             @if($post->caption)
-                                <div class="trending-caption">{{ $post->caption }}</div>
+                                <div class="tr-caption">{{ $post->caption }}</div>
                             @else
-                                <div class="trending-caption text-muted">Tidak ada caption</div>
+                                <div class="tr-caption" style="color:var(--muted);font-style:italic;">Tidak ada caption</div>
                             @endif
 
-                            <!-- Stats -->
-                            <div class="trending-stats">
-                                <div class="stat-badge likes">
-                                    <i class="fas fa-heart"></i>
-                                    <span>{{ number_format($post->likes->count()) }}</span>
-                                </div>
-                                <div class="stat-badge comments">
-                                    <i class="fas fa-comment"></i>
-                                    <span>{{ number_format($post->comments->count()) }}</span>
+                            <div class="tr-meta">
+                                <span class="tr-badge likes">
+                                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                        <path d="M6.5 11S1.5 8 1.5 4.5A2.5 2.5 0 016.5 2.7 2.5 2.5 0 0111.5 4.5C11.5 8 6.5 11 6.5 11z" stroke="currentColor" stroke-width="1.4"/>
+                                    </svg>
+                                    {{ number_format($post->likes->count()) }}
+                                </span>
+                                <span class="tr-badge comments">
+                                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                        <path d="M10.5 1.5h-8a.5.5 0 00-.5.5v6a.5.5 0 00.5.5H4l2.5 2.5 2.5-2.5h1.5a.5.5 0 00.5-.5V2a.5.5 0 00-.5-.5z" stroke="currentColor" stroke-width="1.3"/>
+                                    </svg>
+                                    {{ number_format($post->comments->count()) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ── Detail Modal ── --}}
+                    <div class="modal fade ap-detail-modal" id="trModal{{ $post->id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <div class="ap-modal-media">
+                                        @if($post->photos && $post->photos->count() > 1)
+                                            <div id="trCarousel{{ $post->id }}" class="carousel slide" data-bs-ride="false">
+                                                <div class="carousel-inner">
+                                                    @foreach($post->photos as $i => $photo)
+                                                        <div class="carousel-item {{ $i==0?'active':'' }}">
+                                                            <img src="{{ asset('storage/'.$photo->photo) }}" alt="">
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                                <button class="carousel-control-prev" type="button" data-bs-target="#trCarousel{{ $post->id }}" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+                                                <button class="carousel-control-next" type="button" data-bs-target="#trCarousel{{ $post->id }}" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+                                                <div class="carousel-indicators">
+                                                    @foreach($post->photos as $i => $photo)
+                                                        <button type="button" data-bs-target="#trCarousel{{ $post->id }}" data-bs-slide-to="{{ $i }}" class="{{ $i==0?'active':'' }}"></button>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @elseif($post->photos && $post->photos->first())
+                                            <img src="{{ asset('storage/'.$post->photos->first()->photo) }}" alt="">
+                                        @else
+                                            <img src="https://via.placeholder.com/600x600/1a1a1a/444?text=No+Image" alt="">
+                                        @endif
+                                    </div>
+
+                                    <div class="ap-modal-sidebar">
+                                        <div class="ap-modal-header">
+                                            <div class="ap-modal-header-left">
+                                                <button class="ap-modal-action like-modal-btn"
+                                                        data-post-id="{{ $post->id }}"
+                                                        data-liked="{{ $post->isLikedBy(auth()->id()) ? '1' : '0' }}">
+                                                    @if($post->isLikedBy(auth()->id()))
+                                                        <svg width="17" height="17" viewBox="0 0 17 17" fill="#c8533a"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z"/></svg>
+                                                    @else
+                                                        <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z" stroke="#888" stroke-width="1.6"/></svg>
+                                                    @endif
+                                                </button>
+                                                <button class="ap-modal-action">
+                                                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                                        <circle cx="12" cy="3" r="1.5" stroke="#888" stroke-width="1.4"/>
+                                                        <circle cx="3" cy="7.5" r="1.5" stroke="#888" stroke-width="1.4"/>
+                                                        <circle cx="12" cy="12" r="1.5" stroke="#888" stroke-width="1.4"/>
+                                                        <path d="M4.5 8.5l6 3M4.5 6.5l6-3" stroke="#888" stroke-width="1.4"/>
+                                                    </svg>
+                                                </button>
+                                                <div class="dropdown">
+                                                    <button class="ap-modal-action" type="button" data-bs-toggle="dropdown">
+                                                        <svg width="14" height="4" viewBox="0 0 14 4" fill="#888">
+                                                            <circle cx="2" cy="2" r="1.3"/><circle cx="7" cy="2" r="1.3"/><circle cx="12" cy="2" r="1.3"/>
+                                                        </svg>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        @auth
+                                                            @if(auth()->id() === $post->user_id)
+                                                                <li><a class="dropdown-item" href="#">✏️ Edit</a></li>
+                                                                <form action="{{ route('user.postingan.destroy', $post) }}" method="POST">
+                                                                    @csrf @method('DELETE')
+                                                                    <li><button class="dropdown-item text-danger" onclick="return confirm('Hapus?')">🗑️ Hapus</button></li>
+                                                                </form>
+                                                            @else
+                                                                <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#reportPost{{ $post->id }}">🚩 Laporkan</a></li>
+                                                            @endif
+                                                        @else
+                                                            <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#reportPost{{ $post->id }}">🚩 Laporkan</a></li>
+                                                        @endauth
+                                                    </ul>
+                                                </div>
+                                                <button class="ap-modal-action" data-bs-dismiss="modal">
+                                                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                                        <path d="M1 1l11 11M12 1L1 12" stroke="#888" stroke-width="1.7" stroke-linecap="round"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <button class="ap-modal-save">Simpan</button>
+                                        </div>
+
+                                        <div class="ap-modal-author">
+                                            <div class="ap-author-row">
+                                                <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}">
+                                                    <img src="{{ $post->user->avatar_display }}" alt="" class="ap-author-avatar">
+                                                </a>
+                                                <div>
+                                                    <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}" class="ap-author-name">{{ $post->user->username ?? $post->user->name }}</a>
+                                                    <span class="ap-author-time">{{ $post->created_at->diffForHumans() }}</span>
+                                                </div>
+                                            </div>
+                                            @if($post->caption)
+                                                <p class="ap-modal-caption">{{ $post->caption }}</p>
+                                            @endif
+                                            <div class="ap-modal-stats">
+                                                <span class="ap-modal-stat like-count" data-post-id="{{ $post->id }}">
+                                                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 11S1.5 8 1.5 4.5A2.5 2.5 0 016.5 2.7 2.5 2.5 0 0111.5 4.5C11.5 8 6.5 11 6.5 11z" stroke="#c8533a" stroke-width="1.4"/></svg>
+                                                    {{ $post->likes->count() }} suka
+                                                </span>
+                                                <span class="ap-modal-stat">
+                                                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M10.5 1.5h-8a.5.5 0 00-.5.5v6a.5.5 0 00.5.5H4l2.5 2.5 2.5-2.5h1.5a.5.5 0 00.5-.5V2a.5.5 0 00-.5-.5z" stroke="#888" stroke-width="1.3"/></svg>
+                                                    {{ $post->comments->count() }} komentar
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="ap-modal-comments" id="comments-container-{{ $post->id }}">
+                                            @forelse($post->comments->where('reply_id', null) as $comment)
+                                                <div class="comment-wrapper" id="comment-wrapper-{{ $comment->id }}">
+                                                    <div class="ap-comment" id="comment-{{ $comment->id }}">
+                                                        <a href="{{ route('user.profile.username', ['name' => $comment->user->username ?? $comment->user->name]) }}">
+                                                            <img src="{{ $comment->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" class="ap-comment-avatar" alt="">
+                                                        </a>
+                                                        <div class="ap-comment-body">
+                                                            <a href="{{ route('user.profile.username', ['name' => $comment->user->username ?? $comment->user->name]) }}" class="ap-comment-author">{{ $comment->user->username ?? $comment->user->name }}</a>
+                                                            <span class="ap-comment-text">{{ $comment->comment }}</span>
+                                                            <div class="ap-comment-meta">
+                                                                <span class="ap-comment-time">{{ $comment->created_at->diffForHumans() }}</span>
+                                                                @auth
+                                                                    <button class="ap-comment-action-btn reply-btn" data-id="{{ $comment->id }}" data-username="{{ $comment->user->username ?? $comment->user->name }}">Balas</button>
+                                                                    @if(auth()->id() === $comment->user_id || auth()->user()->role === 'admin')
+                                                                        <button class="ap-comment-action-btn danger delete-comment-btn" data-id="{{ $comment->id }}" data-url="{{ route('user.comments.destroy', $comment->id) }}">Hapus</button>
+                                                                    @endif
+                                                                @endauth
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @if($comment->replies->count() > 0)
+                                                        <div class="ap-replies-nest">
+                                                            @foreach($comment->replies as $reply)
+                                                                <div class="ap-comment" id="comment-{{ $reply->id }}" style="margin-bottom:10px;">
+                                                                    <a href="{{ route('user.profile.username', ['name' => $reply->user->username ?? $reply->user->name]) }}">
+                                                                        <img src="{{ $reply->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" class="ap-comment-avatar" alt="">
+                                                                    </a>
+                                                                    <div class="ap-comment-body">
+                                                                        <a href="{{ route('user.profile.username', ['name' => $reply->user->username ?? $reply->user->name]) }}" class="ap-comment-author">{{ $reply->user->username ?? $reply->user->name }}</a>
+                                                                        <span class="ap-comment-text">{{ $reply->comment }}</span>
+                                                                        <div class="ap-comment-meta">
+                                                                            <span class="ap-comment-time">{{ $reply->created_at->diffForHumans() }}</span>
+                                                                            @auth
+                                                                                @if(auth()->id() === $reply->user_id || auth()->user()->role === 'admin')
+                                                                                    <button class="ap-comment-action-btn danger delete-comment-btn" data-id="{{ $reply->id }}" data-url="{{ route('user.comments.destroy', $reply->id) }}">Hapus</button>
+                                                                                @endif
+                                                                            @endauth
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @empty
+                                                <p class="text-center" style="color:var(--muted);font-size:13.5px;padding:28px 0;" id="nc-{{ $post->id }}">Belum ada komentar.</p>
+                                            @endforelse
+                                        </div>
+
+                                        @auth
+                                        <div class="ap-comment-form-wrap">
+                                            <form class="comment-form-ajax" data-post-id="{{ $post->id }}">
+                                                @csrf
+                                                <input type="hidden" name="post_id" value="{{ $post->id }}">
+                                                <input type="hidden" name="reply_id" class="reply-id-input" value="">
+                                                <div class="ap-reply-indicator" id="ri-{{ $post->id }}">
+                                                    <span>Membalas: <strong class="reply-to-username"></strong></span>
+                                                    <button type="button" class="ap-cancel-reply">Batal</button>
+                                                </div>
+                                                <div class="ap-comment-input-row">
+                                                    <input type="text" name="comment" class="comment-input" placeholder="Tulis komentar…" autocomplete="off" required>
+                                                    <button type="submit" class="ap-comment-submit" disabled>Kirim</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        @else
+                                        <div style="padding:12px 18px;text-align:center;border-top:1px solid var(--warm-gray);">
+                                            <a href="{{ route('login') }}" style="font-size:13px;color:var(--accent);font-weight:600;">Masuk untuk berkomentar</a>
+                                        </div>
+                                        @endauth
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    @include('partials.post-modal', ['post' => $post])
+                    {{-- Report Post --}}
+                    <div class="modal fade ap-report-modal" id="reportPost{{ $post->id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">Laporkan Postingan</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form action="{{ route('user.report.post', $post->id) }}" method="POST">
+                                    @csrf
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Alasan <span style="color:var(--accent)">*</span></label>
+                                            <select class="form-select" name="reason" required>
+                                                <option value="">Pilih alasan…</option>
+                                                <option value="spam">Spam</option>
+                                                <option value="bullying">Bullying / Pelecehan</option>
+                                                <option value="hate_speech">Ujaran Kebencian</option>
+                                                <option value="pornography">Konten Pornografi</option>
+                                                <option value="violence">Kekerasan</option>
+                                                <option value="other">Lainnya</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-1">
+                                            <label class="form-label">Keterangan <span style="color:var(--muted);font-weight:400">(opsional)</span></label>
+                                            <textarea class="form-control" name="description" rows="3" placeholder="Jelaskan lebih lanjut…"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-0">
+                                        <button type="button" class="btn-cancel" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn-submit-report">Kirim Laporan</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
                 @endforeach
             </div>
 
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center mt-4">
+            {{-- Pagination --}}
+            @if(method_exists($trendingPosts, 'links'))
+            <div class="tr-pagination">
                 {{ $trendingPosts->links() }}
             </div>
+            @endif
+
         @else
-            <div class="empty-trending">
-                <i>🔥</i>
+            <div class="tr-empty">
+                <div class="tr-empty-icon">
+                    <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                        <path d="M13 3C13 3 8 8 8 13a5 5 0 0010 0C18 8 13 3 13 3z" stroke="#b8b3ac" stroke-width="1.6" stroke-linecap="round"/>
+                        <path d="M13 18v4" stroke="#b8b3ac" stroke-width="1.6" stroke-linecap="round"/>
+                    </svg>
+                </div>
                 <h4>Belum Ada Konten Trending</h4>
                 <p>Belum ada postingan yang trending saat ini. Coba lagi nanti!</p>
             </div>
         @endif
+
     </div>
 </div>
 
 <script>
-    // Like functionality
-    document.querySelectorAll('.modal-action-btn[data-post-id]').forEach(button => {
-        button.addEventListener('click', function () {
-            const postId = this.dataset.postId;
+document.addEventListener('DOMContentLoaded', function () {
 
+    // ── Like AJAX ────────────────────────────────────────────────────
+    document.querySelectorAll('.like-modal-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const postId = this.dataset.postId;
             fetch(`{{ route('user.post.like', ':id') }}`.replace(':id', postId), {
                 method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                },
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
-                this.innerHTML = data.liked ? '❤️' : '🤍';
-                this.dataset.liked = data.liked ? '1' : '0';
+                this.innerHTML = data.liked
+                    ? `<svg width="17" height="17" viewBox="0 0 17 17" fill="#c8533a"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z"/></svg>`
+                    : `<svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z" stroke="#888" stroke-width="1.6"/></svg>`;
+            })
+            .catch(console.error);
+        });
+    });
 
-                const countEl = document.querySelector(`.like-count[data-post-id="${postId}"]`);
-                if (countEl) {
-                    countEl.textContent = data.total;
+    // ── Comment submit ───────────────────────────────────────────────
+    document.querySelectorAll('.comment-form-ajax').forEach(form => {
+        const input = form.querySelector('.comment-input');
+        const btn   = form.querySelector('.ap-comment-submit');
+        input.addEventListener('input', () => { btn.disabled = !input.value.trim(); });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!input.value.trim()) return;
+            btn.disabled = true; btn.textContent = '…';
+
+            fetch('{{ route("user.comments.store") }}', {
+                method: 'POST',
+                body: new FormData(this),
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const postId = this.dataset.postId;
+                    const container = document.getElementById('comments-container-' + postId);
+                    document.getElementById('nc-' + postId)?.remove();
+
+                    if (data.comment.reply_id) {
+                        let pw = document.getElementById('comment-wrapper-' + data.comment.reply_id);
+                        if (pw) {
+                            let nest = pw.querySelector('.ap-replies-nest');
+                            if (!nest) { nest = document.createElement('div'); nest.className = 'ap-replies-nest'; pw.appendChild(nest); }
+                            nest.insertAdjacentHTML('beforeend', data.html);
+                        }
+                    } else {
+                        container.insertAdjacentHTML('afterbegin', data.html);
+                    }
+
+                    input.value = '';
+                    form.querySelector('.reply-id-input').value = '';
+                    document.getElementById('ri-' + postId)?.classList.remove('show');
+                    showToast('success', 'Komentar ditambahkan!');
+                } else {
+                    showToast('error', data.message || 'Terjadi kesalahan');
                 }
             })
-            .catch(err => console.error(err));
+            .catch(() => showToast('error', 'Gagal mengirim'))
+            .finally(() => { btn.disabled = false; btn.textContent = 'Kirim'; });
         });
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Comment form submit dengan AJAX
-        document.querySelectorAll('.comment-form-ajax').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                const submitBtn = this.querySelector('button[type="submit"]');
-                const commentInput = this.querySelector('.comment-input');
-                const postId = this.dataset.postId;
-                
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Mengirim...';
-
-                fetch('{{ route("user.comments.store") }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const commentsContainer = document.getElementById('comments-container-' + postId);
-                        const noComments = document.getElementById('no-comments-' + postId);
-                        
-                        if (noComments) {
-                            noComments.remove();
-                        }
-
-                        if (data.comment.reply_id) {
-                            const parentWrapper = document.getElementById('comment-wrapper-' + data.comment.reply_id);
-                            if (parentWrapper) {
-                                let repliesContainer = parentWrapper.querySelector('.replies-container');
-                                if (!repliesContainer) {
-                                    repliesContainer = document.createElement('div');
-                                    repliesContainer.className = 'replies-container';
-                                    repliesContainer.style.marginLeft = '52px';
-                                    repliesContainer.style.marginTop = '12px';
-                                    repliesContainer.style.paddingLeft = '12px';
-                                    repliesContainer.style.borderLeft = '2px solid #efefef';
-                                    parentWrapper.appendChild(repliesContainer);
-                                }
-                                repliesContainer.insertAdjacentHTML('beforeend', data.html);
-                            }
-                        } else {
-                            commentsContainer.insertAdjacentHTML('afterbegin', data.html);
-                        }
-
-                        commentInput.value = '';
-                        const replyIdInput = form.querySelector('.reply-id-input');
-                        const replyInfo = form.querySelector('.reply-info');
-                        replyIdInput.value = '';
-                        replyInfo.style.display = 'none';
-                        
-                        showAlert('success', 'Komentar berhasil ditambahkan!');
-                    } else {
-                        showAlert('error', data.message || 'Terjadi kesalahan');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('error', 'Terjadi kesalahan saat mengirim komentar');
-                })
-                .finally(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Kirim';
-                });
-            });
-        });
-
-        // Reply button click
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('reply-btn')) {
-                const commentId = e.target.getAttribute('data-id');
-                const username = e.target.getAttribute('data-username');
-                
-                const modal = e.target.closest('.modal');
-                if (modal) {
-                    const form = modal.querySelector('.comment-form-ajax');
-                    const replyIdInput = form.querySelector('.reply-id-input');
-                    const replyInfo = form.querySelector('.reply-info');
-                    const replyToUsername = form.querySelector('.reply-to-username');
-                    const commentInput = form.querySelector('.comment-input');
-                    
-                    replyIdInput.value = commentId;
-                    replyToUsername.textContent = username;
-                    replyInfo.style.display = 'block';
-                    commentInput.focus();
-                }
-            }
-        });
-
-        // Cancel reply
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('cancel-reply')) {
-                const form = e.target.closest('.comment-form-ajax');
-                const replyIdInput = form.querySelector('.reply-id-input');
-                const replyInfo = form.querySelector('.reply-info');
-                
-                replyIdInput.value = '';
-                replyInfo.style.display = 'none';
-            }
-        });
-
-        // Delete comment
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('delete-comment-btn')) {
-                if (confirm('Apakah Anda yakin ingin menghapus komentar ini?')) {
-                    const commentId = e.target.getAttribute('data-id');
-                    const deleteUrl = e.target.getAttribute('data-url');
-                    
-                    fetch(deleteUrl, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const commentElement = document.getElementById('comment-' + commentId);
-                            if (commentElement) {
-                                const commentWrapper = document.getElementById('comment-wrapper-' + commentId);
-                                if (commentWrapper) {
-                                    commentWrapper.remove();
-                                } else {
-                                    commentElement.remove();
-                                }
-                                
-                                const modal = e.target.closest('.modal');
-                                const commentsContainer = modal.querySelector('[id^="comments-container-"]');
-                                const remainingComments = commentsContainer.querySelectorAll('.comment-wrapper, .comment-item:not(.reply-item)');
-                                
-                                if (remainingComments.length === 0) {
-                                    const postId = commentsContainer.id.replace('comments-container-', '');
-                                    commentsContainer.innerHTML = '<p class="text-center text-muted no-comments-msg" id="no-comments-' + postId + '">Belum ada komentar</p>';
-                                }
-                            }
-                            showAlert('success', 'Komentar berhasil dihapus!');
-                        } else {
-                            showAlert('error', data.message || 'Gagal menghapus komentar');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showAlert('error', 'Terjadi kesalahan saat menghapus komentar');
-                    });
-                }
-            }
-        });
-
-        // Helper function untuk alert
-        function showAlert(type, message) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
-            alertDiv.style.position = 'fixed';
-            alertDiv.style.top = '80px';
-            alertDiv.style.right = '20px';
-            alertDiv.style.zIndex = '99999';
-            alertDiv.style.minWidth = '300px';
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.body.appendChild(alertDiv);
-            
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 3000);
+    // ── Reply ────────────────────────────────────────────────────────
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('reply-btn')) {
+            const id = e.target.dataset.id, username = e.target.dataset.username;
+            const modal = e.target.closest('.ap-detail-modal');
+            if (!modal) return;
+            const form = modal.querySelector('.comment-form-ajax');
+            const postId = form.dataset.postId;
+            form.querySelector('.reply-id-input').value = id;
+            form.querySelector('.reply-to-username').textContent = username;
+            document.getElementById('ri-' + postId)?.classList.add('show');
+            form.querySelector('.comment-input').focus();
         }
+        if (e.target.classList.contains('ap-cancel-reply')) {
+            const form = e.target.closest('.comment-form-ajax');
+            form.querySelector('.reply-id-input').value = '';
+            document.getElementById('ri-' + form.dataset.postId)?.classList.remove('show');
+        }
+    });
 
-        // Initialize carousels
-        const carousels = document.querySelectorAll('.carousel');
-        carousels.forEach(carousel => {
-            new bootstrap.Carousel(carousel, {
-                interval: false,
-                wrap: true,
-                touch: true
-            });
+    // ── Delete comment ───────────────────────────────────────────────
+    document.addEventListener('click', function (e) {
+        if (!e.target.classList.contains('delete-comment-btn')) return;
+        if (!confirm('Hapus komentar ini?')) return;
+        const id = e.target.dataset.id, url = e.target.dataset.url;
+        fetch(url, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('comment-wrapper-' + id)?.remove() || document.getElementById('comment-' + id)?.remove();
+                showToast('success', 'Komentar dihapus');
+            }
         });
     });
+
+    // ── Toast ────────────────────────────────────────────────────────
+    function showToast(type, msg) {
+        const t = document.createElement('div');
+        t.className = 'ap-toast ' + type;
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3200);
+    }
+
+    // ── Carousels ────────────────────────────────────────────────────
+    document.querySelectorAll('.carousel').forEach(el => {
+        new bootstrap.Carousel(el, { interval: false, wrap: true, touch: true });
+    });
+});
 </script>
 
 @endsection

@@ -1,166 +1,330 @@
 <!doctype html>
-<html lang="en">
-
+<html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Aperture - Login</title>
-  <link rel="shortcut icon" type="image/png" href="{{asset('ui/images/logos/aperturely_logo.png')}}" />
-  <link rel="stylesheet" href="{{asset('ui/css/styles.min.css')}}" />
-  
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aperture — Masuk</title>
+    <link rel="shortcut icon" type="image/png" href="{{ asset('ui/images/logos/aperturely_logo.png') }}"/>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    .btn-google {
-      width: 100%;
-      padding: 12px;
-      background: #ffffff;
-      color: #2d2d2d;
-      border: 2px solid #e0e0e0;
-      border-radius: 5px;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      margin-top: 15px;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+        --black:      #0a0a0a;
+        --white:      #ffffff;
+        --cream:      #f9f7f4;
+        --warm-gray:  #e8e4df;
+        --mid-gray:   #b8b3ac;
+        --muted:      #888077;
+        --accent:     #c8533a;
+        --accent-h:   #a83f28;
+        --accent-soft:#f5ece9;
+        --shadow-md:  0 4px 16px rgba(10,10,10,0.10);
+        --shadow-lg:  0 12px 40px rgba(10,10,10,0.14);
+        --r-md: 14px;
+        --r-lg: 20px;
+        --r-xl: 28px;
+        font-family: 'DM Sans', sans-serif;
     }
 
-    .btn-google:hover {
-      background: #f8f8f8;
-      border-color: #7571f9;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      color: #2d2d2d;
+    html, body { height: 100%; }
+
+    body {
+        background: var(--cream);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 24px 16px;
     }
 
-    .btn-google svg {
-      margin-right: 10px;
+    /* ── Decorative background ── */
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 60% 50% at 10% 20%, rgba(200,83,58,.06) 0%, transparent 60%),
+            radial-gradient(ellipse 50% 40% at 90% 80%, rgba(10,10,10,.04) 0%, transparent 60%);
+        pointer-events: none;
+        z-index: 0;
     }
 
-    .divider {
-      text-align: center;
-      margin: 20px 0;
-      position: relative;
+    /* ── Card ── */
+    .auth-card {
+        background: var(--white);
+        border-radius: var(--r-xl);
+        box-shadow: var(--shadow-lg);
+        width: 100%;
+        max-width: 420px;
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
     }
 
-    .divider::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      width: 100%;
-      height: 1px;
-      background: #e0e0e0;
+    /* Accent top bar */
+    .auth-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent), #e07a5f, var(--accent));
     }
 
-    .divider span {
-      background: #ffffff;
-      padding: 0 15px;
-      color: #999;
-      font-size: 13px;
-      position: relative;
-      z-index: 1;
+    .auth-body { padding: 40px 40px 36px; }
+
+    /* ── Brand ── */
+    .auth-brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 32px;
+        text-decoration: none;
     }
 
-    .logo-img img {
-      max-width: 180px;
-      height: auto;
+    .auth-brand img {
+        height: 38px;
+        width: auto;
+        margin-bottom: 10px;
+    }
+
+    .auth-brand-sub {
+        font-size: 12px;
+        color: var(--muted);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+
+    /* ── Heading ── */
+    .auth-heading {
+        margin-bottom: 28px;
+    }
+
+    .auth-heading h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 24px;
+        font-weight: 400;
+        color: var(--black);
+        margin-bottom: 6px;
+    }
+
+    .auth-heading p {
+        font-size: 13.5px;
+        color: var(--muted);
+    }
+
+    /* ── Form fields ── */
+    .auth-group { margin-bottom: 18px; }
+
+    .auth-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--black);
+        margin-bottom: 7px;
+    }
+
+    .auth-field {
+        width: 100%;
+        height: 44px;
+        background: var(--cream);
+        border: 1.5px solid var(--warm-gray);
+        border-radius: var(--r-md);
+        padding: 0 16px;
+        font-size: 14px;
+        font-family: 'DM Sans', sans-serif;
+        color: var(--black);
+        outline: none;
+        transition: border-color .2s, background .2s, box-shadow .2s;
+    }
+
+    .auth-field:focus {
+        background: var(--white);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(200,83,58,.12);
+    }
+
+    .auth-field::placeholder { color: var(--muted); }
+
+    .auth-field.is-invalid {
+        border-color: #c0392b;
+        background: #fdf2f2;
+    }
+
+    .auth-invalid {
+        font-size: 12px;
+        color: #c0392b;
+        font-weight: 500;
+        margin-top: 5px;
+        display: block;
+    }
+
+    /* ── Submit button ── */
+    .auth-submit {
+        width: 100%;
+        height: 44px;
+        background: var(--black);
+        color: var(--white);
+        border: none;
+        border-radius: var(--r-md);
+        font-size: 14.5px;
+        font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer;
+        transition: background .2s, transform .15s, box-shadow .2s;
+        margin-top: 8px;
+    }
+
+    .auth-submit:hover {
+        background: #222;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(10,10,10,.2);
+    }
+
+    /* ── Divider ── */
+    .auth-divider {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin: 22px 0;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--warm-gray);
+    }
+
+    .auth-divider span {
+        font-size: 11.5px;
+        color: var(--muted);
+        font-weight: 600;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    /* ── Google button ── */
+    .auth-google {
+        width: 100%;
+        height: 44px;
+        background: var(--white);
+        color: var(--black);
+        border: 1.5px solid var(--warm-gray);
+        border-radius: var(--r-md);
+        font-size: 14px;
+        font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+        transition: background .2s, border-color .2s, transform .15s, box-shadow .2s;
+    }
+
+    .auth-google:hover {
+        background: var(--cream);
+        border-color: var(--mid-gray);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+        color: var(--black);
+    }
+
+    /* ── Footer link ── */
+    .auth-footer {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 13.5px;
+        color: var(--muted);
+    }
+
+    .auth-footer a {
+        color: var(--accent);
+        font-weight: 600;
+        text-decoration: none;
+        margin-left: 5px;
+        transition: color .2s;
+    }
+
+    .auth-footer a:hover { color: var(--accent-h); }
+
+    @media (max-width: 480px) {
+        .auth-body { padding: 32px 24px 28px; }
     }
   </style>
 </head>
-
 <body>
-  <!--  Body Wrapper -->
-  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-    data-sidebar-position="fixed" data-header-position="fixed">
-    <div
-      class="position-relative overflow-hidden text-bg-light min-vh-100 d-flex align-items-center justify-content-center">
-      <div class="d-flex align-items-center justify-content-center w-100">
-        <div class="row justify-content-center w-100">
-          <div class="col-md-8 col-lg-6 col-xxl-3">
-            <div class="card mb-0">
-              <div class="card-body">
-                <a href="{{ url('/') }}" class="text-nowrap logo-img text-center d-block py-3 w-100">
-                  <img src="{{asset('ui/images/logos/aperturely.png')}}" alt="Aperturely Logo" />
-                </a>
-                <!-- <p class="text-center">Isilah Dengan Tepat</p> -->
-                
-                <form method="POST" action="{{ route('login') }}">
-                  @csrf
-                  
-                  <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input 
-                      type="email" 
-                      class="form-control @error('email') is-invalid @enderror" 
-                      id="email"
-                      name="email"
-                      value="{{ old('email') }}"
-                      required
-                      autocomplete="email"
-                      autofocus
-                    >
-                    @error('email')
-                      <div class="invalid-feedback">
-                        {{ $message }}
-                      </div>
-                    @enderror
-                  </div>
-                  
-                  <div class="mb-4">
-                    <label for="password" class="form-label">Password</label>
-                    <input 
-                      type="password" 
-                      class="form-control @error('password') is-invalid @enderror" 
-                      id="password"
-                      name="password"
-                      required
-                      autocomplete="current-password"
-                    >
-                    @error('password')
-                      <div class="invalid-feedback">
-                        {{ $message }}
-                      </div>
-                    @enderror
-                  </div>
-                  
-                  <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4">
-                    Masuk
-                  </button>
-                  
-                  <div class="divider">
-                    <span>ATAU</span>
-                  </div>
 
-                  <a href="/auth/google-redirect" class="btn-google">
-                    <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
-                      <path d="M9.003 18c2.43 0 4.467-.806 5.956-2.184l-2.909-2.258c-.806.54-1.836.86-3.047.86-2.344 0-4.328-1.584-5.036-3.711H.96v2.332C2.44 15.983 5.485 18 9.003 18z" fill="#34A853"/>
-                      <path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71 0-.593.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
-                      <path d="M9.003 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.464.891 11.426 0 9.003 0 5.485 0 2.44 2.017.96 4.958L3.967 7.29c.708-2.127 2.692-3.71 5.036-3.71z" fill="#EA4335"/>
-                    </svg>
-                    Login dengan Google
-                  </a>
-                  
-                  <div class="d-flex align-items-center justify-content-center mt-4">
-                    <p class="fs-4 mb-0 fw-bold">Belum punya akun?</p>
-                    <a class="text-primary fw-bold ms-2" href="{{ route('register') }}">Daftar sekarang</a>
-                  </div>
-                </form>
-              </div>
+    <div class="auth-card">
+        <div class="auth-body">
+
+            {{-- Brand --}}
+            <a href="{{ url('/') }}" class="auth-brand">
+                <img src="{{ asset('ui/images/logos/aperturely.png') }}" alt="Aperture">
+                <span class="auth-brand-sub">Photography Platform</span>
+            </a>
+
+            {{-- Heading --}}
+            <div class="auth-heading">
+                <h1>Selamat datang kembali</h1>
+                <p>Masuk untuk melanjutkan ke Aperture</p>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <script src="{{asset('ui/libs/jquery/dist/jquery.min.js')}}"></script>
-  <script src="{{asset('ui/libs/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
-  <!-- solar icons -->
-  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
-</body>
 
+            {{-- Form --}}
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+
+                <div class="auth-group">
+                    <label class="auth-label" for="email">Email</label>
+                    <input type="email" id="email" name="email"
+                           class="auth-field {{ $errors->has('email') ? 'is-invalid' : '' }}"
+                           value="{{ old('email') }}"
+                           placeholder="nama@email.com"
+                           required autocomplete="email" autofocus>
+                    @error('email')
+                        <span class="auth-invalid">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="auth-group">
+                    <label class="auth-label" for="password">Password</label>
+                    <input type="password" id="password" name="password"
+                           class="auth-field {{ $errors->has('password') ? 'is-invalid' : '' }}"
+                           placeholder="Masukkan password"
+                           required autocomplete="current-password">
+                    @error('password')
+                        <span class="auth-invalid">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <button type="submit" class="auth-submit">Masuk</button>
+
+                <div class="auth-divider"><span>atau</span></div>
+
+                <a href="/auth/google-redirect" class="auth-google">
+                    <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+                        <path d="M9.003 18c2.43 0 4.467-.806 5.956-2.184l-2.909-2.258c-.806.54-1.836.86-3.047.86-2.344 0-4.328-1.584-5.036-3.711H.96v2.332C2.44 15.983 5.485 18 9.003 18z" fill="#34A853"/>
+                        <path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71 0-.593.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+                        <path d="M9.003 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.464.891 11.426 0 9.003 0 5.485 0 2.44 2.017.96 4.958L3.967 7.29c.708-2.127 2.692-3.71 5.036-3.71z" fill="#EA4335"/>
+                    </svg>
+                    Masuk dengan Google
+                </a>
+            </form>
+
+            <div class="auth-footer">
+                Belum punya akun?
+                <a href="{{ route('register') }}">Daftar sekarang</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="{{ asset('ui/libs/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ asset('ui/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+</body>
 </html>

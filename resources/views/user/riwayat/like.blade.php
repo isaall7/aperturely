@@ -1,852 +1,582 @@
 @extends('layouts.index2')
 
 @section('content')
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-    /* Existing styles... */
-    /* Reset & Base */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    .user-avatar {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        object-fit: cover;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+        --black:       #0a0a0a;
+        --white:       #ffffff;
+        --cream:       #f9f7f4;
+        --warm-gray:   #e8e4df;
+        --mid-gray:    #b8b3ac;
+        --muted:       #888077;
+        --accent:      #c8533a;
+        --accent-h:    #a83f28;
+        --accent-soft: #f5ece9;
+        --shadow-sm:   0 1px 3px rgba(10,10,10,0.07);
+        --shadow-md:   0 4px 16px rgba(10,10,10,0.10);
+        --shadow-lg:   0 12px 40px rgba(10,10,10,0.14);
+        --r-sm:  8px;
+        --r-md:  14px;
+        --r-lg:  20px;
+        --r-xl:  28px;
+        font-family: 'DM Sans', sans-serif;
     }
 
-    /* Card Footer - Updated */
-    .card-footer-custom {
-        padding: 16px 24px;
-        background: #fafafa;
-        border-top: 2px solid #f0f0f0;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 12px;
+    /* ── Override layout ── */
+    .container-fluid { padding: 0 !important; max-width: 100% !important; }
+    .body-wrapper    { margin-top: 0 !important; }
+
+    /* ===================== PAGE ===================== */
+    .rw-page {
+        background: var(--cream);
+        min-height: calc(100vh - 64px);
+        padding: 36px 0 80px;
     }
 
-    .btn-delete-post {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-        color: white;
-        border: none;
-        padding: 10px 24px;
-        border-radius: 12px;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-    }
-
-    .btn-delete-post:hover {
-        background: linear-gradient(135deg, #c0392b, #a93226);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4);
-    }
-
-    .btn-delete-post:active {
-        transform: translateY(0);
-    }
-
-    .btn-detail {
-        background: white;
-        color: #4a90e2;
-        border: 2px solid #4a90e2;
-        padding: 10px 24px;
-        border-radius: 12px;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .btn-detail:hover {
-        background: #4a90e2;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
-    }
-
-    .btn-detail:active {
-        transform: translateY(0);
-    }
-
-    /* Responsive Footer */
-    @media (max-width: 768px) {
-        .card-footer-custom {
-            flex-direction: column-reverse;
-            gap: 10px;
-        }
-
-        .btn-delete-post,
-        .btn-detail {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-    
-    /* Container */
-    .notification-container {
-        background: #fafafa;
-        min-height: calc(100vh - 60px);
-        padding: 20px 0;
-        margin-top: -20px;
-    }
-
-    .notification-wrapper {
-        max-width: 1400px;
+    .rw-inner {
+        max-width: 1300px;
         margin: 0 auto;
-        padding: 0 40px;
-    }
-
-    /* Sidebar Navigation */
-    .sidebar-card {
-        background: white;
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        position: sticky;
-        top: 80px;
-    }
-
-    .sidebar-title {
-        font-size: 18px;
-        font-weight: 800;
-        color: #1a1a1a;
-        margin-bottom: 20px;
-        letter-spacing: -0.3px;
-    }
-
-    .nav-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .nav-item {
-        display: flex;
-        align-items: center;
-        padding: 14px 16px;
-        border-radius: 14px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        text-decoration: none;
-        color: #4a4a4a;
-        border: 2px solid transparent;
-    }
-
-    .nav-item:hover {
-        background: #f8f8f8;
-        color: #1a1a1a;
-    }
-
-    .nav-item.active {
-        background: linear-gradient(135deg, #4a90e2, #357abd);
-        color: white;
-        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
-    }
-
-    .nav-icon {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 12px;
-        margin-right: 14px;
-        flex-shrink: 0;
-    }
-
-    .nav-item.active .nav-icon {
-        background: rgba(255, 255, 255, 0.2);
-    }
-
-    .nav-item:not(.active) .nav-icon {
-        background: #f0f0f0;
-    }
-
-    .nav-content {
-        flex: 1;
-    }
-
-    .nav-label {
-        font-size: 15px;
-        font-weight: 700;
-        display: block;
-        margin-bottom: 2px;
-    }
-
-    .nav-desc {
-        font-size: 12px;
-        opacity: 0.8;
-    }
-
-    .nav-badge {
-        background: #e74c3c;
-        color: white;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
-        margin-left: auto;
-    }
-
-    .main-content {
-        background: white;
-        border-radius: 20px;
-        padding: 32px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    /* Main Content */
-    .main-content {
-        flex: 1;
-    }
-
-    /* Page Header */
-    .page-header {
-        margin-bottom: 24px;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #e8e8e8;
-    }
-
-    .page-title {
-        font-size: 28px;
-        font-weight: 800;
-        color: #1a1a1a;
-        margin-bottom: 6px;
-        letter-spacing: -0.5px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .page-subtitle {
-        font-size: 15px;
-        color: #8e8e8e;
-        font-weight: 500;
-    }
-
-    /* Notification Cards */
-    .notifications-list {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .notification-card {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        border: 2px solid transparent;
-        transition: all 0.3s ease;
-    }
-
-    .notification-card:hover {
-        border-color: #e74c3c;
-        box-shadow: 0 8px 24px rgba(231, 76, 60, 0.15);
-    }
-
-    /* Card Header */
-    .card-header-custom {
-        background: linear-gradient(135deg, #fff0f0, #ffe8e8);
-        padding: 20px 24px;
-        border-bottom: 2px solid #ffe0e0;
-        display: flex;
-        align-items: center;
-        gap: 16px;
-    }
-
-    .header-icon {
-        width: 48px;
-        height: 48px;
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 24px;
-        flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-    }
-
-    .header-text h6 {
-        font-size: 16px;
-        font-weight: 700;
-        color: #e74c3c;
-        margin: 0 0 4px 0;
-    }
-
-    .header-text small {
-        font-size: 13px;
-        color: #8e8e8e;
-        font-weight: 500;
-    }
-
-    /* Card Body */
-    .card-body-custom {
-        padding: 24px;
-    }
-
-    .post-preview-section {
+        padding: 0 32px;
         display: grid;
-        grid-template-columns: 200px 1fr;
+        grid-template-columns: 220px 1fr;
         gap: 24px;
         align-items: start;
     }
 
-    /* Post Image */
-    .post-image-wrapper {
+    @media (max-width: 900px) { .rw-inner { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) { .rw-inner { padding: 0 16px; } }
+
+    /* ===================== SIDEBAR ===================== */
+    .rw-sidebar {
+        position: sticky;
+        top: 80px;
+    }
+
+    .rw-sidebar-card {
+        background: var(--white);
+        border-radius: var(--r-xl);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .rw-sidebar-header {
+        padding: 18px 20px 14px;
+        border-bottom: 1px solid var(--warm-gray);
+    }
+
+    .rw-sidebar-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    .rw-nav { padding: 8px; }
+
+    .rw-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 10px 12px;
+        border-radius: var(--r-md);
+        text-decoration: none;
+        color: var(--black);
+        font-size: 13.5px;
+        font-weight: 500;
+        transition: background .15s, color .15s;
         position: relative;
-        border-radius: 16px;
-        overflow: hidden;
-        aspect-ratio: 1;
-        background: #f0f0f0;
+        margin-bottom: 2px;
     }
 
-    .post-image-wrapper img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+    .rw-nav-item:hover { background: var(--cream); color: var(--black); }
+
+    .rw-nav-item.active {
+        background: var(--black);
+        color: var(--white);
     }
 
-    .photo-count-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(10px);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
+    .rw-nav-item.active:hover { background: #222; color: var(--white); }
 
-    /* Ban Details */
-    .ban-details {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .detail-item {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-
-    .detail-label {
-        font-size: 12px;
-        font-weight: 700;
-        color: #8e8e8e;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .detail-value {
+    .rw-nav-icon {
+        width: 32px; height: 32px;
+        border-radius: var(--r-sm);
+        background: var(--cream);
+        display: grid; place-items: center;
+        flex-shrink: 0;
         font-size: 15px;
-        color: #262626;
-        line-height: 1.5;
+        transition: background .15s;
     }
 
-    .detail-value.danger {
-        color: #e74c3c;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+    .rw-nav-item.active .rw-nav-icon { background: rgba(255,255,255,.15); }
+
+    .rw-nav-info { flex: 1; min-width: 0; }
+
+    .rw-nav-label {
+        display: block;
+        font-size: 13.5px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .detail-value.muted {
-        color: #666;
-        font-style: italic;
-    }
-
-    .admin-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .badge-role {
-        background: linear-gradient(135deg, #4a90e2, #357abd);
-        color: white;
-        padding: 4px 12px;
-        border-radius: 12px;
+    .rw-nav-desc {
+        display: block;
         font-size: 11px;
+        opacity: .65;
+        margin-top: 1px;
+    }
+
+    .rw-nav-badge {
+        background: var(--accent);
+        color: var(--white);
+        font-size: 10.5px;
         font-weight: 700;
-        text-transform: uppercase;
-    }
-
-    /* Card Footer */
-    .card-footer-custom {
-        padding: 16px 24px;
-        background: #fafafa;
-        border-top: 2px solid #f0f0f0;
-        text-align: right;
-    }
-
-    .btn-detail {
-        background: white;
-        color: #4a90e2;
-        border: 2px solid #4a90e2;
-        padding: 10px 24px;
-        border-radius: 12px;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .btn-detail:hover {
-        background: #4a90e2;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
-    }
-
-    /* Modal Styles */
-    .modal-content {
+        padding: 2px 8px;
         border-radius: 20px;
-        border: none;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        flex-shrink: 0;
     }
 
-    .modal-header {
-        padding: 24px 28px;
-        border-bottom: 2px solid #f0f0f0;
+    .rw-nav-item.active .rw-nav-badge { background: rgba(255,255,255,.25); }
+
+    /* ===================== MAIN ===================== */
+    .rw-main { min-width: 0; }
+
+    /* Page heading */
+    .rw-heading {
+        margin-bottom: 22px;
     }
 
-    .modal-title {
-        font-size: 20px;
-        font-weight: 800;
-        color: #1a1a1a;
+    .rw-heading h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 24px;
+        font-weight: 400;
+        color: var(--black);
+        margin-bottom: 5px;
     }
 
-    .modal-body {
-        padding: 28px;
-    }
+    .rw-heading p { font-size: 13.5px; color: var(--muted); }
 
-    .modal-photos-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 12px;
-        margin-bottom: 24px;
-    }
+    /* ===================== LIKE CARDS ===================== */
+    .rw-list { display: flex; flex-direction: column; gap: 16px; }
 
-    .modal-photo-item {
-        aspect-ratio: 1;
-        border-radius: 12px;
+    .rw-card {
+        background: var(--white);
+        border-radius: var(--r-lg);
+        box-shadow: var(--shadow-sm);
         overflow: hidden;
-        border: 2px solid #e8e8e8;
+        transition: box-shadow .25s, transform .25s;
+        animation: cardIn .4s ease both;
+        border: 1.5px solid transparent;
     }
 
-    .modal-photo-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+    @keyframes cardIn {
+        from { opacity: 0; transform: translateY(12px); }
+        to   { opacity: 1; transform: translateY(0); }
     }
 
-    .modal-section {
-        margin-bottom: 24px;
+    .rw-card:nth-child(1) { animation-delay: .04s; }
+    .rw-card:nth-child(2) { animation-delay: .08s; }
+    .rw-card:nth-child(3) { animation-delay: .12s; }
+    .rw-card:nth-child(4) { animation-delay: .16s; }
+    .rw-card:nth-child(5) { animation-delay: .20s; }
+
+    .rw-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+        border-color: var(--warm-gray);
     }
 
-    .modal-section-label {
-        font-size: 14px;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 10px;
-    }
-
-    .modal-caption-box {
-        background: #fafafa;
-        padding: 16px 20px;
-        border-radius: 12px;
-        border: 2px solid #e8e8e8;
-    }
-
-    .modal-caption-box p {
-        margin: 0;
-        color: #262626;
-        line-height: 1.6;
-        font-size: 15px;
-    }
-
-    .ban-info-alert {
-        background: linear-gradient(135deg, #fff0f0, #ffe8e8);
-        border: 2px solid #ffcccc;
-        border-radius: 16px;
-        padding: 20px;
-    }
-
-    .ban-info-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: #e74c3c;
-        margin-bottom: 16px;
+    /* Card header */
+    .rw-card-header {
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--warm-gray);
         display: flex;
         align-items: center;
         gap: 10px;
+        background: var(--cream);
     }
 
-    .ban-info-item {
-        margin-bottom: 12px;
-        font-size: 14px;
+    .rw-card-header-icon {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        display: grid; place-items: center;
+        flex-shrink: 0;
     }
 
-    .ban-info-item:last-child {
-        margin-bottom: 0;
+    .rw-card-header-text {
+        flex: 1;
     }
 
-    .ban-info-item strong {
-        color: #1a1a1a;
-        font-weight: 700;
+    .rw-card-type {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--accent);
     }
 
-    .modal-footer {
-        padding: 20px 28px;
-        border-top: 2px solid #f0f0f0;
+    .rw-card-time {
+        font-size: 11.5px;
+        color: var(--muted);
+        display: block;
+        margin-top: 1px;
     }
 
-    /* Empty State */
-    .empty-state {
-        background: white;
-        border-radius: 20px;
-        padding: 80px 40px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    /* Card body */
+    .rw-card-body {
+        padding: 18px;
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
     }
 
-    .empty-icon {
-        font-size: 80px;
-        margin-bottom: 20px;
-        opacity: 0.4;
+    /* Thumbnail */
+    .rw-thumb-wrap {
+        width: 110px;
+        height: 110px;
+        border-radius: var(--r-md);
+        overflow: hidden;
+        flex-shrink: 0;
+        background: var(--warm-gray);
+        position: relative;
     }
 
-    .empty-title {
-        font-size: 22px;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 8px;
+    .rw-thumb-wrap img {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform .3s;
     }
 
-    .empty-text {
-        font-size: 15px;
-        color: #8e8e8e;
-    }
+    .rw-card:hover .rw-thumb-wrap img { transform: scale(1.05); }
 
-    /* Responsive */
-    @media (max-width: 1200px) {
-        .notification-wrapper {
-            padding: 0 30px;
-        }
+    /* Details */
+    .rw-card-details { flex: 1; min-width: 0; }
 
-        .post-preview-section {
-            grid-template-columns: 160px 1fr;
-            gap: 20px;
-        }
-    }
-
-    @media (max-width: 992px) {
-        .notification-wrapper {
-            padding: 0 20px;
-        }
-
-        .sidebar-card {
-            position: static;
-            margin-bottom: 20px;
-        }
-
-        .post-preview-section {
-            grid-template-columns: 1fr;
-        }
-
-        .post-image-wrapper {
-            max-width: 300px;
-            margin: 0 auto;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .notification-container {
-            padding: 15px 0;
-        }
-
-        .notification-wrapper {
-            padding: 0 15px;
-        }
-
-        .page-title {
-            font-size: 24px;
-        }
-
-        .card-header-custom {
-            padding: 16px 20px;
-        }
-
-        .card-body-custom {
-            padding: 20px;
-        }
-
-        .modal-photos-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    @media (max-width: 480px) {
-        .page-title {
-            font-size: 20px;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .notification-card {
-            border-radius: 16px;
-        }
-
-        .card-footer-custom {
-            text-align: center;
-        }
-
-        .btn-detail {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-
-    /* Animations */
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .notification-card {
-        animation: slideIn 0.5s ease;
-    }
-    /* Like Button & Count */
-    .post-actions {
+    .rw-owner-row {
         display: flex;
         align-items: center;
         gap: 8px;
-        margin-top: 12px;
+        margin-bottom: 8px;
     }
 
-    .modal-action-btn {
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-        padding: 4px 8px;
-    }
-
-    .modal-action-btn:hover {
-        transform: scale(1.2);
-    }
-
-    .modal-action-btn:active {
-        transform: scale(0.9);
-    }
-
-    .like-count {
-        font-size: 14px;
+    .rw-owner-label {
+        font-size: 11px;
+        color: var(--muted);
         font-weight: 600;
-        color: #262626;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        flex-shrink: 0;
     }
+
+    .rw-owner-link {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        text-decoration: none;
+        transition: opacity .2s;
+    }
+
+    .rw-owner-link:hover { opacity: .8; }
+
+    .rw-owner-avatar {
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1.5px solid var(--warm-gray);
+        flex-shrink: 0;
+    }
+
+    .rw-owner-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--black);
+    }
+
+    .rw-caption {
+        font-size: 13.5px;
+        color: #555;
+        line-height: 1.55;
+        margin-bottom: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .rw-caption.no-caption { color: var(--muted); font-style: italic; }
+
+    /* Like action row */
+    .rw-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .rw-like-btn {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        background: var(--cream);
+        border: 1.5px solid var(--warm-gray);
+        display: grid; place-items: center;
+        cursor: pointer;
+        transition: background .2s, border-color .2s, transform .15s;
+        flex-shrink: 0;
+    }
+
+    .rw-like-btn:hover { background: var(--accent-soft); border-color: var(--accent); transform: scale(1.08); }
+    .rw-like-btn.liked { background: var(--accent-soft); border-color: var(--accent); }
+
+    .rw-like-count {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--black);
+    }
+
+    .rw-like-label {
+        font-size: 13px;
+        color: var(--muted);
+    }
+
+    /* Responsive card body */
+    @media (max-width: 500px) {
+        .rw-card-body { flex-direction: column; }
+        .rw-thumb-wrap { width: 100%; height: 180px; }
+    }
+
+    /* ===================== EMPTY ===================== */
+    .rw-empty {
+        text-align: center;
+        padding: 80px 24px;
+        background: var(--white);
+        border-radius: var(--r-xl);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .rw-empty-icon {
+        width: 64px; height: 64px;
+        background: var(--cream);
+        border-radius: 50%;
+        display: grid; place-items: center;
+        margin: 0 auto 20px;
+    }
+
+    .rw-empty h4 {
+        font-family: 'Playfair Display', serif;
+        font-size: 20px; font-weight: 400;
+        color: var(--black); margin-bottom: 8px;
+    }
+
+    .rw-empty p { font-size: 14px; color: var(--muted); }
 </style>
 
-<div class="notification-container">
-    <div class="notification-wrapper">
-        <div class="row g-4">
-            <!-- Sidebar Navigation -->
-            <div class="col-lg-3">
-                <div class="sidebar-card">
-                    <h5 class="sidebar-title">Riwayat Aktivitas</h5>
-                    
-                    <div class="nav-list">
-                        <!-- Notifikasi -->
-                        <a href="{{ route('user.riwayat.postingan') }}" class="nav-item">
-                            <div class="nav-icon">🔔</div>
-                            <div class="nav-content">
-                                <span class="nav-label">Notifikasi</span>
-                                <span class="nav-desc">Postingan dibanned</span>
-                            </div>
-                            @if(isset($totalPosts) && $totalPosts > 0)
-                                <span class="nav-badge">{{ $totalPosts }}</span>
-                            @endif
-                        </a>
+<div class="rw-page">
+    <div class="rw-inner">
 
-                        <!-- Komentar -->
-                        <a href="{{ route('user.riwayat.komentar') }}" class="nav-item">
-                            <div class="nav-icon">💬</div>
-                            <div class="nav-content">
-                                <span class="nav-label">Komentar</span>
-                                <span class="nav-desc">Riwayat komentar</span>
-                            </div>
-                            @if(isset($totalComments) && $totalComments > 0)
-                                <span class="nav-badge">{{ $totalComments }}</span>
-                            @endif
-                        </a>
-
-                        <!-- Menyukai (Active) -->
-                        <a href="{{ route('user.riwayat.like') }}" class="nav-item active">
-                            <div class="nav-icon">❤️</div>
-                            <div class="nav-content">
-                                <span class="nav-label">Menyukai</span>
-                                <span class="nav-desc">Postingan disukai</span>
-                            </div>
-                            @if($totalLikes > 0)
-                                <span class="nav-badge">{{ $totalLikes }}</span>
-                            @endif
-                        </a>
-
-                        <!-- Diikuti -->
-                        <a href="{{ route('user.riwayat.diikuti') }}" class="nav-item">
-                            <div class="nav-icon">👥</div>
-                            <div class="nav-content">
-                                <span class="nav-label">Pengikut</span>
-                                <span class="nav-desc">Pengguna yang diikuti</span>
-                            </div>
-                            @if($totalFollowers > 0)
-                                <span class="nav-badge">{{ $totalFollowers }}</span>
-                            @endif
-                        </a>
-                        
-                        <!-- Mengikuti -->
-                        <a href="{{ route('user.riwayat.mengikuti') }}" class="nav-item">
-                            <div class="nav-icon">👤</div>
-                            <div class="nav-content">
-                                <span class="nav-label">Mengikuti</span>
-                                <span class="nav-desc">Pengguna yang mengikuti</span>
-                            </div>
-                            @if($totalFollowing > 0)
-                                <span class="nav-badge">{{ $totalFollowing }}</span>
-                            @endif
-                            
-                        </a>
-                    </div>
+        {{-- ══ SIDEBAR ══ --}}
+        <aside class="rw-sidebar">
+            <div class="rw-sidebar-card">
+                <div class="rw-sidebar-header">
+                    <span class="rw-sidebar-title">Riwayat Aktivitas</span>
                 </div>
+                <nav class="rw-nav">
+
+                    <a href="{{ route('user.riwayat.postingan') }}" class="rw-nav-item">
+                        <div class="rw-nav-icon">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                <path d="M7.5 2C7.5 2 5 5 5 7.5a2.5 2.5 0 005 0C10 5 7.5 2 7.5 2z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                                <path d="M7.5 10v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="rw-nav-info">
+                            <span class="rw-nav-label">Notifikasi</span>
+                            <span class="rw-nav-desc">Postingan dibanned</span>
+                        </div>
+                        @if(isset($totalPosts) && $totalPosts > 0)
+                            <span class="rw-nav-badge">{{ $totalPosts }}</span>
+                        @endif
+                    </a>
+
+                    <a href="{{ route('user.riwayat.komentar') }}" class="rw-nav-item">
+                        <div class="rw-nav-icon">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                <path d="M12.5 1.5H2.5a.5.5 0 00-.5.5v7a.5.5 0 00.5.5H4l3 3 3-3h2.5a.5.5 0 00.5-.5V2a.5.5 0 00-.5-.5z" stroke="currentColor" stroke-width="1.3"/>
+                            </svg>
+                        </div>
+                        <div class="rw-nav-info">
+                            <span class="rw-nav-label">Komentar</span>
+                            <span class="rw-nav-desc">Riwayat komentar</span>
+                        </div>
+                        @if(isset($totalComments) && $totalComments > 0)
+                            <span class="rw-nav-badge">{{ $totalComments }}</span>
+                        @endif
+                    </a>
+
+                    <a href="{{ route('user.riwayat.like') }}" class="rw-nav-item active">
+                        <div class="rw-nav-icon">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                <path d="M7.5 13S1.5 9.5 1.5 5.5A3 3 0 017.5 3.1 3 3 0 0113.5 5.5C13.5 9.5 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.4" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <div class="rw-nav-info">
+                            <span class="rw-nav-label">Menyukai</span>
+                            <span class="rw-nav-desc">Postingan disukai</span>
+                        </div>
+                        @if($totalLikes > 0)
+                            <span class="rw-nav-badge">{{ $totalLikes }}</span>
+                        @endif
+                    </a>
+
+                    <a href="{{ route('user.riwayat.diikuti') }}" class="rw-nav-item">
+                        <div class="rw-nav-icon">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                <circle cx="7.5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/>
+                                <path d="M2 13c0-3 2.5-4.5 5.5-4.5s5.5 1.5 5.5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                                <path d="M11 6l1.5 1.5L15 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="rw-nav-info">
+                            <span class="rw-nav-label">Pengikut</span>
+                            <span class="rw-nav-desc">Pengguna yang diikuti</span>
+                        </div>
+                        @if($totalFollowers > 0)
+                            <span class="rw-nav-badge">{{ $totalFollowers }}</span>
+                        @endif
+                    </a>
+
+                    <a href="{{ route('user.riwayat.mengikuti') }}" class="rw-nav-item">
+                        <div class="rw-nav-icon">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                <circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/>
+                                <path d="M1.5 13c0-3 2-4.5 4.5-4.5s4.5 1.5 4.5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                                <path d="M11.5 3v5M9 5.5h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="rw-nav-info">
+                            <span class="rw-nav-label">Mengikuti</span>
+                            <span class="rw-nav-desc">Pengguna yang mengikuti</span>
+                        </div>
+                        @if($totalFollowing > 0)
+                            <span class="rw-nav-badge">{{ $totalFollowing }}</span>
+                        @endif
+                    </a>
+
+                </nav>
+            </div>
+        </aside>
+
+        {{-- ══ MAIN ══ --}}
+        <main class="rw-main">
+
+            <div class="rw-heading">
+                <h1>Riwayat Menyukai</h1>
+                <p>Postingan yang pernah kamu sukai</p>
             </div>
 
-            <!-- Main Content -->
-            <div class="col-lg-9">
-                <div class="main-content">
-                    <div class="page-header">
-                        <h2 class="page-title">Riwayat Menyukai</h2>
-                        <p class="page-subtitle">Lihat postingan yang telah Anda sukai.</p>
-                    </div>
+            @if($likedPosts->count() > 0)
+                <div class="rw-list">
+                    @foreach($likedPosts as $post)
+                        <div class="rw-card">
 
-                    @if($likedPosts->count() > 0)
-                        <div class="notifications-list">
-                            @foreach($likedPosts as $post)
-                                <div class="notification-card">
-                                    <!-- Card Header -->
-                                    <div class="card-header-custom">
-                                        <div class="header-text">
-                                            <h6>Postingan Disukai</h6>
-                                            <small>{{ $post->created_at->diffForHumans() }}</small>
-                                        </div>
-                                    </div>
-
-                                    <!-- Card Body -->
-                                    <div class="card-body-custom">
-                                        <div class="post-preview-section">
-                                            <!-- Post Image -->
-                                            <div class="post-image-wrapper">
-                                                <img src="{{ asset('storage/'.optional($post->mainPhoto)->photo ?? 'images/default-post.jpg') }}" 
-                                                    alt="Post Image">
-                                            </div>
-
-                                            <!-- Post Details -->
-                                            <div class="post-details">
-                                                <!-- Pemilik Postingan -->
-                                                <div class="detail-item">
-                                                    <span class="detail-label">Pemilik Postingan</span>
-                                                    <div class="user-info">
-                                                        @if($post->user)
-                                                        <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}">
-                                                            <img src="{{ $post->user->avatar_display ?? 'https://ui-avatars.com/api/?name='.$post->user->name }}" 
-                                                                alt="{{ $post->user->name }}" class="user-avatar">
-                                                        
-                                                            <span class="username text-dark">{{ $post->user->name }}</span>
-                                                        </a>
-                                                        @else
-                                                            <span class="detail-value muted">Pengguna tidak ditemukan</span>
-                                                        @endif
-                                                    </div>
-                                                </div>
-
-                                                <!-- Caption -->
-                                                <div class="detail-item mt-2">
-                                                    <span class="detail-label">Caption</span>
-                                                    <p class="detail-value">
-                                                        {{ $post->caption ?? 'Tidak ada caption' }}
-                                                    </p>
-                                                </div>
-
-                                                <!-- Tanggal Disukai -->
-                        
-
-                                                <!-- Like Actions -->
-                                                <div class="post-actions">
-                                                    <button type="button" 
-                                                            class="modal-action-btn" 
-                                                            data-post-id="{{ $post->id }}" 
-                                                            data-liked="{{ $post->isLikedBy(auth()->id()) ? '1' : '0' }}">
-                                                        {{ $post->isLikedBy(auth()->id()) ? '❤️' : '🤍' }}
-                                                    </button>
-                                                    <span class="like-count" data-post-id="{{ $post->id }}">
-                                                        {{ $post->likesCount() }}
-                                                    </span>
-                                                    <span style="font-size: 14px; color: #8e8e8e;">suka</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            {{-- Header --}}
+                            <div class="rw-card-header">
+                                <div class="rw-card-header-icon">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                        <path d="M7 12S1.5 9 1.5 5A3.5 3.5 0 017 2.2 3.5 3.5 0 0112.5 5C12.5 9 7 12 7 12z" stroke="#c8533a" stroke-width="1.5" fill="#c8533a"/>
+                                    </svg>
                                 </div>
-                            @endforeach
+                                <div class="rw-card-header-text">
+                                    <span class="rw-card-type">Postingan Disukai</span>
+                                    <span class="rw-card-time">{{ $post->created_at->diffForHumans() }}</span>
+                                </div>
+                            </div>
+
+                            {{-- Body --}}
+                            <div class="rw-card-body">
+
+                                {{-- Thumbnail --}}
+                                <div class="rw-thumb-wrap">
+                                    <img src="{{ asset('storage/'.optional($post->mainPhoto)->photo ?? 'images/default-post.jpg') }}"
+                                         alt="Post">
+                                </div>
+
+                                {{-- Details --}}
+                                <div class="rw-card-details">
+
+                                    {{-- Owner --}}
+                                    @if($post->user)
+                                        <div class="rw-owner-row">
+                                            <span class="rw-owner-label">Oleh</span>
+                                            <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}"
+                                               class="rw-owner-link">
+                                                <img src="{{ $post->user->avatar_display ?? 'https://ui-avatars.com/api/?name='.$post->user->name }}"
+                                                     alt="{{ $post->user->name }}"
+                                                     class="rw-owner-avatar">
+                                                <span class="rw-owner-name">{{ $post->user->username ?? $post->user->name }}</span>
+                                            </a>
+                                        </div>
+                                    @endif
+
+                                    {{-- Caption --}}
+                                    @if($post->caption)
+                                        <div class="rw-caption">{{ $post->caption }}</div>
+                                    @else
+                                        <div class="rw-caption no-caption">Tidak ada caption</div>
+                                    @endif
+
+                                    {{-- Like action --}}
+                                    <div class="rw-actions">
+                                        <button type="button"
+                                                class="rw-like-btn {{ $post->isLikedBy(auth()->id()) ? 'liked' : '' }}"
+                                                data-post-id="{{ $post->id }}"
+                                                data-liked="{{ $post->isLikedBy(auth()->id()) ? '1' : '0' }}">
+                                            @if($post->isLikedBy(auth()->id()))
+                                                <svg width="15" height="15" viewBox="0 0 15 15" fill="#c8533a">
+                                                    <path d="M7.5 13S1.5 9.5 1.5 5.5A3 3 0 017.5 3.1 3 3 0 0113.5 5.5C13.5 9.5 7.5 13 7.5 13z"/>
+                                                </svg>
+                                            @else
+                                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                                    <path d="M7.5 13S1.5 9.5 1.5 5.5A3 3 0 017.5 3.1 3 3 0 0113.5 5.5C13.5 9.5 7.5 13 7.5 13z" stroke="#888" stroke-width="1.4"/>
+                                                </svg>
+                                            @endif
+                                        </button>
+                                        <span class="rw-like-count" data-post-id="{{ $post->id }}">
+                                            {{ $post->likesCount() }}
+                                        </span>
+                                        <span class="rw-like-label">suka</span>
+                                    </div>
+
+                                </div>
+                            </div>
+
                         </div>
-                    @else
-                        <div class="empty-state">
-                            <div class="empty-icon">❤️</div>
-                            <h3 class="empty-title">Belum Ada Postingan Disukai</h3>
-                            <p class="empty-text">Anda belum menyukai postingan apapun.</p>
-                        </div>
-                    @endif
+                    @endforeach
                 </div>
-            </div>
-        </div>
+            @else
+                <div class="rw-empty">
+                    <div class="rw-empty-icon">
+                        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                            <path d="M13 22S3 16.5 3 9A5 5 0 0113 5.5 5 5 0 0123 9C23 16.5 13 22 13 22z" stroke="#b8b3ac" stroke-width="1.6"/>
+                        </svg>
+                    </div>
+                    <h4>Belum Ada Postingan Disukai</h4>
+                    <p>Kamu belum menyukai postingan apapun.</p>
+                </div>
+            @endif
+
+        </main>
     </div>
 </div>
 
-<!-- JavaScript untuk Like Button -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.modal-action-btn').forEach(button => {
-        button.addEventListener('click', function () {
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.rw-like-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
             const postId = this.dataset.postId;
 
             fetch(`{{ route('user.post.like', ':id') }}`.replace(':id', postId), {
@@ -856,22 +586,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Accept': 'application/json',
                 },
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
-                // Ganti icon
-                this.innerHTML = data.liked ? '❤️' : '🤍';
-                this.dataset.liked = data.liked ? '1' : '0';
+                const liked = data.liked;
 
-                // Update jumlah like
-                const countEl = document.querySelector(
-                    `.like-count[data-post-id="${postId}"]`
-                );
+                this.innerHTML = liked
+                    ? `<svg width="15" height="15" viewBox="0 0 15 15" fill="#c8533a"><path d="M7.5 13S1.5 9.5 1.5 5.5A3 3 0 017.5 3.1 3 3 0 0113.5 5.5C13.5 9.5 7.5 13 7.5 13z"/></svg>`
+                    : `<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S1.5 9.5 1.5 5.5A3 3 0 017.5 3.1 3 3 0 0113.5 5.5C13.5 9.5 7.5 13 7.5 13z" stroke="#888" stroke-width="1.4"/></svg>`;
 
-                if (countEl) {
-                    countEl.textContent = data.total;
-                }
+                this.classList.toggle('liked', liked);
+                this.dataset.liked = liked ? '1' : '0';
+
+                const countEl = document.querySelector(`.rw-like-count[data-post-id="${postId}"]`);
+                if (countEl) countEl.textContent = data.total;
             })
-            .catch(err => console.error(err));
+            .catch(console.error);
         });
     });
 });

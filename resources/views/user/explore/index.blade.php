@@ -1,1212 +1,1218 @@
 @extends('layouts.index2')
 
 @section('content')
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-    /* Preserve all dashboard styling */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    /* Explore specific - Sidebar & Search */
-    .explore-container {
-        background: transparent;
-        min-height: calc(100vh - 60px);
-        padding: 15px 0;
-    }
-
-    .explore-sidebar {
-        position: sticky;
-        top: 80px;
-        height: calc(100vh - 100px);
-        overflow-y: auto;
-    }
-
-    .explore-sidebar::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .explore-sidebar::-webkit-scrollbar-track {
-        background: #f8f8f8;
-    }
-
-    .explore-sidebar::-webkit-scrollbar-thumb {
-        background: #dbdbdb;
-        border-radius: 10px;
-    }
-
-    .category-card {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        margin-bottom: 20px;
-        overflow: hidden;
-    }
-
-    .category-card-header {
-        padding: 20px;
-        border-bottom: 1px solid #efefef;
-        font-weight: 700;
-        font-size: 17px;
-        color: #262626;
-    }
-
-    .category-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .category-item {
-        border: none;
-        padding: 14px 20px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        text-decoration: none;
-        color: #262626;
-        font-weight: 500;
-    }
-
-    .category-item:hover {
-        background: #f8f8f8;
-        padding-left: 25px;
-    }
-
-    .category-item.active {
-        background: #5d87ff;
-        color: white;
-        font-weight: 600;
-    }
-
-    .search-card {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        margin-bottom: 24px;
-        padding: 20px;
-    }
-
-    .search-input-wrapper {
-        position: relative;
-        width: 100%;
-    }
-
-    .search-icon {
-        position: absolute;
-        left: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 18px;
-        color: #8e8e8e;
-        pointer-events: none;
-    }
-
-    .search-input {
-        width: 100%;
-        padding: 14px 20px 14px 52px;
-        border: 2px solid #efefef;
-        border-radius: 28px;
-        font-size: 15px;
-        outline: none;
-        transition: all 0.3s ease;
-        background: #fafafa;
-    }
-
-    .search-input:focus {
-        border-color: #5d87ff;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(93, 135, 255, 0.1);
-    }
-
-    .search-btn {
-        background: #5d87ff;
-        color: white;
-        border: none;
-        padding: 14px 28px;
-        border-radius: 28px;
-        font-weight: 700;
-        margin-left: 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .search-btn:hover {
-        background: #4a7de8;
-        transform: scale(1.05);
-    }
-
-    /* Feed Container - From Dashboard */
-    .feed-container {
-        background: transparent;
-        min-height: calc(100vh - 60px);
-        padding: 0;
-    }
-
-    /* Masonry Grid */
-    .masonry-grid {
-        column-count: 4;
-        column-gap: 24px;
-        padding: 0;
-    }
-
-    @media (max-width: 1400px) {
-        .masonry-grid {
-            column-count: 3;
-        }
-    }
-
-    @media (max-width: 992px) {
-        .masonry-grid {
-            column-count: 2;
-            column-gap: 16px;
-        }
-    }
-
-    @media (max-width: 600px) {
-        .masonry-grid {
-            column-count: 1;
-        }
-    }
-
-    /* Post Card - From Dashboard */
-    .post-card {
-        background: white;
-        border-radius: 20px;
-        margin-bottom: 24px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        overflow: hidden;
-        break-inside: avoid;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        cursor: pointer;
-    }
-
-    .post-card:hover {
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-        transform: translateY(-4px);
-    }
-
-    .post-image-container {
-        position: relative;
-        width: 100%;
-        background: #f8f8f8;
-        overflow: hidden;
-    }
-
-    .post-image-container img {
-        width: 100%;
-        height: auto;
-        display: block;
-        border-radius: 20px 20px 0 0;
-        transition: transform 0.4s ease;
-    }
-
-    .post-card:hover .post-image-container img {
-        transform: scale(1.05);
-    }
-
-    /* Post Info */
-    .post-info {
-        padding: 16px 18px;
-    }
-
-    .post-user {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
-    }
-
-    .user-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid #f0f0f0;
-        transition: all 0.3s ease;
-    }
-
-    .user-avatar:hover {
-        border-color: #5d87ff;
-        transform: scale(1.1);
-    }
-
-    .user-name {
-        font-size: 14px;
-        color: #262626;
-        font-weight: 600;
-        transition: color 0.3s ease;
-        text-decoration: none;
-    }
-
-    .user-name:hover {
-        color: #5d87ff;
-    }
-
-    .post-caption {
-        font-size: 15px;
-        color: #262626;
-        margin-bottom: 12px;
-        font-weight: 500;
-        line-height: 1.5;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .post-stats {
-        display: flex;
-        gap: 20px;
-        font-size: 14px;
-        color: #8e8e8e;
-        margin-top: 10px;
-        font-weight: 500;
-    }
-
-    .post-stats span {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        transition: color 0.3s ease;
-    }
-
-    .post-stats span:hover {
-        color: #262626;
-    }
-
-    /* Modal - From Dashboard */
-    .detail-modal .modal-dialog {
-        max-width: 1200px;
-        height: 92vh;
-        margin: 4vh auto;
-    }
-
-    .detail-modal .modal-content {
-        border-radius: 24px;
-        overflow: hidden;
-        border: none;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-
-    .detail-modal .modal-body {
-        padding: 0;
-        flex: 1;
-        overflow: hidden;
-    }
-
-    .modal-container {
-        display: flex;
-        height: 100%;
-    }
-
-    .modal-image-section {
-        flex: 1.5;
-        background: #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .modal-image-section img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
-
-    /* Modal Carousel */
-    .modal-carousel {
-        width: 100%;
-        height: 100%;
-    }
-
-    .modal-carousel .carousel-inner {
-        height: 100%;
-    }
-
-    .modal-carousel .carousel-item {
-        height: 100%;
-        display: none !important;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-    }
-
-    .modal-carousel .carousel-item.active {
-        display: flex !important;
-        position: relative;
-    }
-
-    .modal-carousel .carousel-item img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
-
-    .modal-carousel .carousel-control-prev,
-    .modal-carousel .carousel-control-next {
-        width: 56px;
-        height: 56px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 50%;
-        top: 50%;
-        transform: translateY(-50%);
-        opacity: 1;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 10;
-    }
-
-    .modal-carousel .carousel-control-prev:hover,
-    .modal-carousel .carousel-control-next:hover {
-        background: white;
-        transform: translateY(-50%) scale(1.1);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    }
-
-    .modal-carousel .carousel-control-prev {
-        left: 24px;
-    }
-
-    .modal-carousel .carousel-control-next {
-        right: 24px;
-    }
-
-    .modal-carousel .carousel-control-prev-icon,
-    .modal-carousel .carousel-control-next-icon {
-        width: 28px;
-        height: 28px;
-        filter: invert(1);
-    }
-
-    .modal-carousel .carousel-indicators {
-        bottom: 24px;
-    }
-
-    .modal-carousel .carousel-indicators button {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.6);
-        border: none;
-        margin: 0 5px;
-        transition: all 0.3s ease;
-    }
-
-    .modal-carousel .carousel-indicators button.active {
-        background-color: #fff;
-        transform: scale(1.3);
-    }
-
-    /* Modal Details Section */
-    .modal-details-section {
-        width: 480px;
-        background: white;
-        display: flex;
-        flex-direction: column;
-        border-left: 1px solid #efefef;
-    }
-
-    .modal-header-custom {
-        padding: 24px;
-        border-bottom: 1px solid #efefef;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .modal-header-actions {
-        display: flex;
-        gap: 14px;
-        align-items: center;
-    }
-
-    .modal-action-btn {
-        background: #f8f8f8;
-        border: none;
-        cursor: pointer;
-        font-size: 26px;
-        padding: 10px;
-        border-radius: 50%;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        width: 44px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .modal-action-btn:hover {
-        background: #e8e8e8;
-        transform: scale(1.1) rotate(5deg);
-    }
-
-    .modal-save-btn {
-        background: linear-gradient(135deg, #e60023, #c4001d);
-        color: white;
-        border: none;
-        padding: 14px 32px;
-        border-radius: 28px;
-        font-weight: 700;
-        font-size: 15px;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 12px rgba(230, 0, 35, 0.3);
-    }
-
-    .modal-save-btn:hover {
-        background: linear-gradient(135deg, #ff0a37, #e60023);
-        transform: scale(1.05);
-        box-shadow: 0 6px 16px rgba(230, 0, 35, 0.4);
-    }
-
-    .modal-user-section {
-        padding: 24px;
-        border-bottom: 1px solid #efefef;
-    }
-
-    .modal-user-info {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 16px;
-    }
-
-    .modal-user-avatar {
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid #f0f0f0;
-        transition: all 0.3s ease;
-    }
-
-    .modal-user-avatar:hover {
-        border-color: #5d87ff;
-        transform: scale(1.05);
-    }
-
-    .modal-user-details h6 {
-        margin: 0;
-        font-weight: 700;
-        color: #262626;
-        font-size: 17px;
-        transition: color 0.3s ease;
-    }
-
-    .modal-user-details h6 a:hover {
-        color: #5d87ff;
-    }
-
-    .modal-user-details span {
-        font-size: 14px;
-        color: #8e8e8e;
-    }
-
-    .modal-caption {
-        font-size: 15px;
-        color: #262626;
-        line-height: 1.6;
-        margin-bottom: 14px;
-    }
-
-    .modal-stats {
-        display: flex;
-        gap: 24px;
-        font-size: 15px;
-        color: #8e8e8e;
-        font-weight: 600;
-    }
-
-    .modal-stats span {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: color 0.3s ease;
-    }
-
-    .modal-stats span:hover {
-        color: #262626;
-    }
-
-    /* Comments Section */
-    .modal-comments-section {
-        flex: 1;
-        overflow-y: auto;
-        padding: 24px;
-    }
-
-    .comment-item {
-        display: flex;
-        gap: 14px;
-        margin-bottom: 24px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid #f5f5f5;
-    }
-
-    .comment-item:last-child {
-        border-bottom: none;
-    }
-
-    .comment-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        flex-shrink: 0;
-        border: 2px solid #f0f0f0;
-    }
-
-    .comment-content {
-        flex: 1;
-    }
-
-    .comment-avatar-link {
-        display: block;
-        line-height: 0;
-        transition: opacity 0.2s ease;
-    }
-
-    .comment-avatar-link:hover {
-        opacity: 0.7;
-    }
-
-    .comment-username-link {
-        text-decoration: none;
-        color: inherit;
-    }
-
-    .comment-username-link:hover .comment-username {
-        text-decoration: underline;
-        color: #000;
-    }
-
-    .comment-username {
-        font-weight: 700;
-        color: #262626;
-        font-size: 15px;
-        margin-right: 10px;
-        transition: all 0.2s ease;
-        cursor: pointer;
-    }
-
-    .comment-text {
-        color: #262626;
-        font-size: 15px;
-        line-height: 1.5;
-    }
-
-    .comment-actions {
-        display: flex;
-        gap: 20px;
-        margin-top: 10px;
-        font-size: 13px;
-        color: #8e8e8e;
-        font-weight: 600;
-    }
-
-    .comment-actions button {
-        background: none;
-        border: none;
-        color: #8e8e8e;
-        cursor: pointer;
-        padding: 0;
-        font-weight: 600;
-        font-size: 13px;
-        transition: color 0.3s ease;
-    }
-
-    .comment-actions button:hover {
-        color: #262626;
-    }
-
-    .replies-container {
-        margin-left: 52px;
-        margin-top: 12px;
-        padding-left: 12px;
-        border-left: 2px solid #efefef;
-    }
-
-    /* Comment Input */
-    .modal-comment-input-section {
-        padding: 24px;
-        border-top: 1px solid #efefef;
-    }
-
-    .modal-comment-input {
-        display: flex;
-        gap: 14px;
-        align-items: center;
-    }
-
-    .modal-comment-input input {
-        flex: 1;
-        border: 2px solid #efefef;
-        border-radius: 28px;
-        padding: 14px 24px;
-        outline: none;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        background: #fafafa;
-    }
-
-    .modal-comment-input input:focus {
-        border-color: #5d87ff;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(93, 135, 255, 0.1);
-    }
-
-    .modal-comment-input button {
-        background: #5d87ff;
-        color: white;
-        border: none;
-        padding: 14px 28px;
-        border-radius: 28px;
-        font-weight: 700;
-        cursor: pointer;
-        font-size: 15px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .modal-comment-input button:hover:not(:disabled) {
-        background: #4a7de8;
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(93, 135, 255, 0.3);
-    }
-
-    .modal-comment-input button:disabled {
-        background: #dbdbdb;
-        cursor: not-allowed;
-        opacity: 0.6;
-    }
-
-    .reply-info {
-        padding: 8px 12px;
-        background: #f0f7ff;
-        border-radius: 8px;
-        margin-top: 8px;
-        display: none;
-    }
-
-    .reply-info small {
-        color: #5d87ff;
-        font-weight: 600;
-    }
-
-    .cancel-reply {
-        background: none;
-        border: none;
-        color: #8e8e8e;
-        cursor: pointer;
-        margin-left: 10px;
-        font-size: 14px;
-    }
-
-    .cancel-reply:hover {
-        color: #262626;
-    }
-
-    /* Dropdown Menu */
-    .dropdown-menu {
-        border: none;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-        border-radius: 16px;
-        padding: 10px;
-        min-width: 220px;
-        margin-top: 8px;
-    }
-
-    .dropdown-item {
-        padding: 12px 18px;
-        font-size: 15px;
-        color: #262626;
-        transition: all 0.2s ease;
-        border-radius: 10px;
-        font-weight: 500;
-    }
-
-    .dropdown-item:hover {
-        background: #f0f7ff;
-        color: #5d87ff;
-        transform: translateX(4px);
-    }
-
-    .dropdown-item.text-danger:hover {
-        background: #fff0f0;
-        color: #e74c3c;
-    }
-
-    /* Report Modal */
-    .report-modal .modal-dialog {
-        max-width: 560px;
-    }
-
-    .report-modal .modal-content {
-        border-radius: 20px;
-        border: none;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-    }
-
-    .report-modal .modal-header {
-        border-bottom: 1px solid #f0f0f0;
-        padding: 28px;
-    }
-
-    .report-modal .modal-title {
-        font-weight: 700;
-        font-size: 20px;
-        color: #262626;
-    }
-
-    .report-modal .modal-body {
-        padding: 28px;
-    }
-
-    .report-modal .form-label {
-        font-weight: 700;
-        color: #262626;
-        margin-bottom: 10px;
-        font-size: 15px;
-    }
-
-    .report-modal .form-select,
-    .report-modal .form-control {
-        border: 2px solid #efefef;
-        border-radius: 14px;
-        padding: 14px 20px;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        background: #fafafa;
-    }
-
-    .report-modal .form-select:focus,
-    .report-modal .form-control:focus {
-        border-color: #e74c3c;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.1);
-    }
-
-    .report-modal .modal-footer {
-        border-top: 1px solid #f0f0f0;
-        padding: 24px 28px;
-        gap: 12px;
-    }
-
-    .report-modal .btn-submit-report {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-        color: white;
-        border: none;
-        padding: 14px 32px;
-        border-radius: 14px;
-        font-weight: 700;
-        font-size: 15px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        flex: 1;
-        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-    }
-
-    .report-modal .btn-submit-report:hover {
-        background: linear-gradient(135deg, #ff5a4a, #e74c3c);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4);
-    }
-
-    .report-modal .btn-cancel {
-        background: #f0f5f9;
-        color: #262626;
-        border: none;
-        padding: 14px 32px;
-        border-radius: 14px;
-        font-weight: 700;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        flex: 1;
-    }
-
-    .report-modal .btn-cancel:hover {
-        background: #e0e7ed;
-    }
-
-    /* Scrollbar */
-    .modal-comments-section::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    .modal-comments-section::-webkit-scrollbar-track {
-        background: #f8f8f8;
-        border-radius: 10px;
-    }
-
-    .modal-comments-section::-webkit-scrollbar-thumb {
-        background: #dbdbdb;
-        border-radius: 10px;
-    }
-
-    .modal-comments-section::-webkit-scrollbar-thumb:hover {
-        background: #b8b8b8;
-    }
-
-    /* Empty State */
-    .empty-feed {
-        text-align: center;
-        padding: 120px 40px;
-        background: white;
-        border-radius: 24px;
-        margin: 40px auto;
-        max-width: 600px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    }
-
-    .empty-feed i {
-        font-size: 80px;
-        margin-bottom: 24px;
-        display: block;
-        opacity: 0.7;
-    }
-
-    .empty-feed h4 {
-        color: #262626;
-        margin-bottom: 12px;
-        font-weight: 700;
-        font-size: 24px;
-    }
-
-    .empty-feed p {
-        color: #8e8e8e;
-        font-size: 16px;
-    }
-
-    /* Responsive */
-    @media (max-width: 992px) {
-        .modal-details-section {
-            width: 100%;
-        }
-
-        .modal-container {
-            flex-direction: column;
-        }
-
-        .modal-image-section {
-            height: 55vh;
-        }
-
-        .modal-comments-section {
-            max-height: 30vh;
-        }
-
-        .explore-sidebar {
-            position: relative;
-            height: auto;
-            margin-bottom: 20px;
-        }
-    }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --black:       #0a0a0a;
+    --white:       #ffffff;
+    --cream:       #f9f7f4;
+    --warm-gray:   #e8e4df;
+    --mid-gray:    #b8b3ac;
+    --muted:       #888077;
+    --accent:      #c8533a;
+    --accent-h:    #a83f28;
+    --accent-soft: #f5ece9;
+    --shadow-sm:   0 1px 3px rgba(10,10,10,0.07);
+    --shadow-md:   0 4px 16px rgba(10,10,10,0.10);
+    --shadow-lg:   0 12px 40px rgba(10,10,10,0.14);
+    --r-sm:  8px;
+    --r-md:  14px;
+    --r-lg:  20px;
+    --r-xl:  28px;
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Override layout ── */
+.container-fluid { padding: 0 !important; max-width: 100% !important; }
+.body-wrapper    { margin-top: 0 !important; }
+
+/* ===================== PAGE ===================== */
+.ex-page {
+    background: var(--cream);
+    min-height: calc(100vh - 64px);
+    padding: 32px 0 80px;
+}
+
+.ex-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 28px;
+    align-items: start;
+}
+
+@media (max-width: 1100px) { .ex-inner { grid-template-columns: 200px 1fr; gap: 20px; } }
+@media (max-width: 860px)  { .ex-inner { grid-template-columns: 1fr; } }
+@media (max-width: 600px)  { .ex-inner { padding: 0 16px; } }
+
+/* ===================== SIDEBAR ===================== */
+.ex-sidebar {
+    position: sticky;
+    top: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Search box */
+.ex-search-box {
+    background: var(--white);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 16px;
+}
+
+.ex-search-wrap {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.ex-search-wrap input {
+    width: 100%;
+    height: 40px;
+    background: var(--cream);
+    border: 1.5px solid transparent;
+    border-radius: 40px;
+    padding: 0 16px 0 40px;
+    font-size: 13.5px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--black);
+    outline: none;
+    transition: border-color .2s, background .2s;
+}
+
+.ex-search-wrap input:focus {
+    background: var(--white);
+    border-color: var(--accent);
+}
+
+.ex-search-wrap input::placeholder { color: var(--muted); }
+
+.ex-search-icon {
+    position: absolute;
+    left: 13px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+    display: flex;
+}
+
+.ex-search-btn {
+    width: 100%;
+    height: 36px;
+    background: var(--black);
+    color: var(--white);
+    border: none;
+    border-radius: 36px;
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.ex-search-btn:hover { background: #222; }
+
+/* Category card */
+.ex-cat-card {
+    background: var(--white);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.ex-cat-header {
+    padding: 16px 18px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid var(--warm-gray);
+}
+
+.ex-cat-list { padding: 8px; }
+
+.ex-cat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--r-sm);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--black);
+    text-decoration: none;
+    transition: background .15s, color .15s, padding-left .2s;
+    cursor: pointer;
+}
+
+.ex-cat-item:hover {
+    background: var(--cream);
+    padding-left: 16px;
+    color: var(--black);
+}
+
+.ex-cat-item.active {
+    background: var(--black);
+    color: var(--white);
+    padding-left: 12px;
+}
+
+.ex-cat-item.active:hover {
+    background: #222;
+    color: var(--white);
+    padding-left: 12px;
+}
+
+.ex-cat-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--mid-gray);
+    flex-shrink: 0;
+    transition: background .15s;
+}
+
+.ex-cat-item.active .ex-cat-dot { background: var(--accent); }
+.ex-cat-item:hover .ex-cat-dot  { background: var(--accent); }
+
+/* ===================== MAIN ===================== */
+.ex-main { min-width: 0; }
+
+/* Search bar desktop (top of main) */
+.ex-search-top {
+    background: var(--white);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.ex-search-top .ex-search-wrap { flex: 1; margin: 0; }
+
+.ex-search-top .ex-search-btn {
+    width: auto;
+    padding: 0 24px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+/* Section heading */
+.ex-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.ex-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--black);
+}
+
+.ex-count {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+/* ===================== MASONRY ===================== */
+.ap-grid {
+    columns: 4;
+    column-gap: 18px;
+}
+
+@media (max-width: 1300px) { .ap-grid { columns: 3; } }
+@media (max-width: 900px)  { .ap-grid { columns: 2; column-gap: 14px; } }
+@media (max-width: 480px)  { .ap-grid { columns: 1; } }
+
+/* ===================== POST CARD ===================== */
+.ap-card {
+    break-inside: avoid;
+    margin-bottom: 18px;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: box-shadow .3s, transform .3s;
+    animation: cardReveal .5s ease both;
+    position: relative;
+}
+
+.ap-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-3px);
+}
+
+@keyframes cardReveal {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.ap-card:nth-child(1) { animation-delay:.05s; }
+.ap-card:nth-child(2) { animation-delay:.10s; }
+.ap-card:nth-child(3) { animation-delay:.15s; }
+.ap-card:nth-child(4) { animation-delay:.20s; }
+.ap-card:nth-child(5) { animation-delay:.25s; }
+.ap-card:nth-child(6) { animation-delay:.30s; }
+
+.ap-card-img-wrap {
+    position: relative;
+    overflow: hidden;
+    background: var(--warm-gray);
+}
+
+.ap-card-img-wrap img {
+    width: 100%; height: auto;
+    display: block;
+    transition: transform .5s cubic-bezier(.4,0,.2,1);
+}
+
+.ap-card:hover .ap-card-img-wrap img { transform: scale(1.06); }
+
+.ap-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, transparent 40%, rgba(10,10,10,.55));
+    opacity: 0;
+    transition: opacity .3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px;
+}
+
+.ap-card:hover .ap-card-overlay { opacity: 1; }
+
+.ap-overlay-top { display: flex; justify-content: flex-end; }
+
+.ap-overlay-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ap-save-btn {
+    height: 32px; padding: 0 16px;
+    border-radius: 32px; border: none;
+    background: var(--accent); color: var(--white);
+    font-size: 12.5px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; transition: background .2s, transform .15s;
+}
+
+.ap-save-btn:hover { background: var(--accent-h); transform: scale(1.05); }
+
+.ap-overlay-actions { display: flex; gap: 7px; }
+
+.ap-icon-btn {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.92);
+    border: none; cursor: pointer;
+    display: grid; place-items: center;
+    transition: transform .2s, background .2s;
+    backdrop-filter: blur(4px);
+}
+
+.ap-icon-btn:hover { transform: scale(1.12); background: var(--white); }
+
+.ap-multi-badge {
+    position: absolute;
+    top: 9px; left: 9px;
+    background: rgba(10,10,10,.6);
+    color: var(--white);
+    font-size: 11px; font-weight: 500;
+    padding: 3px 9px; border-radius: 20px;
+    backdrop-filter: blur(4px);
+    display: flex; align-items: center; gap: 4px;
+}
+
+.ap-card-body { padding: 12px 14px 14px; }
+
+.ap-card-user {
+    display: flex; align-items: center;
+    gap: 8px; margin-bottom: 7px;
+}
+
+.ap-card-avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%; object-fit: cover;
+    border: 1.5px solid var(--warm-gray); flex-shrink: 0;
+}
+
+.ap-card-username {
+    font-size: 12.5px; font-weight: 600;
+    color: var(--black); text-decoration: none;
+    transition: color .2s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.ap-card-username:hover { color: var(--accent); }
+
+.ap-card-caption {
+    font-size: 13px; color: #555;
+    line-height: 1.5; margin-bottom: 9px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.ap-card-stats {
+    display: flex; align-items: center; gap: 12px;
+}
+
+.ap-stat {
+    display: flex; align-items: center;
+    gap: 4px; font-size: 12px;
+    color: var(--muted); font-weight: 500;
+}
+
+/* ===================== EMPTY ===================== */
+.ex-empty {
+    text-align: center;
+    padding: 80px 24px;
+    background: var(--white);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-sm);
+}
+
+.ex-empty-icon {
+    width: 64px; height: 64px;
+    background: var(--cream);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    margin: 0 auto 20px;
+}
+
+.ex-empty h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 400;
+    color: var(--black); margin-bottom: 8px;
+}
+
+.ex-empty p { font-size: 14px; color: var(--muted); }
+
+/* ===================== DETAIL MODAL ===================== */
+.ap-detail-modal .modal-dialog {
+    max-width: 1060px;
+    margin: 3vh auto;
+    height: 94vh;
+}
+
+.ap-detail-modal .modal-content {
+    border: none;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    height: 100%;
+    display: flex; flex-direction: column;
+    box-shadow: 0 30px 80px rgba(10,10,10,.3);
+}
+
+.ap-detail-modal .modal-body {
+    padding: 0; flex: 1;
+    overflow: hidden; display: flex;
+}
+
+.ap-modal-media {
+    flex: 1; background: var(--black);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+}
+
+.ap-modal-media img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+.ap-modal-media .carousel { width: 100%; height: 100%; }
+.ap-modal-media .carousel-inner { height: 100%; }
+.ap-modal-media .carousel-item {
+    height: 100%; display: flex !important;
+    align-items: center; justify-content: center;
+    position: absolute; top: 0; left: 0; width: 100%;
+    opacity: 0; transition: opacity .35s ease;
+}
+.ap-modal-media .carousel-item.active { position: relative; opacity: 1; }
+
+.ap-modal-media .carousel-control-prev,
+.ap-modal-media .carousel-control-next {
+    width: 44px; height: 44px;
+    background: rgba(255,255,255,.9);
+    backdrop-filter: blur(8px);
+    border-radius: 50%; top: 50%; transform: translateY(-50%);
+    opacity: 1; z-index: 10; transition: background .2s, transform .2s;
+}
+.ap-modal-media .carousel-control-prev { left: 16px; }
+.ap-modal-media .carousel-control-next { right: 16px; }
+.ap-modal-media .carousel-control-prev:hover,
+.ap-modal-media .carousel-control-next:hover {
+    background: var(--white); transform: translateY(-50%) scale(1.1);
+}
+.ap-modal-media .carousel-control-prev-icon,
+.ap-modal-media .carousel-control-next-icon { width: 20px; height: 20px; filter: invert(1); }
+.ap-modal-media .carousel-indicators { bottom: 16px; gap: 6px; margin: 0; }
+.ap-modal-media .carousel-indicators button {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,.5); border: none;
+    transition: all .2s; padding: 0; margin: 0;
+}
+.ap-modal-media .carousel-indicators button.active { background: var(--white); transform: scale(1.4); }
+
+.ap-modal-sidebar {
+    width: 390px; flex-shrink: 0;
+    background: var(--white);
+    display: flex; flex-direction: column;
+    border-left: 1px solid var(--warm-gray);
+}
+
+.ap-modal-header {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--warm-gray);
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 10px;
+}
+
+.ap-modal-header-left { display: flex; align-items: center; gap: 6px; }
+
+.ap-modal-action {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--cream); border: none; cursor: pointer;
+    display: grid; place-items: center;
+    transition: background .2s, transform .2s;
+}
+.ap-modal-action:hover { background: var(--warm-gray); transform: scale(1.08); }
+
+.ap-modal-save {
+    height: 34px; padding: 0 18px;
+    background: var(--accent); color: var(--white);
+    border: none; border-radius: 34px;
+    font-size: 13.5px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; transition: background .2s;
+}
+.ap-modal-save:hover { background: var(--accent-h); }
+
+.ap-modal-author {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--warm-gray);
+}
+
+.ap-author-row { display: flex; align-items: center; gap: 11px; margin-bottom: 10px; }
+
+.ap-author-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    object-fit: cover; border: 2px solid var(--warm-gray); flex-shrink: 0;
+}
+
+.ap-author-name { font-size: 14.5px; font-weight: 600; color: var(--black); text-decoration: none; }
+.ap-author-name:hover { color: var(--accent); }
+.ap-author-time { font-size: 12px; color: var(--muted); display: block; margin-top: 1px; }
+
+.ap-modal-caption { font-size: 14px; color: #444; line-height: 1.6; margin-bottom: 10px; }
+
+.ap-modal-stats { display: flex; gap: 16px; }
+.ap-modal-stat { display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: var(--muted); }
+
+.ap-modal-comments { flex: 1; overflow-y: auto; padding: 14px 18px; }
+.ap-modal-comments::-webkit-scrollbar { width: 4px; }
+.ap-modal-comments::-webkit-scrollbar-thumb { background: var(--warm-gray); border-radius: 10px; }
+
+.ap-comment { display: flex; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--cream); }
+.ap-comment:last-child { border-bottom: none; }
+
+.ap-comment-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    object-fit: cover; flex-shrink: 0; border: 1.5px solid var(--warm-gray);
+}
+
+.ap-comment-body { flex: 1; }
+.ap-comment-author { font-size: 13px; font-weight: 600; color: var(--black); text-decoration: none; }
+.ap-comment-author:hover { color: var(--accent); }
+.ap-comment-text { font-size: 13px; color: #444; line-height: 1.5; margin-top: 2px; display: block; }
+.ap-comment-meta { display: flex; align-items: center; gap: 12px; margin-top: 5px; }
+.ap-comment-time { font-size: 11px; color: var(--muted); }
+
+.ap-comment-action-btn {
+    background: none; border: none;
+    font-size: 11.5px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--muted); cursor: pointer; padding: 0;
+    transition: color .2s;
+}
+.ap-comment-action-btn:hover { color: var(--black); }
+.ap-comment-action-btn.danger { color: #c0392b; }
+
+.ap-replies-nest {
+    margin-left: 42px; margin-top: 8px;
+    padding-left: 12px; border-left: 2px solid var(--warm-gray);
+}
+
+.ap-comment-form-wrap {
+    padding: 12px 18px;
+    border-top: 1px solid var(--warm-gray);
+}
+
+.ap-reply-indicator {
+    display: none;
+    background: var(--accent-soft);
+    border-radius: var(--r-sm);
+    padding: 5px 11px; margin-bottom: 8px;
+    font-size: 12px; color: var(--accent); font-weight: 500;
+    align-items: center; justify-content: space-between;
+}
+.ap-reply-indicator.show { display: flex; }
+.ap-cancel-reply { background: none; border: none; font-size: 11.5px; color: var(--accent); cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 600; }
+
+.ap-comment-input-row { display: flex; align-items: center; gap: 8px; }
+.ap-comment-input-row input {
+    flex: 1; height: 38px;
+    background: var(--cream);
+    border: 1.5px solid transparent;
+    border-radius: 38px; padding: 0 16px;
+    font-size: 13px; font-family: 'DM Sans', sans-serif;
+    outline: none; transition: border-color .2s, background .2s; color: var(--black);
+}
+.ap-comment-input-row input::placeholder { color: var(--muted); }
+.ap-comment-input-row input:focus { background: var(--white); border-color: var(--accent); }
+
+.ap-comment-submit {
+    height: 38px; padding: 0 16px;
+    background: var(--accent); color: var(--white);
+    border: none; border-radius: 38px;
+    font-size: 13px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; transition: background .2s; white-space: nowrap;
+}
+.ap-comment-submit:hover:not(:disabled) { background: var(--accent-h); }
+.ap-comment-submit:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Report Modal */
+.ap-report-modal .modal-dialog { max-width: 480px; }
+.ap-report-modal .modal-content { border: none; border-radius: var(--r-xl); box-shadow: var(--shadow-lg); overflow: hidden; }
+.ap-report-modal .modal-header { padding: 22px 26px 14px; border-bottom: 1px solid var(--warm-gray); }
+.ap-report-modal .modal-title { font-size: 17px; font-weight: 600; color: var(--black); }
+.ap-report-modal .modal-body { padding: 18px 26px; }
+.ap-report-modal .form-label { font-size: 13.5px; font-weight: 600; color: var(--black); display: block; margin-bottom: 7px; }
+.ap-report-modal .form-select,
+.ap-report-modal .form-control {
+    border: 1.5px solid var(--warm-gray); border-radius: var(--r-md);
+    padding: 10px 14px; font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream); outline: none;
+    transition: border-color .2s; width: 100%; color: var(--black);
+}
+.ap-report-modal .form-select:focus,
+.ap-report-modal .form-control:focus { border-color: var(--accent); background: var(--white); box-shadow: 0 0 0 3px rgba(200,83,58,.12); }
+.ap-report-modal .modal-footer { padding: 12px 26px 22px; border-top: 1px solid var(--warm-gray); display: flex; gap: 10px; }
+.ap-report-modal .btn-cancel { flex: 1; height: 40px; background: var(--cream); border: none; border-radius: var(--r-md); font-size: 13.5px; font-weight: 600; font-family: 'DM Sans', sans-serif; color: var(--black); cursor: pointer; transition: background .2s; }
+.ap-report-modal .btn-cancel:hover { background: var(--warm-gray); }
+.ap-report-modal .btn-submit-report { flex: 1; height: 40px; background: #c0392b; border: none; border-radius: var(--r-md); font-size: 13.5px; font-weight: 600; font-family: 'DM Sans', sans-serif; color: var(--white); cursor: pointer; transition: background .2s; }
+.ap-report-modal .btn-submit-report:hover { background: #a93226; }
+
+/* Dropdown */
+.dropdown-menu { border: 1px solid var(--warm-gray); border-radius: var(--r-md); box-shadow: var(--shadow-md); padding: 6px; font-family: 'DM Sans', sans-serif; }
+.dropdown-item { border-radius: var(--r-sm); padding: 8px 13px; font-size: 13.5px; color: var(--black); transition: background .15s; }
+.dropdown-item:hover { background: var(--cream); }
+.dropdown-item.text-danger { color: #c0392b !important; }
+.dropdown-item.text-danger:hover { background: #fdf2f2; }
+
+/* Toast */
+.ap-toast { position: fixed; top: 80px; right: 24px; z-index: 99999; padding: 12px 18px; border-radius: var(--r-md); font-size: 13.5px; font-weight: 500; font-family: 'DM Sans', sans-serif; box-shadow: var(--shadow-lg); animation: toastIn .3s ease; max-width: 300px; }
+.ap-toast.success { background: #1a7431; color: var(--white); }
+.ap-toast.error   { background: #c0392b; color: var(--white); }
+@keyframes toastIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+
+/* Responsive modal */
+@media (max-width: 860px) {
+    .ap-detail-modal .modal-body { flex-direction: column; }
+    .ap-modal-media { height: 48vh; }
+    .ap-modal-sidebar { width: 100%; flex: 1; }
+    .ex-sidebar { position: static; }
+}
+@media (max-width: 480px) {
+    .ap-detail-modal .modal-dialog { margin: 0; height: 100vh; max-width: 100%; }
+    .ap-detail-modal .modal-content { border-radius: 0; }
+}
 </style>
 
-<div class="explore-container py-1 mt-1">
-    <div class="container">
-        <div class="row">
-            <!-- Sidebar: Kategori saja -->
-            <div class="col-lg-3 mb-4">
-                <div class="explore-sidebar">
-                    <!-- Search Card (Mobile) -->
-                    <div class="search-card d-lg-none">
-                        <form action="{{ route('user.explore.search') }}" method="GET">
-                            <div class="search-input-wrapper">
-                                <iconify-icon icon="solar:magnifer-linear" class="search-icon"></iconify-icon>
-                                <input type="text" 
-                                       name="q" 
-                                       class="search-input" 
-                                       placeholder="Cari postingan..." 
-                                       value="{{ $searchQuery ?? '' }}">
-                            </div>
-                            <button type="submit" class="search-btn mt-2 w-100">Cari</button>
-                        </form>
-                    </div>
+<div class="ex-page">
+    <div class="ex-inner">
 
-                    <!-- Kategori -->
-                    <div class="category-card">
-                        <div class="category-card-header">
-                            <i class="fas fa-filter"></i> Kategori
-                        </div>
-                        <div class="category-list">
-                            <a href="{{ route('user.explore.halaman') }}" 
-                               class="category-item {{ !isset($selectedCategory) ? 'active' : '' }}">
-                                <i class="fas fa-th"></i> Semua Kategori
-                            </a>
-                            @foreach($categories as $category)
-                            <a href="{{ route('user.explore.category', $category->id) }}" 
-                               class="category-item {{ isset($selectedCategory) && $selectedCategory->id === $category->id ? 'active' : '' }}">
-                                <i class="fas fa-folder"></i> {{ $category->name }}
-                            </a>
-                            @endforeach
-                        </div>
+        {{-- ══ SIDEBAR ══ --}}
+        <aside class="ex-sidebar">
+
+            {{-- Search --}}
+            <div class="ex-search-box">
+                <form action="{{ route('user.explore.search') }}" method="GET">
+                    <div class="ex-search-wrap">
+                        <span class="ex-search-icon">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M10.5 10.5L13.5 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <input type="text" name="q" placeholder="Cari postingan…" value="{{ $searchQuery ?? '' }}">
                     </div>
+                    <button type="submit" class="ex-search-btn">Cari</button>
+                </form>
+            </div>
+
+            {{-- Categories --}}
+            <div class="ex-cat-card">
+                <div class="ex-cat-header">Kategori</div>
+                <div class="ex-cat-list">
+                    <a href="{{ route('user.explore.halaman') }}"
+                       class="ex-cat-item {{ !isset($selectedCategory) ? 'active' : '' }}">
+                        <span class="ex-cat-dot"></span>
+                        Semua
+                    </a>
+                    @foreach($categories as $category)
+                        <a href="{{ route('user.explore.category', $category->id) }}"
+                           class="ex-cat-item {{ isset($selectedCategory) && $selectedCategory->id === $category->id ? 'active' : '' }}">
+                            <span class="ex-cat-dot"></span>
+                            {{ $category->name }}
+                        </a>
+                    @endforeach
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="col-lg-9">
-                <!-- Search Card (Desktop) -->
-                <div class="search-card d-none d-lg-block">
-                    <form action="{{ route('user.explore.search') }}" method="GET" class="d-flex align-items-center">
-                        <div class="search-input-wrapper flex-grow-1">
-                            <iconify-icon icon="solar:magnifer-linear" class="search-icon"></iconify-icon>
-                            <input type="text" 
-                                   name="q" 
-                                   class="search-input" 
-                                   placeholder="Cari postingan, pengguna, atau kategori..." 
-                                   value="{{ $searchQuery ?? '' }}">
-                        </div>
-                        <button type="submit" class="search-btn">Cari</button>
-                    </form>
-                </div>
+        </aside>
 
-                <!-- Feed Container -->
-                <div class="feed-container">
-                    @if($posts->count() > 0)
-                        <div class="masonry-grid">
-                            @foreach($posts as $post)
-                                @include('partials.post-card', ['post' => $post])
-                                @include('partials.post-modal', ['post' => $post])
-                            @endforeach
-                        </div>
+        {{-- ══ MAIN ══ --}}
+        <main class="ex-main">
+
+            {{-- Heading --}}
+            <div class="ex-heading">
+                <h2 class="ex-title">
+                    @if(isset($selectedCategory))
+                        {{ $selectedCategory->name }}
+                    @elseif(isset($searchQuery) && $searchQuery)
+                        Hasil: "{{ $searchQuery }}"
                     @else
-                        <div class="empty-feed">
-                            <i>📷</i>
-                            <h4>Tidak ada postingan ditemukan</h4>
-                            <p>Coba cari dengan kata kunci yang berbeda atau jelajahi kategori lain</p>
-                        </div>
+                        Jelajahi
                     @endif
-                </div>
+                </h2>
+                @if($posts->count() > 0)
+                    <span class="ex-count">{{ $posts->count() }} postingan</span>
+                @endif
             </div>
-        </div>
+
+            {{-- Grid --}}
+            @if($posts->count() > 0)
+                <div class="ap-grid">
+                    @foreach($posts as $post)
+
+                        {{-- Card --}}
+                        <div class="ap-card" data-bs-toggle="modal" data-bs-target="#exModal{{ $post->id }}">
+                            <div class="ap-card-img-wrap">
+                                @if($post->photos && $post->photos->first())
+                                    <img src="{{ asset('storage/' . $post->photos->first()->photo) }}" alt="" loading="lazy">
+                                @else
+                                    <img src="https://via.placeholder.com/300x400/e8e4df/b8b3ac?text=No+Image" alt="">
+                                @endif
+
+                                @if($post->photos && $post->photos->count() > 1)
+                                    <div class="ap-multi-badge">
+                                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                            <rect x="1" y="3" width="6" height="6" rx="1" stroke="white" stroke-width="1.2"/>
+                                            <path d="M3 3V2a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H7" stroke="white" stroke-width="1.2"/>
+                                        </svg>
+                                        {{ $post->photos->count() }}
+                                    </div>
+                                @endif
+
+                                <div class="ap-card-overlay" onclick="event.stopPropagation()">
+                                    <div class="ap-overlay-top">
+                                        <button class="ap-save-btn">Simpan</button>
+                                    </div>
+                                    <div class="ap-overlay-bottom">
+                                        <div class="ap-overlay-actions">
+                                            <button class="ap-icon-btn">
+                                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                                    <path d="M7.5 12.5S2 9.5 2 5.5A3.5 3.5 0 017.5 3 3.5 3.5 0 0113 5.5C13 9.5 7.5 12.5 7.5 12.5z" stroke="#c8533a" stroke-width="1.5"/>
+                                                </svg>
+                                            </button>
+                                            <button class="ap-icon-btn">
+                                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                                    <path d="M12 1.5H3a.5.5 0 00-.5.5v7a.5.5 0 00.5.5H5l2.5 2.5L10 9.5h2a.5.5 0 00.5-.5V2a.5.5 0 00-.5-.5z" stroke="#555" stroke-width="1.4"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="dropdown">
+                                            <button class="ap-icon-btn" type="button" data-bs-toggle="dropdown" onclick="event.stopPropagation()">
+                                                <svg width="14" height="4" viewBox="0 0 14 4" fill="currentColor">
+                                                    <circle cx="2" cy="2" r="1.3"/><circle cx="7" cy="2" r="1.3"/><circle cx="12" cy="2" r="1.3"/>
+                                                </svg>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                @auth
+                                                    @if(auth()->id() === $post->user_id)
+                                                        <li><a class="dropdown-item" href="#">✏️ Edit</a></li>
+                                                        <form action="{{ route('user.postingan.destroy', $post) }}" method="POST">
+                                                            @csrf @method('DELETE')
+                                                            <li><button class="dropdown-item text-danger" onclick="return confirm('Hapus?')">🗑️ Hapus</button></li>
+                                                        </form>
+                                                    @else
+                                                        <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#reportPost{{ $post->id }}" onclick="event.stopPropagation()">🚩 Laporkan</a></li>
+                                                    @endif
+                                                @else
+                                                    <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#reportPost{{ $post->id }}" onclick="event.stopPropagation()">🚩 Laporkan</a></li>
+                                                @endauth
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if($post->caption || $post->user)
+                            <div class="ap-card-body">
+                                <div class="ap-card-user">
+                                    <img src="{{ $post->user->avatar_display }}" alt="" class="ap-card-avatar">
+                                    <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}" class="ap-card-username" onclick="event.stopPropagation()">
+                                        {{ $post->user->username ?? $post->user->name }}
+                                    </a>
+                                </div>
+                                @if($post->caption)
+                                    <div class="ap-card-caption">{{ $post->caption }}</div>
+                                @endif
+                                <div class="ap-card-stats">
+                                    <span class="ap-stat">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                            <path d="M6 10.5S1 7.5 1 4A2.5 2.5 0 016 2.2 2.5 2.5 0 0111 4C11 7.5 6 10.5 6 10.5z" stroke="#c8533a" stroke-width="1.3"/>
+                                        </svg>
+                                        {{ $post->likes->count() }}
+                                    </span>
+                                    <span class="ap-stat">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                            <path d="M9.5 1H2.5a.5.5 0 00-.5.5v6a.5.5 0 00.5.5H4l2 2 2-2h1.5a.5.5 0 00.5-.5v-6A.5.5 0 009.5 1z" stroke="#888" stroke-width="1.3"/>
+                                        </svg>
+                                        {{ $post->comments->count() }}
+                                    </span>
+                                </div>
+                            </div>
+                            @endif
+                        </div>
+
+                        {{-- Detail Modal --}}
+                        <div class="modal fade ap-detail-modal" id="exModal{{ $post->id }}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <div class="ap-modal-media">
+                                            @if($post->photos && $post->photos->count() > 1)
+                                                <div id="exCarousel{{ $post->id }}" class="carousel slide" data-bs-ride="false">
+                                                    <div class="carousel-inner">
+                                                        @foreach($post->photos as $i => $photo)
+                                                            <div class="carousel-item {{ $i==0?'active':'' }}">
+                                                                <img src="{{ asset('storage/'.$photo->photo) }}" alt="">
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                    <button class="carousel-control-prev" type="button" data-bs-target="#exCarousel{{ $post->id }}" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+                                                    <button class="carousel-control-next" type="button" data-bs-target="#exCarousel{{ $post->id }}" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+                                                    <div class="carousel-indicators">
+                                                        @foreach($post->photos as $i => $photo)
+                                                            <button type="button" data-bs-target="#exCarousel{{ $post->id }}" data-bs-slide-to="{{ $i }}" class="{{ $i==0?'active':'' }}"></button>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            @elseif($post->photos && $post->photos->first())
+                                                <img src="{{ asset('storage/'.$post->photos->first()->photo) }}" alt="">
+                                            @else
+                                                <img src="https://via.placeholder.com/600x600/1a1a1a/444?text=No+Image" alt="">
+                                            @endif
+                                        </div>
+
+                                        <div class="ap-modal-sidebar">
+                                            <div class="ap-modal-header">
+                                                <div class="ap-modal-header-left">
+                                                    <button class="ap-modal-action like-modal-btn"
+                                                            data-post-id="{{ $post->id }}"
+                                                            data-liked="{{ $post->isLikedBy(auth()->id()) ? '1' : '0' }}">
+                                                        @if($post->isLikedBy(auth()->id()))
+                                                            <svg width="17" height="17" viewBox="0 0 17 17" fill="#c8533a"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z"/></svg>
+                                                        @else
+                                                            <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z" stroke="#888" stroke-width="1.6"/></svg>
+                                                        @endif
+                                                    </button>
+                                                    <button class="ap-modal-action">
+                                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                                            <circle cx="12" cy="3" r="1.5" stroke="#888" stroke-width="1.4"/>
+                                                            <circle cx="3" cy="7.5" r="1.5" stroke="#888" stroke-width="1.4"/>
+                                                            <circle cx="12" cy="12" r="1.5" stroke="#888" stroke-width="1.4"/>
+                                                            <path d="M4.5 8.5l6 3M4.5 6.5l6-3" stroke="#888" stroke-width="1.4"/>
+                                                        </svg>
+                                                    </button>
+                                                    <div class="dropdown">
+                                                        <button class="ap-modal-action" type="button" data-bs-toggle="dropdown">
+                                                            <svg width="14" height="4" viewBox="0 0 14 4" fill="#888">
+                                                                <circle cx="2" cy="2" r="1.3"/><circle cx="7" cy="2" r="1.3"/><circle cx="12" cy="2" r="1.3"/>
+                                                            </svg>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            @auth
+                                                                @if(auth()->id() === $post->user_id)
+                                                                    <li><a class="dropdown-item" href="#">✏️ Edit</a></li>
+                                                                    <form action="{{ route('user.postingan.destroy', $post) }}" method="POST">
+                                                                        @csrf @method('DELETE')
+                                                                        <li><button class="dropdown-item text-danger" onclick="return confirm('Hapus?')">🗑️ Hapus</button></li>
+                                                                    </form>
+                                                                @else
+                                                                    <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#reportPost{{ $post->id }}">🚩 Laporkan</a></li>
+                                                                @endif
+                                                            @else
+                                                                <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#reportPost{{ $post->id }}">🚩 Laporkan</a></li>
+                                                            @endauth
+                                                        </ul>
+                                                    </div>
+                                                    <button class="ap-modal-action" data-bs-dismiss="modal">
+                                                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                                            <path d="M1 1l11 11M12 1L1 12" stroke="#888" stroke-width="1.7" stroke-linecap="round"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <button class="ap-modal-save">Simpan</button>
+                                            </div>
+
+                                            <div class="ap-modal-author">
+                                                <div class="ap-author-row">
+                                                    <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}">
+                                                        <img src="{{ $post->user->avatar_display }}" alt="" class="ap-author-avatar">
+                                                    </a>
+                                                    <div>
+                                                        <a href="{{ route('user.profile.username', ['name' => $post->user->name]) }}" class="ap-author-name">{{ $post->user->username ?? $post->user->name }}</a>
+                                                        <span class="ap-author-time">{{ $post->created_at->diffForHumans() }}</span>
+                                                    </div>
+                                                </div>
+                                                @if($post->caption)
+                                                    <p class="ap-modal-caption">{{ $post->caption }}</p>
+                                                @endif
+                                                <div class="ap-modal-stats">
+                                                    <span class="ap-modal-stat like-count" data-post-id="{{ $post->id }}">
+                                                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 11S1.5 8 1.5 4.5A2.5 2.5 0 016.5 2.7 2.5 2.5 0 0111.5 4.5C11.5 8 6.5 11 6.5 11z" stroke="#c8533a" stroke-width="1.4"/></svg>
+                                                        {{ $post->likes->count() }} suka
+                                                    </span>
+                                                    <span class="ap-modal-stat">
+                                                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M10.5 1.5h-8a.5.5 0 00-.5.5v6a.5.5 0 00.5.5H4l2.5 2.5 2.5-2.5h1.5a.5.5 0 00.5-.5V2a.5.5 0 00-.5-.5z" stroke="#888" stroke-width="1.3"/></svg>
+                                                        {{ $post->comments->count() }} komentar
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="ap-modal-comments" id="comments-container-{{ $post->id }}">
+                                                @forelse($post->comments->where('reply_id', null) as $comment)
+                                                    <div class="comment-wrapper" id="comment-wrapper-{{ $comment->id }}">
+                                                        <div class="ap-comment" id="comment-{{ $comment->id }}">
+                                                            <a href="{{ route('user.profile.username', ['name' => $comment->user->username ?? $comment->user->name]) }}">
+                                                                <img src="{{ $comment->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" class="ap-comment-avatar" alt="">
+                                                            </a>
+                                                            <div class="ap-comment-body">
+                                                                <a href="{{ route('user.profile.username', ['name' => $comment->user->username ?? $comment->user->name]) }}" class="ap-comment-author">{{ $comment->user->username ?? $comment->user->name }}</a>
+                                                                <span class="ap-comment-text">{{ $comment->comment }}</span>
+                                                                <div class="ap-comment-meta">
+                                                                    <span class="ap-comment-time">{{ $comment->created_at->diffForHumans() }}</span>
+                                                                    @auth
+                                                                        <button class="ap-comment-action-btn reply-btn" data-id="{{ $comment->id }}" data-username="{{ $comment->user->username ?? $comment->user->name }}">Balas</button>
+                                                                        @if(auth()->id() === $comment->user_id || auth()->user()->role === 'admin')
+                                                                            <button class="ap-comment-action-btn danger delete-comment-btn" data-id="{{ $comment->id }}" data-url="{{ route('user.comments.destroy', $comment->id) }}">Hapus</button>
+                                                                        @endif
+                                                                        @if(auth()->id() !== $comment->user_id)
+                                                                            <button class="ap-comment-action-btn" data-bs-toggle="modal" data-bs-target="#reportCommentModal{{ $comment->id }}">Laporkan</button>
+                                                                        @endif
+                                                                    @else
+                                                                        <button class="ap-comment-action-btn" data-bs-toggle="modal" data-bs-target="#reportCommentModal{{ $comment->id }}">Laporkan</button>
+                                                                    @endauth
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        @if($comment->replies->count() > 0)
+                                                            <div class="ap-replies-nest">
+                                                                @foreach($comment->replies as $reply)
+                                                                    <div class="ap-comment" id="comment-{{ $reply->id }}" style="margin-bottom:10px;">
+                                                                        <a href="{{ route('user.profile.username', ['name' => $reply->user->username ?? $reply->user->name]) }}">
+                                                                            <img src="{{ $reply->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}" class="ap-comment-avatar" alt="">
+                                                                        </a>
+                                                                        <div class="ap-comment-body">
+                                                                            <a href="{{ route('user.profile.username', ['name' => $reply->user->username ?? $reply->user->name]) }}" class="ap-comment-author">{{ $reply->user->username ?? $reply->user->name }}</a>
+                                                                            <span class="ap-comment-text">{{ $reply->comment }}</span>
+                                                                            <div class="ap-comment-meta">
+                                                                                <span class="ap-comment-time">{{ $reply->created_at->diffForHumans() }}</span>
+                                                                                @auth
+                                                                                    @if(auth()->id() === $reply->user_id || auth()->user()->role === 'admin')
+                                                                                        <button class="ap-comment-action-btn danger delete-comment-btn" data-id="{{ $reply->id }}" data-url="{{ route('user.comments.destroy', $reply->id) }}">Hapus</button>
+                                                                                    @endif
+                                                                                @endauth
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                @empty
+                                                    <p class="text-center" style="color:var(--muted);font-size:13.5px;padding:28px 0;" id="nc-{{ $post->id }}">Belum ada komentar.</p>
+                                                @endforelse
+                                            </div>
+
+                                            @auth
+                                            <div class="ap-comment-form-wrap">
+                                                <form class="comment-form-ajax" data-post-id="{{ $post->id }}">
+                                                    @csrf
+                                                    <input type="hidden" name="post_id" value="{{ $post->id }}">
+                                                    <input type="hidden" name="reply_id" class="reply-id-input" value="">
+                                                    <div class="ap-reply-indicator" id="ri-{{ $post->id }}">
+                                                        <span>Membalas: <strong class="reply-to-username"></strong></span>
+                                                        <button type="button" class="ap-cancel-reply">Batal</button>
+                                                    </div>
+                                                    <div class="ap-comment-input-row">
+                                                        <input type="text" name="comment" class="comment-input" placeholder="Tulis komentar…" autocomplete="off" required>
+                                                        <button type="submit" class="ap-comment-submit" disabled>Kirim</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            @else
+                                            <div style="padding:12px 18px;text-align:center;border-top:1px solid var(--warm-gray);">
+                                                <a href="{{ route('login') }}" style="font-size:13px;color:var(--accent);font-weight:600;">Masuk untuk berkomentar</a>
+                                            </div>
+                                            @endauth
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Report Post Modal --}}
+                        <div class="modal fade ap-report-modal" id="reportPost{{ $post->id }}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title">Laporkan Postingan</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <form action="{{ route('user.report.post', $post->id) }}" method="POST">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Alasan <span style="color:var(--accent)">*</span></label>
+                                                <select class="form-select" name="reason" required>
+                                                    <option value="">Pilih alasan…</option>
+                                                    <option value="spam">Spam</option>
+                                                    <option value="bullying">Bullying / Pelecehan</option>
+                                                    <option value="hate_speech">Ujaran Kebencian</option>
+                                                    <option value="pornography">Konten Pornografi</option>
+                                                    <option value="violence">Kekerasan</option>
+                                                    <option value="scam">Penipuan</option>
+                                                    <option value="copyright">Pelanggaran Hak Cipta</option>
+                                                    <option value="misinformation">Informasi Menyesatkan</option>
+                                                    <option value="other">Lainnya</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-1">
+                                                <label class="form-label">Keterangan <span style="color:var(--muted);font-weight:400">(opsional)</span></label>
+                                                <textarea class="form-control" name="description" rows="3" placeholder="Jelaskan lebih lanjut…"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-0">
+                                            <button type="button" class="btn-cancel" data-bs-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn-submit-report">Kirim Laporan</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        @foreach($post->comments as $comment)
+                            <div class="modal fade ap-report-modal" id="reportCommentModal{{ $comment->id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header border-0">
+                                            <h5 class="modal-title">Laporkan Komentar</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form action="{{ route('user.report.comment', $comment->id) }}" method="POST">
+                                            @csrf
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Alasan <span style="color:var(--accent)">*</span></label>
+                                                    <select class="form-select" name="reason" required>
+                                                        <option value="">Pilih alasan…</option>
+                                                        <option value="spam">Spam</option>
+                                                        <option value="bullying">Bullying / Pelecehan</option>
+                                                        <option value="hate_speech">Ujaran Kebencian</option>
+                                                        <option value="pornography">Konten Pornografi</option>
+                                                        <option value="violence">Kekerasan</option>
+                                                        <option value="scam">Penipuan</option>
+                                                        <option value="copyright">Pelanggaran Hak Cipta</option>
+                                                        <option value="misinformation">Informasi Menyesatkan</option>
+                                                        <option value="other">Lainnya</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-1">
+                                                    <label class="form-label">Keterangan <span style="color:var(--muted);font-weight:400">(opsional)</span></label>
+                                                    <textarea class="form-control" name="description" rows="3" placeholder="Jelaskan lebih lanjut…"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer border-0">
+                                                <button type="button" class="btn-cancel" data-bs-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn-submit-report">Kirim Laporan</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+
+                    @endforeach
+                </div>
+            @else
+                <div class="ex-empty">
+                    <div class="ex-empty-icon">
+                        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                            <rect x="2" y="4" width="22" height="18" rx="3" stroke="#b8b3ac" stroke-width="1.6"/>
+                            <circle cx="13" cy="13" r="4" stroke="#b8b3ac" stroke-width="1.6"/>
+                            <circle cx="19.5" cy="8" r="1.2" fill="#b8b3ac"/>
+                        </svg>
+                    </div>
+                    <h4>Tidak ada postingan</h4>
+                    <p>Coba kata kunci lain atau pilih kategori berbeda</p>
+                </div>
+            @endif
+
+        </main>
     </div>
 </div>
 
 <script>
-    // Like functionality
-    document.querySelectorAll('.modal-action-btn[data-post-id]').forEach(button => {
-        button.addEventListener('click', function () {
-            const postId = this.dataset.postId;
+document.addEventListener('DOMContentLoaded', function () {
 
+    // ── Like AJAX ────────────────────────────────────────────────────
+    document.querySelectorAll('.like-modal-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const postId = this.dataset.postId;
             fetch(`{{ route('user.post.like', ':id') }}`.replace(':id', postId), {
                 method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                },
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
-                this.innerHTML = data.liked ? '❤️' : '🤍';
-                this.dataset.liked = data.liked ? '1' : '0';
+                this.innerHTML = data.liked
+                    ? `<svg width="17" height="17" viewBox="0 0 17 17" fill="#c8533a"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z"/></svg>`
+                    : `<svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z" stroke="#888" stroke-width="1.6"/></svg>`;
+            })
+            .catch(console.error);
+        });
+    });
 
-                const countEl = document.querySelector(`.like-count[data-post-id="${postId}"]`);
-                if (countEl) {
-                    countEl.textContent = data.total;
+    // ── Comment submit ───────────────────────────────────────────────
+    document.querySelectorAll('.comment-form-ajax').forEach(form => {
+        const input = form.querySelector('.comment-input');
+        const btn   = form.querySelector('.ap-comment-submit');
+        input.addEventListener('input', () => { btn.disabled = !input.value.trim(); });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!input.value.trim()) return;
+            btn.disabled = true; btn.textContent = '…';
+
+            fetch('{{ route("user.comments.store") }}', {
+                method: 'POST',
+                body: new FormData(this),
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const postId = this.dataset.postId;
+                    const container = document.getElementById('comments-container-' + postId);
+                    document.getElementById('nc-' + postId)?.remove();
+
+                    if (data.comment.reply_id) {
+                        let pw = document.getElementById('comment-wrapper-' + data.comment.reply_id);
+                        if (pw) {
+                            let nest = pw.querySelector('.ap-replies-nest');
+                            if (!nest) { nest = document.createElement('div'); nest.className = 'ap-replies-nest'; pw.appendChild(nest); }
+                            nest.insertAdjacentHTML('beforeend', data.html);
+                        }
+                    } else {
+                        container.insertAdjacentHTML('afterbegin', data.html);
+                    }
+
+                    input.value = '';
+                    form.querySelector('.reply-id-input').value = '';
+                    document.getElementById('ri-' + postId)?.classList.remove('show');
+                    showToast('success', 'Komentar ditambahkan!');
+                } else {
+                    showToast('error', data.message || 'Terjadi kesalahan');
                 }
             })
-            .catch(err => console.error(err));
+            .catch(() => showToast('error', 'Gagal mengirim'))
+            .finally(() => { btn.disabled = false; btn.textContent = 'Kirim'; });
         });
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Comment form submit dengan AJAX
-        document.querySelectorAll('.comment-form-ajax').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                const submitBtn = this.querySelector('button[type="submit"]');
-                const commentInput = this.querySelector('.comment-input');
-                const postId = this.dataset.postId;
-                
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Mengirim...';
-
-                fetch('{{ route("user.comments.store") }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const commentsContainer = document.getElementById('comments-container-' + postId);
-                        const noComments = document.getElementById('no-comments-' + postId);
-                        
-                        if (noComments) {
-                            noComments.remove();
-                        }
-
-                        if (data.comment.reply_id) {
-                            const parentWrapper = document.getElementById('comment-wrapper-' + data.comment.reply_id);
-                            if (parentWrapper) {
-                                let repliesContainer = parentWrapper.querySelector('.replies-container');
-                                if (!repliesContainer) {
-                                    repliesContainer = document.createElement('div');
-                                    repliesContainer.className = 'replies-container';
-                                    repliesContainer.style.marginLeft = '52px';
-                                    repliesContainer.style.marginTop = '12px';
-                                    repliesContainer.style.paddingLeft = '12px';
-                                    repliesContainer.style.borderLeft = '2px solid #efefef';
-                                    parentWrapper.appendChild(repliesContainer);
-                                }
-                                repliesContainer.insertAdjacentHTML('beforeend', data.html);
-                            }
-                        } else {
-                            commentsContainer.insertAdjacentHTML('afterbegin', data.html);
-                        }
-
-                        commentInput.value = '';
-                        const replyIdInput = form.querySelector('.reply-id-input');
-                        const replyInfo = form.querySelector('.reply-info');
-                        replyIdInput.value = '';
-                        replyInfo.style.display = 'none';
-                        
-                        showAlert('success', 'Komentar berhasil ditambahkan!');
-                    } else {
-                        showAlert('error', data.message || 'Terjadi kesalahan');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('error', 'Terjadi kesalahan saat mengirim komentar');
-                })
-                .finally(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Kirim';
-                });
-            });
-        });
-
-        // Reply button click
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('reply-btn')) {
-                const commentId = e.target.getAttribute('data-id');
-                const username = e.target.getAttribute('data-username');
-                
-                const modal = e.target.closest('.modal');
-                if (modal) {
-                    const form = modal.querySelector('.comment-form-ajax');
-                    const replyIdInput = form.querySelector('.reply-id-input');
-                    const replyInfo = form.querySelector('.reply-info');
-                    const replyToUsername = form.querySelector('.reply-to-username');
-                    const commentInput = form.querySelector('.comment-input');
-                    
-                    replyIdInput.value = commentId;
-                    replyToUsername.textContent = username;
-                    replyInfo.style.display = 'block';
-                    commentInput.focus();
-                }
-            }
-        });
-
-        // Cancel reply
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('cancel-reply')) {
-                const form = e.target.closest('.comment-form-ajax');
-                const replyIdInput = form.querySelector('.reply-id-input');
-                const replyInfo = form.querySelector('.reply-info');
-                
-                replyIdInput.value = '';
-                replyInfo.style.display = 'none';
-            }
-        });
-
-        // Delete comment
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('delete-comment-btn')) {
-                if (confirm('Apakah Anda yakin ingin menghapus komentar ini?')) {
-                    const commentId = e.target.getAttribute('data-id');
-                    const deleteUrl = e.target.getAttribute('data-url');
-                    
-                    fetch(deleteUrl, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const commentElement = document.getElementById('comment-' + commentId);
-                            if (commentElement) {
-                                const commentWrapper = document.getElementById('comment-wrapper-' + commentId);
-                                if (commentWrapper) {
-                                    commentWrapper.remove();
-                                } else {
-                                    commentElement.remove();
-                                }
-                                
-                                const modal = e.target.closest('.modal');
-                                const commentsContainer = modal.querySelector('[id^="comments-container-"]');
-                                const remainingComments = commentsContainer.querySelectorAll('.comment-wrapper, .comment-item:not(.reply-item)');
-                                
-                                if (remainingComments.length === 0) {
-                                    const postId = commentsContainer.id.replace('comments-container-', '');
-                                    commentsContainer.innerHTML = '<p class="text-center text-muted no-comments-msg" id="no-comments-' + postId + '">Belum ada komentar</p>';
-                                }
-                            }
-                            showAlert('success', 'Komentar berhasil dihapus!');
-                        } else {
-                            showAlert('error', data.message || 'Gagal menghapus komentar');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showAlert('error', 'Terjadi kesalahan saat menghapus komentar');
-                    });
-                }
-            }
-        });
-
-        // Helper function untuk alert
-        function showAlert(type, message) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
-            alertDiv.style.position = 'fixed';
-            alertDiv.style.top = '80px';
-            alertDiv.style.right = '20px';
-            alertDiv.style.zIndex = '99999';
-            alertDiv.style.minWidth = '300px';
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.body.appendChild(alertDiv);
-            
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 3000);
+    // ── Reply ────────────────────────────────────────────────────────
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('reply-btn')) {
+            const id = e.target.dataset.id, username = e.target.dataset.username;
+            const modal = e.target.closest('.ap-detail-modal');
+            if (!modal) return;
+            const form = modal.querySelector('.comment-form-ajax');
+            const postId = form.dataset.postId;
+            form.querySelector('.reply-id-input').value = id;
+            form.querySelector('.reply-to-username').textContent = username;
+            document.getElementById('ri-' + postId)?.classList.add('show');
+            form.querySelector('.comment-input').focus();
         }
+        if (e.target.classList.contains('ap-cancel-reply')) {
+            const form = e.target.closest('.comment-form-ajax');
+            form.querySelector('.reply-id-input').value = '';
+            document.getElementById('ri-' + form.dataset.postId)?.classList.remove('show');
+        }
+    });
 
-        // Initialize carousels
-        const carousels = document.querySelectorAll('.carousel');
-        carousels.forEach(carousel => {
-            new bootstrap.Carousel(carousel, {
-                interval: false,
-                wrap: true,
-                touch: true
-            });
+    // ── Delete comment ───────────────────────────────────────────────
+    document.addEventListener('click', function (e) {
+        if (!e.target.classList.contains('delete-comment-btn')) return;
+        if (!confirm('Hapus komentar ini?')) return;
+        const id = e.target.dataset.id, url = e.target.dataset.url;
+        fetch(url, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('comment-wrapper-' + id)?.remove() || document.getElementById('comment-' + id)?.remove();
+                showToast('success', 'Komentar dihapus');
+            } else showToast('error', 'Gagal menghapus');
         });
     });
+
+    // ── Toast ────────────────────────────────────────────────────────
+    function showToast(type, msg) {
+        const t = document.createElement('div');
+        t.className = 'ap-toast ' + type;
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3200);
+    }
+
+    // ── Carousels ────────────────────────────────────────────────────
+    document.querySelectorAll('.carousel').forEach(el => {
+        new bootstrap.Carousel(el, { interval: false, wrap: true, touch: true });
+    });
+});
 </script>
 
 @endsection

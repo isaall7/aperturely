@@ -33,23 +33,51 @@ class PostsController extends Controller
             'caption'          => 'nullable|string|max:2000',
             'category_id'      => 'nullable|exists:categories,id',
             'type_category_id' => 'nullable|exists:type_categories,id',
+
+            // AI score validation
+            'ai_porn'   => 'nullable|numeric',
+            'ai_hentai' => 'nullable|numeric',
+            'ai_sexy'   => 'nullable|numeric',
         ]);
 
+        $porn   = $request->ai_porn ?? 0;
+        $hentai = $request->ai_hentai ?? 0;
+        $sexy   = $request->ai_sexy ?? 0;
+
+        $nsfwScore = $porn + $hentai + $sexy;
+
+        $unsafe =
+            $porn > 0.35 ||
+            $hentai > 0.25 ||
+            $sexy > 0.25 ||
+            $nsfwScore > 0.50;
+
         DB::beginTransaction();
+
         try {
+
             $post = Posts::create([
                 'user_id'          => Auth::id(),
                 'caption'          => $request->caption,
                 'category_id'      => $request->category_id,
                 'type_category_id' => $request->type_category_id,
-                'status'           => 'active',
+                'status'           => $unsafe ? 'rejected_ai' : 'active',
+                'ai_reason'        => $unsafe ? 'NSFW detected by AI filter' : null,
             ]);
+
+            if ($unsafe) {
+                DB::commit();
+
+                return back()->with(
+                    'error',
+                    '❌ Postingan ditolak karena terdeteksi mengandung konten sensitif.'
+                );
+            }
 
             $manager = new ImageManager(new Driver());
 
             foreach ($request->file('photos') as $file) {
 
-                // Compress & resize
                 $image = $manager->read($file->getPathname())
                     ->scaleDown(1920)
                     ->toJpeg(75);
@@ -72,6 +100,7 @@ class PostsController extends Controller
                 ->with('success', 'Postingan berhasil diupload 🎉');
 
         } catch (\Throwable $e) {
+
             DB::rollBack();
 
             Log::error('Store Post Error', [

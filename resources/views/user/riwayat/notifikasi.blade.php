@@ -1,903 +1,763 @@
 @extends('layouts.index2')
 
 @section('content')
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-    /* Reset & Base */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    /* Card Footer - Updated */
-    .card-footer-custom {
-        padding: 16px 24px;
-        background: #fafafa;
-        border-top: 2px solid #f0f0f0;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .btn-delete-post {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-        color: white;
-        border: none;
-        padding: 10px 24px;
-        border-radius: 12px;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-    }
-
-    .btn-delete-post:hover {
-        background: linear-gradient(135deg, #c0392b, #a93226);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4);
-    }
-
-    .btn-delete-post:active {
-        transform: translateY(0);
-    }
-
-    .btn-detail {
-        background: white;
-        color: #4a90e2;
-        border: 2px solid #4a90e2;
-        padding: 10px 24px;
-        border-radius: 12px;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .btn-detail:hover {
-        background: #4a90e2;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
-    }
-
-    .btn-detail:active {
-        transform: translateY(0);
-    }
-
-    /* Responsive Footer */
-    @media (max-width: 768px) {
-        .card-footer-custom {
-            flex-direction: column-reverse;
-            gap: 10px;
-        }
-
-        .btn-delete-post,
-        .btn-detail {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-    
-    /* Container */
-    .notification-container {
-        background: #fafafa;
-        min-height: calc(100vh - 60px);
-        padding: 20px 0;
-        margin-top: -20px;
-    }
-
-    .notification-wrapper {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 40px;
-    }
-
-    /* Sidebar Navigation */
-    .sidebar-card {
-        background: white;
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        position: sticky;
-        top: 80px;
-    }
-
-    .sidebar-title {
-        font-size: 18px;
-        font-weight: 800;
-        color: #1a1a1a;
-        margin-bottom: 20px;
-        letter-spacing: -0.3px;
-    }
-
-    .nav-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .nav-item {
-        display: flex;
-        align-items: center;
-        padding: 14px 16px;
-        border-radius: 14px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        text-decoration: none;
-        color: #4a4a4a;
-        border: 2px solid transparent;
-    }
-
-    .nav-item:hover {
-        background: #f8f8f8;
-        color: #1a1a1a;
-    }
-
-    .nav-item.active {
-        background: linear-gradient(135deg, #4a90e2, #357abd);
-        color: white;
-        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
-    }
-
-    .nav-icon {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 12px;
-        margin-right: 14px;
-        flex-shrink: 0;
-    }
-
-    .nav-item.active .nav-icon {
-        background: rgba(255, 255, 255, 0.2);
-    }
-
-    .nav-item:not(.active) .nav-icon {
-        background: #f0f0f0;
-    }
-
-    .nav-content {
-        flex: 1;
-    }
-
-    .nav-label {
-        font-size: 15px;
-        font-weight: 700;
-        display: block;
-        margin-bottom: 2px;
-    }
-
-    .nav-desc {
-        font-size: 12px;
-        opacity: 0.8;
-    }
-
-    .nav-badge {
-        background: #e74c3c;
-        color: white;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
-        margin-left: auto;
-    }
-
-    .main-content {
-        background: white;
-        border-radius: 20px;
-        padding: 32px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    /* Main Content */
-    .main-content {
-        flex: 1;
-    }
-
-    /* Page Header */
-    .page-header {
-        margin-bottom: 24px;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #e8e8e8;
-    }
-
-    .page-title {
-        font-size: 28px;
-        font-weight: 800;
-        color: #1a1a1a;
-        margin-bottom: 6px;
-        letter-spacing: -0.5px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .page-subtitle {
-        font-size: 15px;
-        color: #8e8e8e;
-        font-weight: 500;
-    }
-
-    /* Notification Cards */
-    .notifications-list {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .notification-card {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        border: 2px solid transparent;
-        transition: all 0.3s ease;
-    }
-
-    .notification-card:hover {
-        border-color: #e74c3c;
-        box-shadow: 0 8px 24px rgba(231, 76, 60, 0.15);
-    }
-
-    /* Card Header */
-    .card-header-custom {
-        background: linear-gradient(135deg, #fff0f0, #ffe8e8);
-        padding: 20px 24px;
-        border-bottom: 2px solid #ffe0e0;
-        display: flex;
-        align-items: center;
-        gap: 16px;
-    }
-
-    .header-icon {
-        width: 48px;
-        height: 48px;
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 24px;
-        flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-    }
-
-    .header-text h6 {
-        font-size: 16px;
-        font-weight: 700;
-        color: #e74c3c;
-        margin: 0 0 4px 0;
-    }
-
-    .header-text small {
-        font-size: 13px;
-        color: #8e8e8e;
-        font-weight: 500;
-    }
-
-    /* Card Body */
-    .card-body-custom {
-        padding: 24px;
-    }
-
-    .post-preview-section {
-        display: grid;
-        grid-template-columns: 200px 1fr;
-        gap: 24px;
-        align-items: start;
-    }
-
-    /* Post Image */
-    .post-image-wrapper {
-        position: relative;
-        border-radius: 16px;
-        overflow: hidden;
-        aspect-ratio: 1;
-        background: #f0f0f0;
-    }
-
-    .post-image-wrapper img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .photo-count-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(10px);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    /* Ban Details */
-    .ban-details {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .detail-item {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-
-    .detail-label {
-        font-size: 12px;
-        font-weight: 700;
-        color: #8e8e8e;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .detail-value {
-        font-size: 15px;
-        color: #262626;
-        line-height: 1.5;
-    }
-
-    .detail-value.danger {
-        color: #e74c3c;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .detail-value.muted {
-        color: #666;
-        font-style: italic;
-    }
-
-    .admin-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .badge-role {
-        background: linear-gradient(135deg, #4a90e2, #357abd);
-        color: white;
-        padding: 4px 12px;
-        border-radius: 12px;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-    }
-
-    /* Card Footer */
-    .card-footer-custom {
-        padding: 16px 24px;
-        background: #fafafa;
-        border-top: 2px solid #f0f0f0;
-        text-align: right;
-    }
-
-    .btn-detail {
-        background: white;
-        color: #4a90e2;
-        border: 2px solid #4a90e2;
-        padding: 10px 24px;
-        border-radius: 12px;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .btn-detail:hover {
-        background: #4a90e2;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
-    }
-
-    /* Modal Styles */
-    .modal-content {
-        border-radius: 20px;
-        border: none;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-
-    .modal-header {
-        padding: 24px 28px;
-        border-bottom: 2px solid #f0f0f0;
-    }
-
-    .modal-title {
-        font-size: 20px;
-        font-weight: 800;
-        color: #1a1a1a;
-    }
-
-    .modal-body {
-        padding: 28px;
-    }
-
-    .modal-photos-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 12px;
-        margin-bottom: 24px;
-    }
-
-    .modal-photo-item {
-        aspect-ratio: 1;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 2px solid #e8e8e8;
-    }
-
-    .modal-photo-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .modal-section {
-        margin-bottom: 24px;
-    }
-
-    .modal-section-label {
-        font-size: 14px;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 10px;
-    }
-
-    .modal-caption-box {
-        background: #fafafa;
-        padding: 16px 20px;
-        border-radius: 12px;
-        border: 2px solid #e8e8e8;
-    }
-
-    .modal-caption-box p {
-        margin: 0;
-        color: #262626;
-        line-height: 1.6;
-        font-size: 15px;
-    }
-
-    .ban-info-alert {
-        background: linear-gradient(135deg, #fff0f0, #ffe8e8);
-        border: 2px solid #ffcccc;
-        border-radius: 16px;
-        padding: 20px;
-    }
-
-    .ban-info-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: #e74c3c;
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .ban-info-item {
-        margin-bottom: 12px;
-        font-size: 14px;
-    }
-
-    .ban-info-item:last-child {
-        margin-bottom: 0;
-    }
-
-    .ban-info-item strong {
-        color: #1a1a1a;
-        font-weight: 700;
-    }
-
-    .modal-footer {
-        padding: 20px 28px;
-        border-top: 2px solid #f0f0f0;
-    }
-
-    /* Empty State */
-    .empty-state {
-        background: white;
-        border-radius: 20px;
-        padding: 80px 40px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .empty-icon {
-        font-size: 80px;
-        margin-bottom: 20px;
-        opacity: 0.4;
-    }
-
-    .empty-title {
-        font-size: 22px;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 8px;
-    }
-
-    .empty-text {
-        font-size: 15px;
-        color: #8e8e8e;
-    }
-
-    /* Responsive */
-    @media (max-width: 1200px) {
-        .notification-wrapper {
-            padding: 0 30px;
-        }
-
-        .post-preview-section {
-            grid-template-columns: 160px 1fr;
-            gap: 20px;
-        }
-    }
-
-    @media (max-width: 992px) {
-        .notification-wrapper {
-            padding: 0 20px;
-        }
-
-        .sidebar-card {
-            position: static;
-            margin-bottom: 20px;
-        }
-
-        .post-preview-section {
-            grid-template-columns: 1fr;
-        }
-
-        .post-image-wrapper {
-            max-width: 300px;
-            margin: 0 auto;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .notification-container {
-            padding: 15px 0;
-        }
-
-        .notification-wrapper {
-            padding: 0 15px;
-        }
-
-        .page-title {
-            font-size: 24px;
-        }
-
-        .card-header-custom {
-            padding: 16px 20px;
-        }
-
-        .card-body-custom {
-            padding: 20px;
-        }
-
-        .modal-photos-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    @media (max-width: 480px) {
-        .page-title {
-            font-size: 20px;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .notification-card {
-            border-radius: 16px;
-        }
-
-        .card-footer-custom {
-            text-align: center;
-        }
-
-        .btn-detail {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-
-    /* Animations */
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .notification-card {
-        animation: slideIn 0.5s ease;
-    }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --black:       #0a0a0a;
+    --white:       #ffffff;
+    --cream:       #f9f7f4;
+    --warm-gray:   #e8e4df;
+    --mid-gray:    #b8b3ac;
+    --muted:       #888077;
+    --accent:      #c8533a;
+    --accent-h:    #a83f28;
+    --accent-soft: #f5ece9;
+    --red:         #c0392b;
+    --red-soft:    #fdf2f2;
+    --shadow-sm:   0 1px 3px rgba(10,10,10,0.07);
+    --shadow-md:   0 4px 16px rgba(10,10,10,0.10);
+    --shadow-lg:   0 12px 40px rgba(10,10,10,0.14);
+    --r-sm:  8px;
+    --r-md:  14px;
+    --r-lg:  20px;
+    --r-xl:  28px;
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Override layout ── */
+.container-fluid { padding: 0 !important; max-width: 100% !important; }
+.body-wrapper    { margin-top: 0 !important; }
+
+/* ===================== PAGE ===================== */
+.rw-page {
+    background: var(--cream);
+    min-height: calc(100vh - 64px);
+    padding: 36px 0 80px;
+}
+
+.rw-inner {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 900px) { .rw-inner { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .rw-inner { padding: 0 16px; } }
+
+/* ===================== SIDEBAR ===================== */
+.rw-sidebar { position: sticky; top: 80px; }
+
+.rw-sidebar-card {
+    background: var(--white);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.rw-sidebar-header {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--warm-gray);
+}
+
+.rw-sidebar-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.rw-nav { padding: 8px; }
+
+.rw-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 12px;
+    border-radius: var(--r-md);
+    text-decoration: none;
+    color: var(--black);
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: background .15s, color .15s;
+    margin-bottom: 2px;
+}
+
+.rw-nav-item:hover { background: var(--cream); color: var(--black); }
+.rw-nav-item.active { background: var(--black); color: var(--white); }
+.rw-nav-item.active:hover { background: #222; color: var(--white); }
+
+.rw-nav-icon {
+    width: 32px; height: 32px;
+    border-radius: var(--r-sm);
+    background: var(--cream);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+    font-size: 15px;
+}
+
+.rw-nav-item.active .rw-nav-icon { background: rgba(255,255,255,.15); }
+
+.rw-nav-info { flex: 1; min-width: 0; }
+
+.rw-nav-label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rw-nav-desc {
+    display: block;
+    font-size: 11px;
+    opacity: .65;
+    margin-top: 1px;
+}
+
+.rw-nav-badge {
+    background: var(--accent);
+    color: var(--white);
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    flex-shrink: 0;
+}
+
+.rw-nav-item.active .rw-nav-badge { background: rgba(255,255,255,.25); }
+
+/* ===================== MAIN ===================== */
+.rw-main { min-width: 0; }
+
+.rw-heading { margin-bottom: 22px; }
+
+.rw-heading h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--black);
+    margin-bottom: 5px;
+}
+
+.rw-heading p { font-size: 13.5px; color: var(--muted); }
+
+/* ===================== BAN CARDS ===================== */
+.rw-list { display: flex; flex-direction: column; gap: 16px; }
+
+.rw-card {
+    background: var(--white);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: box-shadow .25s, transform .25s;
+    animation: cardIn .4s ease both;
+    border: 1.5px solid transparent;
+}
+
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.rw-card:nth-child(1) { animation-delay: .04s; }
+.rw-card:nth-child(2) { animation-delay: .08s; }
+.rw-card:nth-child(3) { animation-delay: .12s; }
+.rw-card:nth-child(4) { animation-delay: .16s; }
+
+.rw-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: #f5c0b8;
+}
+
+/* Card header */
+.rw-card-header {
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--warm-gray);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--red-soft);
+}
+
+.rw-card-header-icon {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: rgba(192,57,43,.12);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+}
+
+.rw-card-type {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--red);
+    flex: 1;
+}
+
+.rw-card-time {
+    font-size: 11.5px;
+    color: var(--muted);
+}
+
+/* Card body */
+.rw-card-body {
+    padding: 18px;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+/* Thumbnail */
+.rw-thumb-wrap {
+    width: 110px; height: 110px;
+    border-radius: var(--r-md);
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--warm-gray);
+    position: relative;
+}
+
+.rw-thumb-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.rw-photo-count {
+    position: absolute;
+    top: 6px; right: 6px;
+    background: rgba(10,10,10,.65);
+    color: var(--white);
+    font-size: 10.5px; font-weight: 600;
+    padding: 2px 8px; border-radius: 12px;
+    backdrop-filter: blur(4px);
+}
+
+/* Details */
+.rw-card-details { flex: 1; min-width: 0; }
+
+/* Detail rows */
+.rw-detail { margin-bottom: 10px; }
+
+.rw-detail:last-child { margin-bottom: 0; }
+
+.rw-detail-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    margin-bottom: 3px;
+    display: block;
+}
+
+.rw-detail-value {
+    font-size: 13.5px;
+    color: var(--black);
+    line-height: 1.5;
+}
+
+.rw-detail-value.danger {
+    color: var(--red);
+    font-weight: 600;
+}
+
+.rw-detail-value.italic { color: var(--muted); font-style: italic; }
+
+/* Card footer */
+.rw-card-footer {
+    padding: 13px 18px;
+    border-top: 1px solid var(--warm-gray);
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.rw-btn {
+    height: 36px; padding: 0 18px;
+    border-radius: 36px;
+    font-size: 13px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; border: none;
+    display: inline-flex; align-items: center; gap: 7px;
+    text-decoration: none; transition: all .2s;
+    white-space: nowrap;
+}
+
+.rw-btn-detail {
+    background: var(--white);
+    color: var(--black);
+    border: 1.5px solid var(--warm-gray);
+}
+.rw-btn-detail:hover { background: var(--warm-gray); color: var(--black); }
+
+.rw-btn-delete {
+    background: var(--red-soft);
+    color: var(--red);
+    border: 1.5px solid #f5c0b8;
+}
+.rw-btn-delete:hover { background: var(--red); color: var(--white); border-color: var(--red); }
+
+/* ===================== DETAIL MODAL ===================== */
+.rw-modal .modal-dialog { max-width: 680px; }
+
+.rw-modal .modal-content {
+    border: none;
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.rw-modal .modal-header {
+    padding: 22px 28px 16px;
+    border-bottom: 1px solid var(--warm-gray);
+    display: flex; align-items: center; gap: 12px;
+}
+
+.rw-modal-header-icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--red-soft);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+}
+
+.rw-modal .modal-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--black);
+    margin: 0;
+}
+
+.rw-modal .modal-body { padding: 24px 28px; }
+
+/* Photos grid */
+.rw-modal-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.rw-modal-photo {
+    aspect-ratio: 1;
+    border-radius: var(--r-md);
+    overflow: hidden;
+    background: var(--warm-gray);
+    border: 1.5px solid var(--warm-gray);
+}
+
+.rw-modal-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Caption box */
+.rw-modal-section { margin-bottom: 20px; }
+
+.rw-modal-section-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.rw-caption-box {
+    background: var(--cream);
+    border: 1.5px solid var(--warm-gray);
+    border-radius: var(--r-md);
+    padding: 14px 16px;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.65;
+}
+
+/* Ban alert box */
+.rw-ban-alert {
+    background: var(--red-soft);
+    border: 1.5px solid #f5c0b8;
+    border-radius: var(--r-lg);
+    padding: 18px 20px;
+}
+
+.rw-ban-alert-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.rw-ban-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 9px;
+    font-size: 13.5px;
+}
+
+.rw-ban-row:last-child { margin-bottom: 0; }
+
+.rw-ban-key {
+    font-weight: 600;
+    color: var(--black);
+    flex-shrink: 0;
+    min-width: 120px;
+}
+
+.rw-ban-val { color: #555; }
+
+.rw-modal .modal-footer {
+    padding: 14px 28px 22px;
+    border-top: 1px solid var(--warm-gray);
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* ===================== EMPTY ===================== */
+.rw-empty {
+    text-align: center;
+    padding: 80px 24px;
+    background: var(--white);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-sm);
+}
+
+.rw-empty-icon {
+    width: 64px; height: 64px;
+    background: var(--cream);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    margin: 0 auto 20px;
+}
+
+.rw-empty h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 400;
+    color: var(--black); margin-bottom: 8px;
+}
+
+.rw-empty p { font-size: 14px; color: var(--muted); }
+
+@media (max-width: 500px) {
+    .rw-card-body { flex-direction: column; }
+    .rw-thumb-wrap { width: 100%; height: 180px; }
+    .rw-card-footer { flex-direction: column-reverse; }
+    .rw-btn { width: 100%; justify-content: center; }
+}
 </style>
 
-<div class="notification-container">
-    <div class="notification-wrapper">
-        <div class="row g-4">
-            <!-- Sidebar Navigation -->
-            <div class="col-lg-3">
-                <div class="sidebar-card">
-                    <h5 class="sidebar-title">Riwayat Aktivitas</h5>
-                    
-                    <div class="nav-list">
-                        <!-- Notifikasi (Active) -->
-                        <a href="{{ route('user.riwayat.postingan') }}" class="nav-item active">
-                            <div class="nav-icon">
-                                🔔
-                            </div>
-                            <div class="nav-content">
-                                <span class="nav-label">Notifikasi</span>
-                                <span class="nav-desc">Postingan dibanned</span>
-                            </div>
-                             @if($totalPosts > 0)
-                                <span class="nav-badge">{{ $totalPosts ?? '-'}}</span>
-                            @endif
-                        </a>
+<div class="rw-page">
+    <div class="rw-inner">
 
-                        <!-- Komentar -->
-                        <a href="{{ route('user.riwayat.komentar') }}" class="nav-item">
-                            <div class="nav-icon">
-                                💬
-                            </div>
-                            <div class="nav-content">
-                                <span class="nav-label">Komentar</span>
-                                <span class="nav-desc">Riwayat komentar</span>
-                            </div>
-                             @if($totalComments > 0)
-                                <span class="nav-badge">{{ $totalComments ?? '-'}}</span>
-                            @endif
-                        </a>
-
-                        <!-- Menyukai -->
-                        <a href="{{ route('user.riwayat.like') }}" class="nav-item">
-                            <div class="nav-icon">
-                                ❤️
-                            </div>
-                            <div class="nav-content">
-                                <span class="nav-label">Menyukai</span>
-                                <span class="nav-desc">Postingan disukai</span>
-                            </div>
-                            @if($totalLikes > 0)
-                                <span class="nav-badge">{{ $totalLikes ?? '-'}}</span>
-                            @endif
-                        </a>
-
-                        <a href="{{ route('user.riwayat.diikuti') }}" class="nav-item">
-                            <div class="nav-icon">
-                                👥
-                            </div>
-                            <div class="nav-content">
-                                <span class="nav-label">Pengikut</span>
-                                <span class="nav-desc">Pengguna yang diikuti</span>
-                            </div>
-                            @if($totalFollowers > 0)
-                                <span class="nav-badge">{{ $totalFollowers ?? '-'}}</span>
-                            @endif
-                        </a>
-                        
-                        <a href="{{ route('user.riwayat.mengikuti') }}" class="nav-item">
-                            <div class="nav-icon">
-                                👤
-                            </div>
-                            <div class="nav-content">
-                                <span class="nav-label">Mengikuti</span>
-                                <span class="nav-desc">Pengguna yang mengikuti</span>
-                            </div>
-                            @if($totalFollowing > 0)
-                                <span class="nav-badge">{{ $totalFollowing ?? '-'}}</span>
-                            @endif
-                        </a>
-                    </div>
+        {{-- ══ SIDEBAR ══ --}}
+        <aside class="rw-sidebar">
+            <div class="rw-sidebar-card">
+                <div class="rw-sidebar-header">
+                    <span class="rw-sidebar-title">Riwayat Aktivitas</span>
                 </div>
+                <nav class="rw-nav">
+
+                    <a href="{{ route('user.riwayat.postingan') }}" class="rw-nav-item active">
+                        <div class="rw-nav-icon">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                <path d="M7.5 2C7.5 2 5 5 5 7.5a2.5 2.5 0 005 0C10 5 7.5 2 7.5 2z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                                <path d="M7.5 10v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="rw-nav-info">
+                            <span class="rw-nav-label">Notifikasi</span>
+                            <span class="rw-nav-desc">Postingan dibanned</span>
+                        </div>
+                        @if($totalPosts > 0)
+                            <span class="rw-nav-badge">{{ $totalPosts }}</span>
+                        @endif
+                    </a>
+
+                    <a href="{{ route('user.riwayat.komentar') }}" class="rw-nav-item">
+                        <div class="rw-nav-icon">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                <path d="M12.5 1.5H2.5a.5.5 0 00-.5.5v7a.5.5 0 00.5.5H4l3 3 3-3h2.5a.5.5 0 00.5-.5V2a.5.5 0 00-.5-.5z" stroke="currentColor" stroke-width="1.3"/>
+                            </svg>
+                        </div>
+                        <div class="rw-nav-info">
+                            <span class="rw-nav-label">Komentar</span>
+                            <span class="rw-nav-desc">Riwayat komentar</span>
+                        </div>
+                        @if($totalComments > 0)
+                            <span class="rw-nav-badge">{{ $totalComments }}</span>
+                        @endif
+                    </a>
+
+                    <a href="{{ route('user.riwayat.like') }}" class="rw-nav-item">
+                        <div class="rw-nav-icon">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                <path d="M7.5 13S1.5 9.5 1.5 5.5A3 3 0 017.5 3.1 3 3 0 0113.5 5.5C13.5 9.5 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.4"/>
+                            </svg>
+                        </div>
+                        <div class="rw-nav-info">
+                            <span class="rw-nav-label">Menyukai</span>
+                            <span class="rw-nav-desc">Postingan disukai</span>
+                        </div>
+                        @if($totalLikes > 0)
+                            <span class="rw-nav-badge">{{ $totalLikes }}</span>
+                        @endif
+                    </a>
+
+                    <a href="{{ route('user.riwayat.diikuti') }}" class="rw-nav-item">
+                        <div class="rw-nav-icon">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                <circle cx="7.5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/>
+                                <path d="M2 13c0-3 2.5-4.5 5.5-4.5s5.5 1.5 5.5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                                <path d="M11 6l1.5 1.5L15 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="rw-nav-info">
+                            <span class="rw-nav-label">Pengikut</span>
+                            <span class="rw-nav-desc">Pengguna yang diikuti</span>
+                        </div>
+                        @if($totalFollowers > 0)
+                            <span class="rw-nav-badge">{{ $totalFollowers }}</span>
+                        @endif
+                    </a>
+
+                    <a href="{{ route('user.riwayat.mengikuti') }}" class="rw-nav-item">
+                        <div class="rw-nav-icon">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                <circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/>
+                                <path d="M1.5 13c0-3 2-4.5 4.5-4.5s4.5 1.5 4.5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                                <path d="M11.5 3v5M9 5.5h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="rw-nav-info">
+                            <span class="rw-nav-label">Mengikuti</span>
+                            <span class="rw-nav-desc">Pengguna yang mengikuti</span>
+                        </div>
+                        @if($totalFollowing > 0)
+                            <span class="rw-nav-badge">{{ $totalFollowing }}</span>
+                        @endif
+                    </a>
+
+                </nav>
+            </div>
+        </aside>
+
+        {{-- ══ MAIN ══ --}}
+        <main class="rw-main">
+
+            <div class="rw-heading">
+                <h1>Notifikasi Pelanggaran</h1>
+                <p>Postingan yang telah dibanned oleh admin</p>
             </div>
 
-            <!-- Main Content -->
-            <div class="col-lg-9">
-                <div class="main-content">
-                    <!-- Page Header -->
-                    <div class="page-header">
-                        <h1 class="page-title">
-                            <span>Notifikasi Pelanggaran</span>
-                        </h1>
-                        <p class="page-subtitle">Postingan Anda yang telah dibanned oleh admin</p>
+            @forelse($posts as $post)
+                {{-- ── Ban Card ── --}}
+                <div class="rw-list">
+                <div class="rw-card">
+
+                    {{-- Header --}}
+                    <div class="rw-card-header">
+                        <div class="rw-card-header-icon">
+                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                <circle cx="6.5" cy="6.5" r="5.5" stroke="#c0392b" stroke-width="1.4"/>
+                                <path d="M4 4l5 5M9 4L4 9" stroke="#c0392b" stroke-width="1.4" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <span class="rw-card-type">Postingan Dibanned</span>
+                        <span class="rw-card-time">{{ $post->bans->first()->created_at->diffForHumans() }}</span>
                     </div>
 
-                    <!-- Notifications List -->
-                    <div class="notifications-list">
-                        @forelse($posts as $post)
-                            <div class="notification-card">
-                                <!-- Card Header -->
-                                <div class="card-header-custom">
-                                    <div class="header-icon">
-                                        ⛔
-                                    </div>
-                                    <div class="header-text">
-                                        <h6>Postingan Dibanned</h6>
-                                        <small>{{ $post->bans->first()->created_at->diffForHumans() }}</small>
+                    {{-- Body --}}
+                    <div class="rw-card-body">
+
+                        {{-- Thumbnail --}}
+                        <div class="rw-thumb-wrap">
+                            @if($post->photos->first())
+                                <img src="{{ asset('storage/'.$post->photos->first()->photo) }}" alt="">
+                            @endif
+                            @if($post->photos->count() > 1)
+                                <div class="rw-photo-count">+{{ $post->photos->count() - 1 }}</div>
+                            @endif
+                        </div>
+
+                        {{-- Details --}}
+                        <div class="rw-card-details">
+
+                            @if($post->caption)
+                                <div class="rw-detail">
+                                    <span class="rw-detail-label">Caption</span>
+                                    <span class="rw-detail-value">{{ Str::limit($post->caption, 120) }}</span>
+                                </div>
+                            @endif
+
+                            <div class="rw-detail">
+                                <span class="rw-detail-label">Alasan Ban</span>
+                                <span class="rw-detail-value danger">{{ $post->bans->first()->reason }}</span>
+                            </div>
+
+                            @if($post->bans->first()->notes)
+                                <div class="rw-detail">
+                                    <span class="rw-detail-label">Catatan Admin</span>
+                                    <span class="rw-detail-value">{{ $post->bans->first()->notes }}</span>
+                                </div>
+                            @endif
+
+                            <div class="rw-detail">
+                                <span class="rw-detail-label">Dibanned Oleh</span>
+                                <span class="rw-detail-value">{{ $post->bans->first()->admin->name }}</span>
+                            </div>
+
+                            <div class="rw-detail">
+                                <span class="rw-detail-label">Tanggal</span>
+                                <span class="rw-detail-value">{{ $post->bans->first()->created_at->format('d M Y') }}</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {{-- Footer --}}
+                    <div class="rw-card-footer">
+                        <form action="{{ route('user.postingan.destroy', $post) }}" method="POST" style="margin:0">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="rw-btn rw-btn-delete"
+                                    onclick="return confirm('Hapus postingan ini secara permanen?')">
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                    <path d="M1.5 3h9M4.5 3V2a.5.5 0 01.5-.5h2a.5.5 0 01.5.5v1M9.5 3l-.5 7a.5.5 0 01-.5.5h-5A.5.5 0 013 10L2.5 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Hapus Postingan
+                            </button>
+                        </form>
+                        <button class="rw-btn rw-btn-detail"
+                                data-bs-toggle="modal"
+                                data-bs-target="#banModal{{ $post->id }}">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/>
+                                <path d="M6 5.5v3M6 4v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                            </svg>
+                            Lihat Detail
+                        </button>
+                    </div>
+                </div>
+                </div>
+
+                {{-- ── Detail Modal ── --}}
+                <div class="modal fade rw-modal" id="banModal{{ $post->id }}" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div class="rw-modal-header-icon">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <circle cx="8" cy="8" r="6.5" stroke="#c0392b" stroke-width="1.5"/>
+                                        <path d="M5 5l6 6M11 5L5 11" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                                <h5 class="modal-title">Detail Pelanggaran</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+
+                                {{-- Photos --}}
+                                <div class="rw-modal-section">
+                                    <span class="rw-modal-section-label">Foto Postingan</span>
+                                    <div class="rw-modal-photos">
+                                        @foreach($post->photos as $photo)
+                                            <div class="rw-modal-photo">
+                                                <img src="{{ asset('storage/'.$photo->photo) }}" alt="">
+                                            </div>
+                                        @endforeach
                                     </div>
                                 </div>
 
-                                <!-- Card Body -->
-                                <div class="card-body-custom">
-                                    <div class="post-preview-section">
-                                        <!-- Post Image -->
-                                        <div class="post-image-wrapper">
-                                            <img src="{{ asset('storage/'.$post->photos->first()->photo) }}" alt="Post image">
-                                            @if($post->photos->count() > 1)
-                                                <div class="photo-count-badge">
-                                                    <span>📸</span>
-                                                    <span>{{ $post->photos->count() }}</span>
-                                                </div>
-                                            @endif
+                                {{-- Caption --}}
+                                <div class="rw-modal-section">
+                                    <span class="rw-modal-section-label">Caption</span>
+                                    <div class="rw-caption-box">{{ $post->caption ?? 'Tidak ada caption' }}</div>
+                                </div>
+
+                                {{-- Ban info --}}
+                                <div class="rw-modal-section" style="margin-bottom:0">
+                                    <div class="rw-ban-alert">
+                                        <div class="rw-ban-alert-title">
+                                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                                <circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.4"/>
+                                                <path d="M4 4l5 5M9 4L4 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                                            </svg>
+                                            Informasi Ban
                                         </div>
-
-                                        <!-- Ban Details -->
-                                        <div class="ban-details">
-                                            <!-- Caption -->
-                                            <div class="detail-item">
-                                                <div class="detail-label">Caption</div>
-                                                <div class="detail-value">{{ Str::limit($post->caption, 100) }}</div>
+                                        <div class="rw-ban-row">
+                                            <span class="rw-ban-key">Alasan:</span>
+                                            <span class="rw-ban-val">{{ $post->bans->first()->reason }}</span>
+                                        </div>
+                                        @if($post->bans->first()->notes)
+                                            <div class="rw-ban-row">
+                                                <span class="rw-ban-key">Catatan:</span>
+                                                <span class="rw-ban-val">{{ $post->bans->first()->notes }}</span>
                                             </div>
-
-                                            <!-- Ban Reason -->
-                                            <div class="detail-item">
-                                                <div class="detail-label">Alasan Ban</div>
-                                                <div class="detail-value">
-                                                    <span>{{ $post->bans->first()->reason }}</span>
-                                                </div>
-                                            </div>
-
-                                            <!-- Admin Notes -->
-                                            @if($post->bans->first()->notes)
-                                                <div class="detail-item">
-                                                    <div class="detail-label">Catatan Admin</div>
-                                                    <div class="detail-value">{{ $post->bans->first()->notes }}</div>
-                                                </div>
-                                            @endif
-
-                                            <!-- Banned By -->
-                                            <div class="detail-item">
-                                                <div class="detail-label">Dibanned Oleh</div>
-                                                <div class="detail-value">
-                                                    <div class="admin-badge">
-                                                        <strong>{{ $post->bans->first()->admin->name }} Baik</strong>
-                                                        <!-- <span class="badge-role">Admin</span> -->
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Date -->
-                                            <div class="detail-item">
-                                                <div class="detail-label">Tanggal</div>
-                                                <div class="detail-value">{{ $post->bans->first()->created_at->format('d M Y') }}</div>
-                                            </div>
+                                        @endif
+                                        <div class="rw-ban-row">
+                                            <span class="rw-ban-key">Dibanned oleh:</span>
+                                            <span class="rw-ban-val">{{ $post->bans->first()->admin->name }}</span>
+                                        </div>
+                                        <div class="rw-ban-row">
+                                            <span class="rw-ban-key">Tanggal:</span>
+                                            <span class="rw-ban-val">{{ $post->bans->first()->created_at->format('d M Y') }}</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Card Footer -->
-                                <div class="card-footer-custom" style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-                                    <form action="{{ route('user.postingan.destroy', $post) }}" method="post" style="margin: 0;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn-delete-post" type="submit" onclick="return confirm('⚠️ Apakah Anda yakin ingin menghapus postingan ini secara permanen?');">
-                                            <span>Hapus</span>
-                                        </button>
-                                    </form>
-                                    <button class="btn-detail" data-bs-toggle="modal" data-bs-target="#detailModal{{ $post->id }}">
-                                        <span>Lihat Detail</span>
+                            </div>
+                            <div class="modal-footer">
+                                <form action="{{ route('user.postingan.destroy', $post) }}" method="POST" style="margin:0">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="rw-btn rw-btn-delete"
+                                            onclick="return confirm('Hapus postingan ini secara permanen?')">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                            <path d="M1.5 3h9M4.5 3V2a.5.5 0 01.5-.5h2a.5.5 0 01.5.5v1M9.5 3l-.5 7a.5.5 0 01-.5.5h-5A.5.5 0 013 10L2.5 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Hapus Postingan
                                     </button>
-                                </div>
+                                </form>
+                                <button type="button" class="rw-btn rw-btn-detail" data-bs-dismiss="modal">
+                                    Tutup
+                                </button>
                             </div>
-
-                            <!-- Detail Modal -->
-                            <div class="modal fade" id="detailModal{{ $post->id }}" tabindex="-1">
-                                <div class="modal-dialog modal-lg modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Detail Pelanggaran</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <!-- All Photos -->
-                                            <div class="modal-section">
-                                                <div class="modal-section-label">Foto Postingan</div>
-                                                <div class="modal-photos-grid">
-                                                    @foreach($post->photos as $photo)
-                                                        <div class="modal-photo-item">
-                                                            <img src="{{ asset('storage/'.$photo->photo) }}" alt="Post photo">
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-
-                                            <!-- Caption -->
-                                            <div class="modal-section">
-                                                <div class="modal-section-label">Caption</div>
-                                                <div class="modal-caption-box">
-                                                    <p>{{ $post->caption ?? 'Tidak ada caption' }}</p>
-                                                </div>
-                                            </div>
-
-                                            <!-- Ban Info -->
-                                            <div class="modal-section">
-                                                <div class="ban-info-alert">
-                                                    <div class="ban-info-title">
-                                                        <span>Informasi Ban</span>
-                                                    </div>
-                                                    <div class="ban-info-item">
-                                                        <strong>Alasan:</strong> {{ $post->bans->first()->reason }}
-                                                    </div>
-                                                    @if($post->bans->first()->notes)
-                                                        <div class="ban-info-item">
-                                                            <strong>Catatan:</strong> {{ $post->bans->first()->notes }}
-                                                        </div>
-                                                    @endif
-                                                    <div class="ban-info-item">
-                                                        <strong>Dibanned oleh:</strong> {{ $post->bans->first()->admin->name }}
-                                                    </div>
-                                                    <div class="ban-info-item">
-                                                        <strong>Tanggal:</strong> {{ $post->bans->first()->created_at->format('d M Y') }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer d-flex justify-content-between">
-                                            <form action="{{ route('user.postingan.destroy', $post) }}" method="post" class="m-0">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger" type="submit" onclick="return confirm('⚠️ Apakah Anda yakin ingin menghapus postingan ini secara permanen?');">
-                                                    Hapus Postingan
-                                                </button>
-                                            </form>
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                Tutup
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="empty-state">
-                                <div class="empty-icon">📭</div>
-                                <h5 class="empty-title">Tidak Ada Notifikasi</h5>
-                                <p class="empty-text">Tidak ada postingan yang dibanned</p>
-                            </div>
-                        @endforelse
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+
+            @empty
+                <div class="rw-empty">
+                    <div class="rw-empty-icon">
+                        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                            <rect x="3" y="3" width="20" height="20" rx="4" stroke="#b8b3ac" stroke-width="1.6"/>
+                            <path d="M9 13h8M13 9v8" stroke="#b8b3ac" stroke-width="1.6" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h4>Tidak Ada Notifikasi</h4>
+                    <p>Tidak ada postingan yang dibanned saat ini.</p>
+                </div>
+            @endforelse
+
+        </main>
     </div>
 </div>
+
 @endsection

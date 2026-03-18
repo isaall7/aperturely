@@ -47,6 +47,7 @@ Route::prefix('dashboard')->name('admin.')->middleware(['auth', 'role:admin'])->
 
 Route::prefix('/')->name('user.')->group(function () {
     Route::get('/', [DashboardUser::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/kategori/{slug}', [DashboardUser::class, 'index'])->name('dashboard.kategori');
 
     Route::resource('/postingan', PostsController::class);
 

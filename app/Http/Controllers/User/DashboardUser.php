@@ -199,41 +199,36 @@ class DashboardUser extends Controller
     }
 
     // ini buat nampilin dashboard user beserta postingan aktif
-    public function index(Request $request)
+    public function index(Request $request, $slug = null)
     {
         $search = $request->search;
 
-        $cari = Posts::when($search, function ($query, $search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('caption', 'like', "%{$search}%")
-                ->orWhereHas('category', function ($qCat) use ($search) {
-                    $qCat->where('name', 'like', "%{$search}%")
-                        ->orWhereHas('typecategories', function ($qType) use ($search) {
-                            $qType->where('name', 'like', "%{$search}%");
-                        });
-                })
-                ->orWhereHas('user', function ($qUser) use ($search) {
-                    $qUser->where('name', 'like', "%{$search}%");
-                });
-            });
-        });
+        $tipeKategori = TypeCategories::all();
 
         $user = Auth::user();
-        
+
         $posts = Posts::with([
             'photos',
             'user',
             'likes',
             'comments.user',
-            'comments.replies.user'
+            'comments.replies.user',
+            'tipeKategori'
         ])
         ->where('status', 'active')
-        ->withCount(['likes', 'comments']) // Hitung total likes & comments
-        ->orderByRaw('(likes_count + comments_count * 2) DESC') // Prioritas engagement
-        ->inRandomOrder() // Acak urutan postingan
+
+        ->when($slug, function ($query) use ($slug) {
+            $query->whereHas('tipeKategori', function ($q) use ($slug) {
+                $q->where('slug', $slug);
+            });
+        })
+
+        ->withCount(['likes', 'comments'])
+        ->orderByRaw('(likes_count + comments_count * 2) DESC')
+        ->inRandomOrder()
         ->get();
-        
-        return view('user.dashboard', compact('posts', 'user', 'cari', 'search'));
+
+        return view('user.dashboard', compact('posts', 'user','search', 'tipeKategori','slug'));
     }
 
 }

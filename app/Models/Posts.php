@@ -22,7 +22,12 @@ class Posts extends Model
 
     // --- RELASI ---
 
-     public function category()
+    public function tipeKategori()
+    {
+        return $this->belongsTo(TypeCategories::class, 'type_category_id');
+    }
+
+    public function category()
     {
         return $this->belongsTo(Categories::class);
     }
