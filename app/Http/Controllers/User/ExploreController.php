@@ -80,7 +80,11 @@ class ExploreController extends Controller
                             });
                     })
                     ->orWhereHas('user', function ($qUser) use ($query) {
-                        $qUser->where('name', 'like', "%{$query}%");
+                        $qUser->where('name', 'like', "%{$query}%")
+                            ->orWhere('username', 'like', "%{$query}%");
+                    })
+                    ->orWhereHas('tags', function ($qTag) use ($query) {
+                        $qTag->where('name', 'like', "%{$query}%");
                     });
             });
         })
@@ -88,6 +92,7 @@ class ExploreController extends Controller
             'user',
             'photos',
             'likes',
+            'tags',
             'comments.user',
             'comments.replies.user'
         ])

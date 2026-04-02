@@ -347,18 +347,83 @@
   }
 
   /* ── Responsive ── */
-  @media (max-width: 900px) {
-      .ap-search { max-width: 260px; }
-      .ap-navbar { padding: 0 20px; gap: 12px; }
+  @media (max-width: 768px) {
+  /* Sembunyikan semua nav center di desktop navbar */
+  .ap-nav-center { display: none; }
+
+  /* Sembunyikan tombol Unggah, gantikan dengan bottom nav */
+  .ap-upload-btn { display: none; }
+
+  /* Navbar lebih compact */
+  .ap-navbar { height: 56px; padding: 0 16px; }
+
+  /* Bottom Navigation Bar */
+  .ap-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 66px;
+    background: rgba(249,247,244,0.96);
+    backdrop-filter: blur(18px);
+    border-top: 1px solid var(--ap-warm-gray);
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 4px env(safe-area-inset-bottom);
+    z-index: 1040;
   }
-  @media (max-width: 680px) {
-      .ap-search { display: none; }
-      .ap-nav-center .ap-nav-link[title="Trending"],
-      .ap-nav-center .ap-nav-link[title="Eksplor"] { display: none; }
+
+  .ap-bn-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 3px; color: var(--ap-muted);
+    background: none; border: none;
+    font-size: 9.5px; font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; text-decoration: none;
   }
-  @media (max-width: 480px) {
-      .ap-upload-btn span { display: none; }
-      .ap-upload-btn { padding: 0 12px; }
+  .ap-bn-item.active { color: var(--ap-accent); }
+
+  .ap-bn-create {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--ap-black); color: #fff;
+    display: grid; place-items: center;
+    border: none; cursor: pointer;
+    box-shadow: 0 2px 10px rgba(10,10,10,.2);
+    margin-top: -8px;
+  }
+
+  /* Padding bawah konten agar tidak tertutup bottom nav */
+  .body-wrapper { padding-bottom: 74px; }
+  }
+
+  /* Sembunyikan bottom nav di desktop */
+  .ap-bottom-nav { display: none; }
+
+  /* Mobile nav di dalam dropdown — hidden di desktop */
+  .ap-dd-mobile-nav { display: none; }
+  .ap-dd-mobile-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--ap-muted);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 4px 12px 2px;
+      margin: 0;
+  }
+
+  /* Muncul hanya di mobile */
+  @media (max-width: 768px) {
+      .ap-dd-mobile-nav { display: block; }
+
+      /* Perlebar dropdown agar nyaman di mobile */
+      .ap-dropdown {
+          width: 260px;
+          right: 0;
+      }
+
+      /* Sembunyikan nav center & tombol unggah di navbar */
+      .ap-nav-center { display: none; }
+      .ap-upload-btn { display: none; }
   }
 </style>
 
@@ -469,7 +534,7 @@
             <div class="ap-dropdown">
                 <div class="ap-dd-user">
                     <span class="ap-dd-name">{{ auth()->user()->name }}</span>
-                    <span class="ap-dd-handle">{{ auth()->user()->username ?? strtolower(str_replace(' ','', auth()->user()->name)) }}</span>
+                    <span class="ap-dd-handle">@<i>{{ auth()->user()->username ?? strtolower(str_replace(' ','', auth()->user()->name)) }}</i></span>
                 </div>
                 <a class="ap-dd-item" href="{{ route('user.profile') }}">
                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
@@ -495,6 +560,50 @@
                     </svg>
                     Pengaturan Akun
                 </a>
+
+                <!-- tampilan mobile -->
+                <div class="ap-dd-mobile-nav">
+                    <div class="ap-dd-sep"></div>
+                    <p class="ap-dd-mobile-label">Navigasi</p>
+                    <a class="ap-dd-item" href="{{ route('user.dashboard') }}">
+                        <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+                            <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/>
+                            <rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/>
+                            <rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/>
+                            <rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/>
+                        </svg>
+                        Beranda
+                    </a>
+                    <a class="ap-dd-item" href="{{ route('user.explore.trending') }}">
+                        <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+                            <polyline points="3,14 7,9 11,11 17,5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="13,5 17,5 17,9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Trending
+                    </a>
+                    <a class="ap-dd-item" href="{{ route('user.postingan.create') }}">
+                        <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.7"/>
+                            <path d="M10 6.5v7M6.5 10h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                        </svg>
+                        Unggah Foto
+                    </a>
+                    <a class="ap-dd-item" href="{{ route('user.explore.halaman') }}">
+                        <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.7"/>
+                            <polygon points="13,7 8,9 7,13 12,11" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                        Eksplor
+                    </a>
+                    <a class="ap-dd-item" href="{{ route('user.riwayat.postingan') }}">
+                        <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+                            <path d="M3 10a7 7 0 107-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                            <path d="M3 6v4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Riwayat
+                    </a>
+                </div>
+
                 <div class="ap-dd-sep"></div>
                 <form action="{{ route('logout') }}" method="POST" style="margin:0">
                     @csrf
@@ -516,6 +625,97 @@
         <button class="ap-upload-btn" data-bs-toggle="modal" data-bs-target="#apLoginModal">
             Masuk
         </button>
+        <div class="ap-profile-wrap">
+            <div class="ap-avatar-btn">
+                <img src="{{ asset('ui\images\profile\user3.jpg') }}" alt="Guest">
+            </div>
+            <div class="ap-dropdown">
+                <div class="ap-dd-user">
+                    <span class="ap-dd-name">Guest User</span>
+                    <span class="ap-dd-handle">@<i>guestuser</i></span>
+                </div>
+                <a class="ap-dd-item" href="{{ route('user.profile') }}">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                        <circle cx="7.5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4"/>
+                        <path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    </svg>
+                    Profil
+                </a>
+                <a class="ap-dd-item" href="{{ route('user.riwayat.postingan') }}">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                        <path d="M13 2H2a.5.5 0 00-.5.5v9a.5.5 0 00.5.5h4l1.5 1.5L9 12h4a.5.5 0 00.5-.5v-9A.5.5 0 0013 2z" stroke="currentColor" stroke-width="1.4"/>
+                    </svg>
+                    Notifikasi
+                </a>
+                <a class="ap-dd-item" href="#">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                        <circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="1.4"/>
+                        <circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.4"/>
+                        <line x1="7.5" y1="1.5" x2="7.5" y2="3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                        <line x1="7.5" y1="11.5" x2="7.5" y2="13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                        <line x1="1.5" y1="7.5" x2="3.5" y2="7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                        <line x1="11.5" y1="7.5" x2="13.5" y2="7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    </svg>
+                    Pengaturan Akun
+                </a>
+
+                <!-- tampilan mobile -->
+                <div class="ap-dd-mobile-nav">
+                    <div class="ap-dd-sep"></div>
+                    <p class="ap-dd-mobile-label">Navigasi</p>
+                    <a class="ap-dd-item" href="{{ route('user.dashboard') }}">
+                        <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+                            <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/>
+                            <rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/>
+                            <rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/>
+                            <rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/>
+                        </svg>
+                        Beranda
+                    </a>
+                    <a class="ap-dd-item" href="{{ route('user.explore.trending') }}">
+                        <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+                            <polyline points="3,14 7,9 11,11 17,5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="13,5 17,5 17,9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Trending
+                    </a>
+                    <a class="ap-dd-item" href="{{ route('user.postingan.create') }}">
+                        <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.7"/>
+                            <path d="M10 6.5v7M6.5 10h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                        </svg>
+                        Unggah Foto
+                    </a>
+                    <a class="ap-dd-item" href="{{ route('user.explore.halaman') }}">
+                        <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.7"/>
+                            <polygon points="13,7 8,9 7,13 12,11" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                        Eksplor
+                    </a>
+                    <a class="ap-dd-item" href="{{ route('user.riwayat.postingan') }}">
+                        <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+                            <path d="M3 10a7 7 0 107-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                            <path d="M3 6v4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Riwayat
+                    </a>
+                </div>
+
+                <div class="ap-dd-sep"></div>
+                <form action="{{ route('logout') }}" method="POST" style="margin:0">
+                    @csrf
+                    <button type="submit" class="ap-dd-item danger">
+                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                            <path d="M5.5 2H3a1 1 0 00-1 1v9a1 1 0 001 1h2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                            <path d="M10 5l3 2.5L10 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                            <line x1="13" y1="7.5" x2="6" y2="7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                        </svg>
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
         @endguest
         @endauth
 

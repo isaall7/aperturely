@@ -53,6 +53,12 @@ class User extends Authenticatable
     
     // --- RELASI ---
 
+    // relasi ke conversation (pivot)
+    public function conversations()
+    {
+        return $this->belongsToMany(Conversation::class, 'conversation_user');
+    }
+
     // orang yang aku follow
     public function following()
     {

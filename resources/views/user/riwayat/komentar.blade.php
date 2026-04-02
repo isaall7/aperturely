@@ -32,7 +32,6 @@
     font-family: 'DM Sans', sans-serif;
 }
 
-/* ── Override layout ── */
 .container-fluid { padding: 0 !important; max-width: 100% !important; }
 .body-wrapper    { margin-top: 0 !important; }
 
@@ -44,354 +43,151 @@
 }
 
 .rw-inner {
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 0 32px;
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 24px;
-    align-items: start;
+    max-width: 1300px; margin: 0 auto; padding: 0 32px;
+    display: grid; grid-template-columns: 220px 1fr;
+    gap: 24px; align-items: start;
 }
-
-@media (max-width: 900px) { .rw-inner { grid-template-columns: 1fr; } }
-@media (max-width: 560px) { .rw-inner { padding: 0 16px; } }
 
 /* ===================== SIDEBAR ===================== */
 .rw-sidebar { position: sticky; top: 80px; }
-
-.rw-sidebar-card {
-    background: var(--white);
-    border-radius: var(--r-xl);
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
-}
-
-.rw-sidebar-header {
-    padding: 18px 20px 14px;
-    border-bottom: 1px solid var(--warm-gray);
-}
-
-.rw-sidebar-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-}
+.rw-sidebar-card { background: var(--white); border-radius: var(--r-xl); box-shadow: var(--shadow-sm); overflow: hidden; }
+.rw-sidebar-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--warm-gray); }
+.rw-sidebar-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
 
 .rw-nav { padding: 8px; }
-
 .rw-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    padding: 10px 12px;
-    border-radius: var(--r-md);
-    text-decoration: none;
-    color: var(--black);
-    font-size: 13.5px;
-    font-weight: 500;
-    transition: background .15s, color .15s;
-    margin-bottom: 2px;
+    display: flex; align-items: center; gap: 11px; padding: 10px 12px;
+    border-radius: var(--r-md); text-decoration: none; color: var(--black);
+    font-size: 13.5px; font-weight: 500; transition: background .15s, color .15s; margin-bottom: 2px;
 }
-
-.rw-nav-item:hover { background: var(--cream); color: var(--black); }
+.rw-nav-item:hover  { background: var(--cream); color: var(--black); }
 .rw-nav-item.active { background: var(--black); color: var(--white); }
 .rw-nav-item.active:hover { background: #222; color: var(--white); }
-
-.rw-nav-icon {
-    width: 32px; height: 32px;
-    border-radius: var(--r-sm);
-    background: var(--cream);
-    display: grid; place-items: center;
-    flex-shrink: 0;
-}
-
+.rw-nav-icon { width: 32px; height: 32px; border-radius: var(--r-sm); background: var(--cream); display: grid; place-items: center; flex-shrink: 0; }
 .rw-nav-item.active .rw-nav-icon { background: rgba(255,255,255,.15); }
-
 .rw-nav-info { flex: 1; min-width: 0; }
-
-.rw-nav-label {
-    display: block;
-    font-size: 13.5px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.rw-nav-desc {
-    display: block;
-    font-size: 11px;
-    opacity: .65;
-    margin-top: 1px;
-}
-
-.rw-nav-badge {
-    background: var(--accent);
-    color: var(--white);
-    font-size: 10.5px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 20px;
-    flex-shrink: 0;
-}
-
+.rw-nav-label { display: block; font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rw-nav-desc  { display: block; font-size: 11px; opacity: .65; margin-top: 1px; }
+.rw-nav-badge { background: var(--accent); color: var(--white); font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 20px; flex-shrink: 0; }
 .rw-nav-item.active .rw-nav-badge { background: rgba(255,255,255,.25); }
 
 /* ===================== MAIN ===================== */
 .rw-main { min-width: 0; }
-
 .rw-heading { margin-bottom: 22px; }
+.rw-heading h1 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 400; color: var(--black); margin-bottom: 5px; }
+.rw-heading p  { font-size: 13.5px; color: var(--muted); }
 
-.rw-heading h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
-    font-weight: 400;
-    color: var(--black);
-    margin-bottom: 5px;
-}
-
-.rw-heading p { font-size: 13.5px; color: var(--muted); }
-
-/* ===================== TWO COLUMN GRID ===================== */
-.rw-split {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-@media (max-width: 760px) { .rw-split { grid-template-columns: 1fr; } }
+/* ===================== SPLIT GRID ===================== */
+.rw-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
 /* ===================== SECTION CARD ===================== */
-.rw-section-card {
-    background: var(--white);
-    border-radius: var(--r-xl);
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.rw-section-header {
-    padding: 16px 18px;
-    border-bottom: 1px solid var(--warm-gray);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.rw-section-icon {
-    width: 32px; height: 32px;
-    border-radius: var(--r-sm);
-    display: grid; place-items: center;
-    flex-shrink: 0;
-}
-
+.rw-section-card { background: var(--white); border-radius: var(--r-xl); box-shadow: var(--shadow-sm); overflow: hidden; display: flex; flex-direction: column; }
+.rw-section-header { padding: 16px 18px; border-bottom: 1px solid var(--warm-gray); display: flex; align-items: center; gap: 10px; }
+.rw-section-icon { width: 32px; height: 32px; border-radius: var(--r-sm); display: grid; place-items: center; flex-shrink: 0; }
 .rw-section-icon.active-icon { background: var(--green-soft); }
 .rw-section-icon.banned-icon { background: var(--red-soft); }
-
-.rw-section-title {
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--black);
-    flex: 1;
-}
-
-.rw-section-count {
-    font-size: 11.5px;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 20px;
-    flex-shrink: 0;
-}
-
+.rw-section-title { font-size: 13.5px; font-weight: 600; color: var(--black); flex: 1; }
+.rw-section-count { font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 20px; }
 .rw-section-count.active-count { background: var(--green-soft); color: var(--green); }
 .rw-section-count.banned-count { background: var(--red-soft); color: var(--red); }
 
 /* ===================== COMMENT LIST ===================== */
-.rw-comments-list {
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-height: 580px;
-    overflow-y: auto;
-}
+.rw-comments-list { flex: 1; overflow-y: auto; max-height: 600px; }
+.rw-comment-item { padding: 16px 18px; border-bottom: 1px solid var(--warm-gray); transition: background .15s; animation: cardIn .35s ease both; }
+@keyframes cardIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.rw-comment-item:last-child { border-bottom: none; }
+.rw-comment-item:hover { background: var(--cream); }
+.rw-comment-item.banned { background: var(--red-soft); }
+.rw-comment-item.banned:hover { background: #fae8e8; }
 
-.rw-comments-list::-webkit-scrollbar { width: 4px; }
-.rw-comments-list::-webkit-scrollbar-thumb { background: var(--warm-gray); border-radius: 10px; }
-
-/* ===================== COMMENT ITEM ===================== */
-.rw-comment-item {
-    background: var(--cream);
-    border-radius: var(--r-md);
-    padding: 13px 14px;
-    border: 1.5px solid var(--warm-gray);
-    transition: border-color .2s, box-shadow .2s;
-}
-
-.rw-comment-item:hover { border-color: var(--mid-gray); box-shadow: var(--shadow-sm); }
-
-.rw-comment-item.banned { border-color: #f5c0b8; background: var(--red-soft); }
-.rw-comment-item.banned:hover { border-color: #e09080; }
-
-/* Item top row */
-.rw-comment-top {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 9px;
-}
-
-.rw-status-pill {
-    font-size: 10.5px;
-    font-weight: 700;
-    padding: 2px 9px;
-    border-radius: 20px;
-    flex-shrink: 0;
-    letter-spacing: .3px;
-}
-
+.rw-comment-top { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; flex-wrap: wrap; }
+.rw-status-pill { font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 20px; flex-shrink: 0; }
 .rw-status-pill.active { background: var(--green-soft); color: var(--green); }
 .rw-status-pill.banned { background: var(--red-soft); color: var(--red); border: 1px solid #f5c0b8; }
+.rw-comment-ref { font-size: 12px; color: var(--muted); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rw-comment-time { font-size: 11.5px; color: var(--muted); flex-shrink: 0; }
 
-.rw-comment-ref {
-    font-size: 11.5px;
-    color: var(--muted);
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+.rw-comment-bubble { font-size: 13.5px; color: var(--black); line-height: 1.55; background: var(--cream); border: 1px solid var(--warm-gray); border-radius: var(--r-md); padding: 10px 13px; margin-bottom: 10px; }
+.rw-comment-item.banned .rw-comment-bubble { background: var(--white); }
 
-.rw-comment-time {
-    font-size: 11px;
-    color: var(--mid-gray);
-    flex-shrink: 0;
-}
-
-/* Comment text bubble */
-.rw-comment-bubble {
-    font-size: 13.5px;
-    color: #444;
-    line-height: 1.55;
-    background: var(--white);
-    border-radius: var(--r-sm);
-    padding: 10px 12px;
-    border-left: 2.5px solid var(--warm-gray);
-    margin-bottom: 9px;
-}
-
-.rw-comment-item.banned .rw-comment-bubble {
-    border-left-color: #f5c0b8;
-    background: var(--white);
-}
-
-/* Reply indicator */
-.rw-reply-tag {
-    display: flex;
-    align-items: flex-start;
-    gap: 6px;
-    background: var(--blue-soft);
-    border-left: 2px solid var(--blue);
-    border-radius: 0 var(--r-sm) var(--r-sm) 0;
-    padding: 6px 10px;
-    margin-bottom: 9px;
-    font-size: 12px;
-    color: var(--blue);
-}
-
-.rw-reply-tag strong { font-weight: 600; flex-shrink: 0; }
+.rw-reply-tag { font-size: 12px; color: var(--muted); background: var(--cream); border-left: 3px solid var(--mid-gray); padding: 6px 10px; border-radius: 0 var(--r-sm) var(--r-sm) 0; margin-bottom: 10px; }
+.rw-reply-tag strong { color: var(--black); font-weight: 600; }
 
 /* Ban info box */
-.rw-ban-box {
-    background: var(--white);
-    border: 1px solid #f5c0b8;
-    border-radius: var(--r-sm);
-    padding: 10px 12px;
-    margin-bottom: 9px;
-}
-
-.rw-ban-box-title {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--red);
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    margin-bottom: 7px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.rw-ban-field {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 4px;
-    font-size: 12.5px;
-}
-
+.rw-ban-box { background: var(--white); border: 1.5px solid #f5c0b8; border-radius: var(--r-md); padding: 12px 14px; margin-bottom: 10px; }
+.rw-ban-box-title { font-size: 11px; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+.rw-ban-field { display: flex; gap: 6px; font-size: 12.5px; margin-bottom: 5px; }
 .rw-ban-field:last-child { margin-bottom: 0; }
-
-.rw-ban-key { font-weight: 600; color: var(--black); flex-shrink: 0; min-width: 70px; }
+.rw-ban-key { font-weight: 600; color: var(--black); flex-shrink: 0; min-width: 60px; }
 .rw-ban-val { color: #555; }
 
 /* Delete button */
-.rw-comment-footer {
-    display: flex;
-    justify-content: flex-end;
-    padding-top: 8px;
-    border-top: 1px solid var(--warm-gray);
-}
-
+.rw-comment-footer { display: flex; justify-content: flex-end; }
 .rw-delete-btn {
-    height: 30px;
-    padding: 0 14px;
-    background: var(--red-soft);
-    color: var(--red);
-    border: 1px solid #f5c0b8;
-    border-radius: 30px;
-    font-size: 12px;
-    font-weight: 600;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: background .2s, color .2s, border-color .2s;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+    color: var(--red); background: var(--red-soft); border: 1px solid #f5c0b8;
+    padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all .2s;
 }
-
 .rw-delete-btn:hover { background: var(--red); color: var(--white); border-color: var(--red); }
 
-/* ===================== EMPTY STATE ===================== */
-.rw-empty-inline {
-    text-align: center;
-    padding: 40px 20px;
-}
-
-.rw-empty-inline-icon {
-    width: 48px; height: 48px;
-    background: var(--cream);
-    border-radius: 50%;
-    display: grid; place-items: center;
-    margin: 0 auto 14px;
-}
-
-.rw-empty-inline h5 {
-    font-size: 14.5px;
-    font-weight: 600;
-    color: var(--black);
-    margin-bottom: 5px;
-}
-
+/* Empty inline */
+.rw-empty-inline { text-align: center; padding: 40px 20px; }
+.rw-empty-inline-icon { width: 48px; height: 48px; background: var(--cream); border-radius: 50%; display: grid; place-items: center; margin: 0 auto 14px; }
+.rw-empty-inline h5 { font-size: 14px; font-weight: 600; color: var(--black); margin-bottom: 5px; }
 .rw-empty-inline p { font-size: 12.5px; color: var(--muted); }
+
+/* ===================== MOBILE BOTTOM NAV ===================== */
+.rw-mobile-nav {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 500;
+    background: var(--white); border-top: 1px solid var(--warm-gray);
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 20px rgba(10,10,10,0.08);
+}
+.rw-mobile-nav-inner { display: flex; justify-content: space-around; align-items: center; max-width: 500px; margin: 0 auto; padding: 0 8px; }
+.rw-mob-item {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 6px 8px; border-radius: var(--r-md);
+    text-decoration: none; color: var(--muted); transition: color .15s; position: relative; min-width: 48px;
+}
+.rw-mob-item:hover  { color: var(--black); }
+.rw-mob-item.active { color: var(--black); }
+.rw-mob-icon { width: 34px; height: 34px; border-radius: var(--r-sm); display: grid; place-items: center; transition: background .15s; }
+.rw-mob-item.active .rw-mob-icon { background: var(--black); color: var(--white); }
+.rw-mob-badge {
+    position: absolute; top: 2px; right: 4px; min-width: 16px; height: 16px;
+    background: var(--accent); color: var(--white); font-size: 9px; font-weight: 700;
+    border-radius: 20px; display: flex; align-items: center; justify-content: center;
+    padding: 0 4px; border: 1.5px solid var(--white);
+}
+.rw-mob-label { font-size: 10px; font-weight: 500; line-height: 1; }
+
+/* ===================== RESPONSIVE BREAKPOINTS ===================== */
+@media (max-width: 900px) {
+    .rw-inner { grid-template-columns: 1fr; padding: 0 16px; }
+    .rw-sidebar { display: none; }
+    .rw-mobile-nav { display: block; }
+    .rw-page { padding-bottom: 100px; }
+    .rw-heading h1 { font-size: 20px; }
+}
+
+@media (max-width: 760px) {
+    .rw-split { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+    .rw-inner { padding: 0 12px; }
+    .rw-page { padding-top: 20px; }
+    .rw-ban-field { flex-direction: column; gap: 2px; }
+    .rw-ban-key { min-width: unset; font-size: 11px; }
+}
 </style>
 
 <div class="rw-page">
     <div class="rw-inner">
 
-        {{-- ══ SIDEBAR ══ --}}
+        {{-- ══ SIDEBAR (Desktop only) ══ --}}
         <aside class="rw-sidebar">
             <div class="rw-sidebar-card">
                 <div class="rw-sidebar-header">
@@ -410,9 +206,7 @@
                             <span class="rw-nav-label">Notifikasi</span>
                             <span class="rw-nav-desc">Postingan dibanned</span>
                         </div>
-                        @if(isset($totalPosts) && $totalPosts > 0)
-                            <span class="rw-nav-badge">{{ $totalPosts }}</span>
-                        @endif
+                        @if(isset($totalPosts) && $totalPosts > 0)<span class="rw-nav-badge">{{ $totalPosts }}</span>@endif
                     </a>
 
                     <a href="{{ route('user.riwayat.komentar') }}" class="rw-nav-item active">
@@ -425,9 +219,7 @@
                             <span class="rw-nav-label">Komentar</span>
                             <span class="rw-nav-desc">Riwayat komentar</span>
                         </div>
-                        @if(isset($totalComments) && $totalComments > 0)
-                            <span class="rw-nav-badge">{{ $totalComments }}</span>
-                        @endif
+                        @if($totalComments > 0)<span class="rw-nav-badge">{{ $totalComments }}</span>@endif
                     </a>
 
                     <a href="{{ route('user.riwayat.like') }}" class="rw-nav-item">
@@ -440,9 +232,7 @@
                             <span class="rw-nav-label">Menyukai</span>
                             <span class="rw-nav-desc">Postingan disukai</span>
                         </div>
-                        @if($totalLikes > 0)
-                            <span class="rw-nav-badge">{{ $totalLikes }}</span>
-                        @endif
+                        @if(isset($totalLikes) && $totalLikes > 0)<span class="rw-nav-badge">{{ $totalLikes }}</span>@endif
                     </a>
 
                     <a href="{{ route('user.riwayat.diikuti') }}" class="rw-nav-item">
@@ -457,9 +247,7 @@
                             <span class="rw-nav-label">Pengikut</span>
                             <span class="rw-nav-desc">Pengguna yang diikuti</span>
                         </div>
-                        @if($totalFollowers > 0)
-                            <span class="rw-nav-badge">{{ $totalFollowers }}</span>
-                        @endif
+                        @if(isset($totalFollowers) && $totalFollowers > 0)<span class="rw-nav-badge">{{ $totalFollowers }}</span>@endif
                     </a>
 
                     <a href="{{ route('user.riwayat.mengikuti') }}" class="rw-nav-item">
@@ -474,9 +262,7 @@
                             <span class="rw-nav-label">Mengikuti</span>
                             <span class="rw-nav-desc">Pengguna yang mengikuti</span>
                         </div>
-                        @if($totalFollowing > 0)
-                            <span class="rw-nav-badge">{{ $totalFollowing }}</span>
-                        @endif
+                        @if(isset($totalFollowing) && $totalFollowing > 0)<span class="rw-nav-badge">{{ $totalFollowing }}</span>@endif
                     </a>
 
                 </nav>
@@ -513,16 +299,13 @@
                                     <span class="rw-comment-ref">{{ Str::limit($comment->post->caption ?? 'Postingan', 28) }}</span>
                                     <span class="rw-comment-time">{{ $comment->created_at->diffForHumans() }}</span>
                                 </div>
-
                                 <div class="rw-comment-bubble">{{ $comment->comment }}</div>
-
                                 @if($comment->reply_id)
                                     <div class="rw-reply-tag">
                                         <strong>Balasan:</strong>
                                         <span>{{ Str::limit($comment->parent->comment ?? '—', 50) }}</span>
                                     </div>
                                 @endif
-
                                 @if(auth()->id() === $comment->user_id || auth()->user()->role === 'admin')
                                     <div class="rw-comment-footer">
                                         <button type="button" class="rw-delete-btn"
@@ -572,10 +355,7 @@
                                     <span class="rw-comment-ref">{{ Str::limit($comment->post->caption ?? 'Postingan', 28) }}</span>
                                     <span class="rw-comment-time">{{ $comment->bans->first()->created_at->diffForHumans() }}</span>
                                 </div>
-
                                 <div class="rw-comment-bubble">{{ $comment->comment }}</div>
-
-                                {{-- Ban info --}}
                                 <div class="rw-ban-box">
                                     <div class="rw-ban-box-title">
                                         <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
@@ -599,14 +379,12 @@
                                         <span class="rw-ban-val">{{ $comment->bans->first()->admin->name }}</span>
                                     </div>
                                 </div>
-
                                 @if($comment->reply_id)
                                     <div class="rw-reply-tag">
                                         <strong>Balasan:</strong>
                                         <span>{{ Str::limit($comment->parent->comment ?? '—', 50) }}</span>
                                     </div>
                                 @endif
-
                                 @if(auth()->id() === $comment->user_id || auth()->user()->role === 'admin')
                                     <div class="rw-comment-footer">
                                         <button type="button" class="rw-delete-btn"
@@ -641,28 +419,77 @@
     </div>
 </div>
 
+{{-- ══ MOBILE BOTTOM NAV ══ --}}
+<nav class="rw-mobile-nav">
+    <div class="rw-mobile-nav-inner">
+
+        <a href="{{ route('user.riwayat.postingan') }}" class="rw-mob-item">
+            @if(isset($totalPosts) && $totalPosts > 0)<span class="rw-mob-badge">{{ $totalPosts > 9 ? '9+' : $totalPosts }}</span>@endif
+            <div class="rw-mob-icon">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                    <path d="M8.5 2S6 5.5 6 8a2.5 2.5 0 005 0C11 5.5 8.5 2 8.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M8.5 10.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <span class="rw-mob-label">Notifikasi</span>
+        </a>
+
+        <a href="{{ route('user.riwayat.komentar') }}" class="rw-mob-item active">
+            @if($totalComments > 0)<span class="rw-mob-badge">{{ $totalComments > 9 ? '9+' : $totalComments }}</span>@endif
+            <div class="rw-mob-icon">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                    <path d="M14 2H3a.5.5 0 00-.5.5v8a.5.5 0 00.5.5h3.5l3 3 3-3H14a.5.5 0 00.5-.5V2.5A.5.5 0 0014 2z" stroke="currentColor" stroke-width="1.4"/>
+                </svg>
+            </div>
+            <span class="rw-mob-label">Komentar</span>
+        </a>
+
+        <a href="{{ route('user.riwayat.like') }}" class="rw-mob-item">
+            @if(isset($totalLikes) && $totalLikes > 0)<span class="rw-mob-badge">{{ $totalLikes > 9 ? '9+' : $totalLikes }}</span>@endif
+            <div class="rw-mob-icon">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                    <path d="M8.5 14S2 10.5 2 6.5A3.5 3.5 0 018.5 3.7 3.5 3.5 0 0115 6.5C15 10.5 8.5 14 8.5 14z" stroke="currentColor" stroke-width="1.4"/>
+                </svg>
+            </div>
+            <span class="rw-mob-label">Suka</span>
+        </a>
+
+        <a href="{{ route('user.riwayat.diikuti') }}" class="rw-mob-item">
+            @if(isset($totalFollowers) && $totalFollowers > 0)<span class="rw-mob-badge">{{ $totalFollowers > 9 ? '9+' : $totalFollowers }}</span>@endif
+            <div class="rw-mob-icon">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                    <circle cx="8.5" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.4"/>
+                    <path d="M3 14c0-3 2.5-4.5 5.5-4.5s5.5 1.5 5.5 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <span class="rw-mob-label">Pengikut</span>
+        </a>
+
+        <a href="{{ route('user.riwayat.mengikuti') }}" class="rw-mob-item">
+            @if(isset($totalFollowing) && $totalFollowing > 0)<span class="rw-mob-badge">{{ $totalFollowing > 9 ? '9+' : $totalFollowing }}</span>@endif
+            <div class="rw-mob-icon">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                    <circle cx="6.5" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.4"/>
+                    <path d="M2 14c0-3 2-4.5 4.5-4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    <path d="M13 9v6M10 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <span class="rw-mob-label">Mengikuti</span>
+        </a>
+
+    </div>
+</nav>
+
 <script>
 function deleteComment(button) {
     if (!confirm('Hapus komentar ini?')) return;
-
     const url = button.getAttribute('data-url');
     const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = url;
-
+    form.method = 'POST'; form.action = url;
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
-    if (csrf) {
-        const t = document.createElement('input');
-        t.type = 'hidden'; t.name = '_token'; t.value = csrf;
-        form.appendChild(t);
-    }
-
-    const m = document.createElement('input');
-    m.type = 'hidden'; m.name = '_method'; m.value = 'DELETE';
-    form.appendChild(m);
-
-    document.body.appendChild(form);
-    form.submit();
+    if (csrf) { const t = document.createElement('input'); t.type='hidden'; t.name='_token'; t.value=csrf; form.appendChild(t); }
+    const m = document.createElement('input'); m.type='hidden'; m.name='_method'; m.value='DELETE'; form.appendChild(m);
+    document.body.appendChild(form); form.submit();
 }
 </script>
 

@@ -198,7 +198,41 @@ class DashboardUser extends Controller
     ];
     }
 
-    // ini buat nampilin dashboard user beserta postingan aktif
+    //ini buat nampilin detail postingan di halaman detail postingan user
+    public function show($id)
+    {
+        $post = Posts::with([
+            'photos',
+            'user',
+            'likes',
+            'comments' => function ($q) {
+                $q->whereNull('reply_id')->with(['user', 'replies.user'])->latest();
+            },
+            'tipeKategori',
+        ])
+        ->where('status', 'active')
+        ->findOrFail($id);
+
+        // Ambil 10 postingan dari kategori yang sama (acak), kecuali postingan ini
+        $relatedPosts = collect();
+
+        if ($post->tipeKategori) {
+            $relatedPosts = Posts::with(['photos', 'user', 'likes', 'comments'])
+                ->where('status', 'active')
+                ->where('id', '!=', $post->id)
+                ->whereHas('tipeKategori', function ($q) use ($post) {
+                    $q->where('id', $post->tipeKategori->id);
+                })
+                ->withCount(['likes', 'comments'])
+                ->inRandomOrder()
+                ->limit(10)
+                ->get();
+        }
+
+        return view('user.post-detail', compact('post', 'relatedPosts'));
+    }
+
+    //ini buat nampilin semua postingan di halaman dashboard user
     public function index(Request $request, $slug = null)
     {
         $search = $request->search;
@@ -228,7 +262,7 @@ class DashboardUser extends Controller
         ->inRandomOrder()
         ->get();
 
-        return view('user.dashboard', compact('posts', 'user','search', 'tipeKategori','slug'));
+        return view('user.dashboard', compact('posts', 'user', 'search', 'tipeKategori', 'slug'));
     }
 
 }

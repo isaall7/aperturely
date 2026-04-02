@@ -4,312 +4,213 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-        --black:       #0a0a0a;
-        --white:       #ffffff;
-        --cream:       #f9f7f4;
-        --warm-gray:   #e8e4df;
-        --mid-gray:    #b8b3ac;
-        --muted:       #888077;
-        --accent:      #c8533a;
-        --accent-h:    #a83f28;
-        --accent-soft: #f5ece9;
-        --shadow-sm:   0 1px 3px rgba(10,10,10,0.07);
-        --shadow-md:   0 4px 16px rgba(10,10,10,0.10);
-        --shadow-lg:   0 12px 40px rgba(10,10,10,0.14);
-        --r-sm:  8px;
-        --r-md:  14px;
-        --r-lg:  20px;
-        --r-xl:  28px;
-        font-family: 'DM Sans', sans-serif;
-    }
+:root {
+    --black:       #0a0a0a;
+    --white:       #ffffff;
+    --cream:       #f9f7f4;
+    --warm-gray:   #e8e4df;
+    --mid-gray:    #b8b3ac;
+    --muted:       #888077;
+    --accent:      #c8533a;
+    --accent-h:    #a83f28;
+    --accent-soft: #f5ece9;
+    --red:         #c0392b;
+    --red-soft:    #fdf2f2;
+    --shadow-sm:   0 1px 3px rgba(10,10,10,0.07);
+    --shadow-md:   0 4px 16px rgba(10,10,10,0.10);
+    --shadow-lg:   0 12px 40px rgba(10,10,10,0.14);
+    --r-sm:  8px;
+    --r-md:  14px;
+    --r-lg:  20px;
+    --r-xl:  28px;
+    font-family: 'DM Sans', sans-serif;
+}
 
-    .container-fluid { padding: 0 !important; max-width: 100% !important; }
-    .body-wrapper    { margin-top: 0 !important; }
+.container-fluid { padding: 0 !important; max-width: 100% !important; }
+.body-wrapper    { margin-top: 0 !important; }
 
-    /* ===================== PAGE ===================== */
-    .rw-page {
-        background: var(--cream);
-        min-height: calc(100vh - 64px);
-        padding: 36px 0 80px;
-    }
+/* ===================== PAGE ===================== */
+.rw-page {
+    background: var(--cream);
+    min-height: calc(100vh - 64px);
+    padding: 36px 0 80px;
+}
 
-    .rw-inner {
-        max-width: 1300px;
-        margin: 0 auto;
-        padding: 0 32px;
-        display: grid;
-        grid-template-columns: 220px 1fr;
-        gap: 24px;
-        align-items: start;
-    }
+.rw-inner {
+    max-width: 1300px; margin: 0 auto; padding: 0 32px;
+    display: grid; grid-template-columns: 220px 1fr;
+    gap: 24px; align-items: start;
+}
 
-    @media (max-width: 900px) { .rw-inner { grid-template-columns: 1fr; } }
-    @media (max-width: 560px) { .rw-inner { padding: 0 16px; } }
+/* ===================== SIDEBAR (desktop) ===================== */
+.rw-sidebar { position: sticky; top: 80px; }
 
-    /* ===================== SIDEBAR ===================== */
-    .rw-sidebar { position: sticky; top: 80px; }
+.rw-sidebar-card { background: var(--white); border-radius: var(--r-xl); box-shadow: var(--shadow-sm); overflow: hidden; }
+.rw-sidebar-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--warm-gray); }
+.rw-sidebar-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
 
-    .rw-sidebar-card {
-        background: var(--white);
-        border-radius: var(--r-xl);
-        box-shadow: var(--shadow-sm);
-        overflow: hidden;
-    }
+.rw-nav { padding: 8px; }
+.rw-nav-item {
+    display: flex; align-items: center; gap: 11px; padding: 10px 12px;
+    border-radius: var(--r-md); text-decoration: none; color: var(--black);
+    font-size: 13.5px; font-weight: 500; transition: background .15s, color .15s; margin-bottom: 2px;
+}
+.rw-nav-item:hover  { background: var(--cream); color: var(--black); }
+.rw-nav-item.active { background: var(--black); color: var(--white); }
+.rw-nav-item.active:hover { background: #222; color: var(--white); }
 
-    .rw-sidebar-header {
-        padding: 18px 20px 14px;
-        border-bottom: 1px solid var(--warm-gray);
-    }
+.rw-nav-icon { width: 32px; height: 32px; border-radius: var(--r-sm); background: var(--cream); display: grid; place-items: center; flex-shrink: 0; }
+.rw-nav-item.active .rw-nav-icon { background: rgba(255,255,255,.15); }
 
-    .rw-sidebar-title {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-    }
+.rw-nav-info { flex: 1; min-width: 0; }
+.rw-nav-label { display: block; font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rw-nav-desc  { display: block; font-size: 11px; opacity: .65; margin-top: 1px; }
+.rw-nav-badge { background: var(--accent); color: var(--white); font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 20px; flex-shrink: 0; }
+.rw-nav-item.active .rw-nav-badge { background: rgba(255,255,255,.25); }
 
-    .rw-nav { padding: 8px; }
+/* ===================== MAIN ===================== */
+.rw-main { min-width: 0; }
+.rw-heading { margin-bottom: 22px; }
+.rw-heading h1 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 400; color: var(--black); margin-bottom: 5px; }
+.rw-heading p  { font-size: 13.5px; color: var(--muted); }
 
-    .rw-nav-item {
-        display: flex;
-        align-items: center;
-        gap: 11px;
-        padding: 10px 12px;
-        border-radius: var(--r-md);
-        text-decoration: none;
-        color: var(--black);
-        font-size: 13.5px;
-        font-weight: 500;
-        transition: background .15s, color .15s;
-        margin-bottom: 2px;
-    }
+/* ===================== USER GRID ===================== */
+.rw-user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
 
-    .rw-nav-item:hover { background: var(--cream); color: var(--black); }
-    .rw-nav-item.active { background: var(--black); color: var(--white); }
-    .rw-nav-item.active:hover { background: #222; color: var(--white); }
+/* ===================== USER CARD ===================== */
+.rw-user-card {
+    background: var(--white);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    border: 1.5px solid var(--warm-gray);
+    transition: box-shadow .25s, transform .25s, border-color .25s;
+    animation: cardIn .4s ease both;
+    display: flex;
+    flex-direction: column;
+}
 
-    .rw-nav-icon {
-        width: 32px; height: 32px;
-        border-radius: var(--r-sm);
-        background: var(--cream);
-        display: grid; place-items: center;
-        flex-shrink: 0;
-    }
+@keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.rw-user-card:nth-child(1) { animation-delay:.04s; }
+.rw-user-card:nth-child(2) { animation-delay:.08s; }
+.rw-user-card:nth-child(3) { animation-delay:.12s; }
+.rw-user-card:nth-child(4) { animation-delay:.16s; }
+.rw-user-card:nth-child(5) { animation-delay:.20s; }
+.rw-user-card:nth-child(6) { animation-delay:.24s; }
 
-    .rw-nav-item.active .rw-nav-icon { background: rgba(255,255,255,.15); }
+.rw-user-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: var(--mid-gray); }
 
-    .rw-nav-info { flex: 1; min-width: 0; }
+.rw-user-top {
+    padding: 24px 20px 16px;
+    text-align: center;
+    background: var(--cream);
+    border-bottom: 1px solid var(--warm-gray);
+}
 
-    .rw-nav-label {
-        display: block;
-        font-size: 13.5px;
-        font-weight: 600;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+.rw-user-avatar-wrap { position: relative; display: inline-block; margin-bottom: 12px; }
 
-    .rw-nav-desc {
-        display: block;
-        font-size: 11px;
-        opacity: .65;
-        margin-top: 1px;
-    }
+.rw-user-avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2.5px solid var(--white);
+    box-shadow: var(--shadow-sm);
+    display: block;
+    transition: transform .2s;
+}
 
-    .rw-nav-badge {
-        background: var(--accent);
-        color: var(--white);
-        font-size: 10.5px;
-        font-weight: 700;
-        padding: 2px 8px;
-        border-radius: 20px;
-        flex-shrink: 0;
-    }
+.rw-user-card:hover .rw-user-avatar { transform: scale(1.05); }
 
-    .rw-nav-item.active .rw-nav-badge { background: rgba(255,255,255,.25); }
+.rw-user-name {
+    font-size: 14.5px; font-weight: 600; color: var(--black);
+    text-decoration: none; display: block; margin-bottom: 3px;
+    transition: color .2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.rw-user-name:hover { color: var(--accent); }
+.rw-user-handle { font-size: 12.5px; color: var(--muted); }
 
-    /* ===================== MAIN ===================== */
-    .rw-main { min-width: 0; }
+.rw-user-info { padding: 14px 16px; flex: 1; }
+.rw-user-info-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); }
 
-    .rw-heading { margin-bottom: 22px; }
+.rw-user-footer { padding: 12px 14px; border-top: 1px solid var(--warm-gray); display: flex; gap: 8px; }
 
-    .rw-heading h1 {
-        font-family: 'Playfair Display', serif;
-        font-size: 24px;
-        font-weight: 400;
-        color: var(--black);
-        margin-bottom: 5px;
-    }
+.rw-btn-profile {
+    flex: 1; height: 34px; border-radius: 34px; font-size: 12.5px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; background: var(--black); color: var(--white);
+    display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+    text-decoration: none; transition: all .2s; white-space: nowrap; cursor: pointer; border: none;
+}
+.rw-btn-profile:hover { background: #222; color: var(--white); transform: translateY(-1px); }
 
-    .rw-heading p { font-size: 13.5px; color: var(--muted); }
+/* ===================== EMPTY ===================== */
+.rw-empty { text-align: center; padding: 80px 24px; background: var(--white); border-radius: var(--r-xl); box-shadow: var(--shadow-sm); }
+.rw-empty-icon { width: 64px; height: 64px; background: var(--cream); border-radius: 50%; display: grid; place-items: center; margin: 0 auto 20px; }
+.rw-empty h4 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 400; color: var(--black); margin-bottom: 8px; }
+.rw-empty p  { font-size: 14px; color: var(--muted); }
 
-    /* ===================== USER GRID ===================== */
-    .rw-user-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 16px;
-    }
+/* ===================== MOBILE BOTTOM NAV ===================== */
+.rw-mobile-nav {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 500;
+    background: var(--white);
+    border-top: 1px solid var(--warm-gray);
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 20px rgba(10,10,10,0.08);
+}
+.rw-mobile-nav-inner {
+    display: flex; justify-content: space-around; align-items: center;
+    max-width: 500px; margin: 0 auto; padding: 0 8px;
+}
+.rw-mob-item {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 6px 8px; border-radius: var(--r-md);
+    text-decoration: none; color: var(--muted);
+    transition: color .15s; position: relative; min-width: 48px;
+}
+.rw-mob-item:hover  { color: var(--black); }
+.rw-mob-item.active { color: var(--black); }
+.rw-mob-icon { width: 34px; height: 34px; border-radius: var(--r-sm); display: grid; place-items: center; transition: background .15s; }
+.rw-mob-item.active .rw-mob-icon { background: var(--black); color: var(--white); }
+.rw-mob-badge {
+    position: absolute; top: 2px; right: 4px;
+    min-width: 16px; height: 16px;
+    background: var(--accent); color: var(--white);
+    font-size: 9px; font-weight: 700; border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 4px; border: 1.5px solid var(--white);
+}
+.rw-mob-label { font-size: 10px; font-weight: 500; line-height: 1; }
 
-    @media (max-width: 640px) { .rw-user-grid { grid-template-columns: repeat(2,1fr); gap: 12px; } }
-    @media (max-width: 400px) { .rw-user-grid { grid-template-columns: 1fr; } }
+/* ===================== RESPONSIVE BREAKPOINTS ===================== */
+@media (max-width: 900px) {
+    .rw-inner { grid-template-columns: 1fr; padding: 0 16px; }
+    .rw-sidebar { display: none; }
+    .rw-mobile-nav { display: block; }
+    .rw-page { padding-bottom: 100px; }
+    .rw-heading h1 { font-size: 20px; }
+}
 
-    /* ===================== USER CARD ===================== */
-    .rw-user-card {
-        background: var(--white);
-        border-radius: var(--r-lg);
-        box-shadow: var(--shadow-sm);
-        overflow: hidden;
-        border: 1.5px solid var(--warm-gray);
-        transition: box-shadow .25s, transform .25s, border-color .25s;
-        animation: cardIn .4s ease both;
-        display: flex;
-        flex-direction: column;
-    }
+@media (max-width: 640px) {
+    .rw-user-grid { grid-template-columns: repeat(2,1fr); gap: 12px; }
+}
 
-    @keyframes cardIn {
-        from { opacity: 0; transform: translateY(12px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .rw-user-card:nth-child(1) { animation-delay:.04s; }
-    .rw-user-card:nth-child(2) { animation-delay:.08s; }
-    .rw-user-card:nth-child(3) { animation-delay:.12s; }
-    .rw-user-card:nth-child(4) { animation-delay:.16s; }
-    .rw-user-card:nth-child(5) { animation-delay:.20s; }
-    .rw-user-card:nth-child(6) { animation-delay:.24s; }
-
-    .rw-user-card:hover {
-        box-shadow: var(--shadow-md);
-        transform: translateY(-3px);
-        border-color: var(--mid-gray);
-    }
-
-    /* Card top — avatar area */
-    .rw-user-top {
-        padding: 24px 20px 16px;
-        text-align: center;
-        background: var(--cream);
-        border-bottom: 1px solid var(--warm-gray);
-    }
-
-    .rw-user-avatar-wrap {
-        position: relative;
-        width: 64px;
-        height: 64px;
-        margin: 0 auto 12px;
-    }
-
-    .rw-user-avatar {
-        width: 64px; height: 64px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2.5px solid var(--white);
-        box-shadow: var(--shadow-sm);
-        display: block;
-        transition: transform .2s;
-    }
-
-    .rw-user-card:hover .rw-user-avatar { transform: scale(1.05); }
-
-    .rw-user-name {
-        font-size: 14.5px;
-        font-weight: 600;
-        color: var(--black);
-        text-decoration: none;
-        display: block;
-        margin-bottom: 3px;
-        transition: color .2s;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .rw-user-name:hover { color: var(--accent); }
-
-    .rw-user-handle {
-        font-size: 12.5px;
-        color: var(--muted);
-    }
-
-    /* Card info */
-    .rw-user-info {
-        padding: 14px 16px;
-        flex: 1;
-    }
-
-    .rw-user-info-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12.5px;
-        color: var(--muted);
-    }
-
-    /* Card footer */
-    .rw-user-footer {
-        padding: 12px 14px;
-        border-top: 1px solid var(--warm-gray);
-    }
-
-    .rw-btn-profile {
-        width: 100%;
-        height: 34px;
-        background: var(--black);
-        color: var(--white);
-        border: none;
-        border-radius: 34px;
-        font-size: 13px;
-        font-weight: 600;
-        font-family: 'DM Sans', sans-serif;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        text-decoration: none;
-        transition: background .2s, transform .15s;
-    }
-
-    .rw-btn-profile:hover {
-        background: #222;
-        transform: translateY(-1px);
-        color: var(--white);
-    }
-
-    /* ===================== EMPTY ===================== */
-    .rw-empty {
-        text-align: center;
-        padding: 80px 24px;
-        background: var(--white);
-        border-radius: var(--r-xl);
-        box-shadow: var(--shadow-sm);
-    }
-
-    .rw-empty-icon {
-        width: 64px; height: 64px;
-        background: var(--cream);
-        border-radius: 50%;
-        display: grid; place-items: center;
-        margin: 0 auto 20px;
-    }
-
-    .rw-empty h4 {
-        font-family: 'Playfair Display', serif;
-        font-size: 20px; font-weight: 400;
-        color: var(--black); margin-bottom: 8px;
-    }
-
-    .rw-empty p { font-size: 14px; color: var(--muted); }
+@media (max-width: 400px) {
+    .rw-inner { padding: 0 12px; }
+    .rw-page { padding-top: 20px; }
+    .rw-user-grid { grid-template-columns: 1fr; }
+}
 </style>
 
 <div class="rw-page">
     <div class="rw-inner">
 
-        {{-- ══ SIDEBAR ══ --}}
+        {{-- ══ SIDEBAR (Desktop only) ══ --}}
         <aside class="rw-sidebar">
             <div class="rw-sidebar-card">
                 <div class="rw-sidebar-header">
@@ -328,9 +229,7 @@
                             <span class="rw-nav-label">Notifikasi</span>
                             <span class="rw-nav-desc">Postingan dibanned</span>
                         </div>
-                        @if(isset($totalPosts) && $totalPosts > 0)
-                            <span class="rw-nav-badge">{{ $totalPosts }}</span>
-                        @endif
+                        @if(isset($totalPosts) && $totalPosts > 0)<span class="rw-nav-badge">{{ $totalPosts }}</span>@endif
                     </a>
 
                     <a href="{{ route('user.riwayat.komentar') }}" class="rw-nav-item">
@@ -343,9 +242,7 @@
                             <span class="rw-nav-label">Komentar</span>
                             <span class="rw-nav-desc">Riwayat komentar</span>
                         </div>
-                        @if(isset($totalComments) && $totalComments > 0)
-                            <span class="rw-nav-badge">{{ $totalComments }}</span>
-                        @endif
+                        @if(isset($totalComments) && $totalComments > 0)<span class="rw-nav-badge">{{ $totalComments }}</span>@endif
                     </a>
 
                     <a href="{{ route('user.riwayat.like') }}" class="rw-nav-item">
@@ -358,9 +255,7 @@
                             <span class="rw-nav-label">Menyukai</span>
                             <span class="rw-nav-desc">Postingan disukai</span>
                         </div>
-                        @if($totalLikes > 0)
-                            <span class="rw-nav-badge">{{ $totalLikes }}</span>
-                        @endif
+                        @if(isset($totalLikes) && $totalLikes > 0)<span class="rw-nav-badge">{{ $totalLikes }}</span>@endif
                     </a>
 
                     <a href="{{ route('user.riwayat.diikuti') }}" class="rw-nav-item active">
@@ -375,9 +270,7 @@
                             <span class="rw-nav-label">Pengikut</span>
                             <span class="rw-nav-desc">Pengguna yang diikuti</span>
                         </div>
-                        @if($totalFollowers > 0)
-                            <span class="rw-nav-badge">{{ $totalFollowers }}</span>
-                        @endif
+                        @if($totalFollowers > 0)<span class="rw-nav-badge">{{ $totalFollowers }}</span>@endif
                     </a>
 
                     <a href="{{ route('user.riwayat.mengikuti') }}" class="rw-nav-item">
@@ -392,9 +285,7 @@
                             <span class="rw-nav-label">Mengikuti</span>
                             <span class="rw-nav-desc">Pengguna yang mengikuti</span>
                         </div>
-                        @if($totalFollowing > 0)
-                            <span class="rw-nav-badge">{{ $totalFollowing }}</span>
-                        @endif
+                        @if(isset($totalFollowing) && $totalFollowing > 0)<span class="rw-nav-badge">{{ $totalFollowing }}</span>@endif
                     </a>
 
                 </nav>
@@ -414,7 +305,6 @@
                     @foreach($followedUsers as $follow)
                         <div class="rw-user-card">
 
-                            {{-- Top: Avatar + Name --}}
                             <div class="rw-user-top">
                                 <div class="rw-user-avatar-wrap">
                                     <img src="{{ $follow->follower->avatar_display ?? 'https://ui-avatars.com/api/?name='.urlencode($follow->follower->name) }}"
@@ -425,10 +315,9 @@
                                    class="rw-user-name">
                                     {{ $follow->follower->name }}
                                 </a>
-                                <span class="rw-user-handle">{{ $follow->follower->username ?? strtolower(str_replace(' ','',$follow->follower->name)) }}</span>
+                                <span class="rw-user-handle">@<i>{{ $follow->follower->username ?? strtolower(str_replace(' ','',$follow->follower->name)) }}</i></span>
                             </div>
 
-                            {{-- Info --}}
                             <div class="rw-user-info">
                                 <div class="rw-user-info-row">
                                     <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -439,7 +328,6 @@
                                 </div>
                             </div>
 
-                            {{-- Footer --}}
                             <div class="rw-user-footer">
                                 <a href="{{ route('user.profile.username', ['name' => $follow->follower->name]) }}"
                                    class="rw-btn-profile">
@@ -471,5 +359,66 @@
         </main>
     </div>
 </div>
+
+{{-- ══ MOBILE BOTTOM NAV ══ --}}
+<nav class="rw-mobile-nav">
+    <div class="rw-mobile-nav-inner">
+
+        <a href="{{ route('user.riwayat.postingan') }}" class="rw-mob-item">
+            @if(isset($totalPosts) && $totalPosts > 0)<span class="rw-mob-badge">{{ $totalPosts > 9 ? '9+' : $totalPosts }}</span>@endif
+            <div class="rw-mob-icon">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                    <path d="M8.5 2S6 5.5 6 8a2.5 2.5 0 005 0C11 5.5 8.5 2 8.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M8.5 10.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <span class="rw-mob-label">Notifikasi</span>
+        </a>
+
+        <a href="{{ route('user.riwayat.komentar') }}" class="rw-mob-item">
+            @if(isset($totalComments) && $totalComments > 0)<span class="rw-mob-badge">{{ $totalComments > 9 ? '9+' : $totalComments }}</span>@endif
+            <div class="rw-mob-icon">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                    <path d="M14 2H3a.5.5 0 00-.5.5v8a.5.5 0 00.5.5h3.5l3 3 3-3H14a.5.5 0 00.5-.5V2.5A.5.5 0 0014 2z" stroke="currentColor" stroke-width="1.4"/>
+                </svg>
+            </div>
+            <span class="rw-mob-label">Komentar</span>
+        </a>
+
+        <a href="{{ route('user.riwayat.like') }}" class="rw-mob-item">
+            @if(isset($totalLikes) && $totalLikes > 0)<span class="rw-mob-badge">{{ $totalLikes > 9 ? '9+' : $totalLikes }}</span>@endif
+            <div class="rw-mob-icon">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                    <path d="M8.5 14S2 10.5 2 6.5A3.5 3.5 0 018.5 3.7 3.5 3.5 0 0115 6.5C15 10.5 8.5 14 8.5 14z" stroke="currentColor" stroke-width="1.4"/>
+                </svg>
+            </div>
+            <span class="rw-mob-label">Suka</span>
+        </a>
+
+        <a href="{{ route('user.riwayat.diikuti') }}" class="rw-mob-item active">
+            @if($totalFollowers > 0)<span class="rw-mob-badge">{{ $totalFollowers > 9 ? '9+' : $totalFollowers }}</span>@endif
+            <div class="rw-mob-icon">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                    <circle cx="8.5" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.4"/>
+                    <path d="M3 14c0-3 2.5-4.5 5.5-4.5s5.5 1.5 5.5 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <span class="rw-mob-label">Pengikut</span>
+        </a>
+
+        <a href="{{ route('user.riwayat.mengikuti') }}" class="rw-mob-item">
+            @if(isset($totalFollowing) && $totalFollowing > 0)<span class="rw-mob-badge">{{ $totalFollowing > 9 ? '9+' : $totalFollowing }}</span>@endif
+            <div class="rw-mob-icon">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                    <circle cx="6.5" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.4"/>
+                    <path d="M2 14c0-3 2-4.5 4.5-4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    <path d="M13 9v6M10 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <span class="rw-mob-label">Mengikuti</span>
+        </a>
+
+    </div>
+</nav>
 
 @endsection

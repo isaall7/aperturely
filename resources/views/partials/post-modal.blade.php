@@ -67,7 +67,7 @@
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     @auth
                                         @if(auth()->id() === $post->user_id)
-                                            <li><a class="dropdown-item" href="#">✏️ Edit</a></li>
+                                            <li><a class="dropdown-item" href="{{ route('user.postingan.edit', $post) }}">✏️ Edit</a></li>
                                             <form action="{{ route('user.postingan.destroy', $post) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')

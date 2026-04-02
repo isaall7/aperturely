@@ -14,6 +14,7 @@ use App\Http\Controllers\User\ReportController;
 use App\Http\Controllers\User\CommentController;
 use App\Http\Controllers\User\LikesPhotoController;
 use App\Http\Controllers\User\ExploreController;
+use App\Http\Controllers\User\ChatController;   
 
 use Google\Cloud\Vision\V1\Client\ImageAnnotatorClient;
 
@@ -48,8 +49,10 @@ Route::prefix('dashboard')->name('admin.')->middleware(['auth', 'role:admin'])->
 Route::prefix('/')->name('user.')->group(function () {
     Route::get('/', [DashboardUser::class, 'index'])->name('dashboard');
     Route::get('/dashboard/kategori/{slug}', [DashboardUser::class, 'index'])->name('dashboard.kategori');
+    Route::get('/post/{id}', [DashboardUser::class, 'show'])->name('post-detail');
 
     Route::resource('/postingan', PostsController::class);
+    Route::get('/tags/search', [PostsController::class, 'searchTag']);
 
     Route::post('/report/post/{post}', [ReportController::class, 'reportPost'])->name('report.post');
     Route::post('/report/comment/{comment}', [ReportController::class, 'reportComment'])->name('report.comment');
@@ -80,12 +83,9 @@ Route::prefix('/')->name('user.')->group(function () {
     Route::get('riwayat-diikuti', [DashboardUser::class, 'showFollowers'])->name('riwayat.diikuti');
     Route::get('riwayat-mengikuti', [DashboardUser::class, 'showFollowing'])->name('riwayat.mengikuti');
 
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{conversationId}/messages', [ChatController::class, 'messages'])->name('chat.messages');
+    Route::post('/chat/{conversationId}/send', [ChatController::class, 'send'])->name('chat.send');
+    Route::post('/chat/{conversationId}/read', [ChatController::class, 'read'])->name('chat.read');
+
 });
-
-Route::get('/cek-vision', function () {
-    return class_exists(ImageAnnotatorClient::class)
-        ? 'VISION OK'
-        : 'VISION NOT FOUND';
-});
-
-

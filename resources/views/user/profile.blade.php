@@ -720,7 +720,7 @@
     @media (max-width: 768px) {
         .pr-card-wrap, .pr-posts { padding: 0 16px; }
         .pr-card-body { flex-direction: column; align-items: center; text-align: center; padding: 24px 20px 20px; gap: 16px; }
-        .pr-avatar-wrap { margin-top: -52px; }
+        .pr-avatar-wrap { margin-top: 0; }
         .pr-avatar { width: 96px; height: 96px; }
         .pr-info-top { flex-direction: column; align-items: center; }
         .pr-actions { justify-content: center; }
@@ -760,7 +760,7 @@
                     <div class="pr-info-top">
                         <div>
                             <div class="pr-name">{{ $user->name ?? $user->username }}</div>
-                            <div class="pr-handle">{{ strtolower(str_replace(' ', '', $user->username ?? $user->name)) }}</div>
+                            <div class="pr-handle">@<i>{{ strtolower(str_replace('', '', $user->username ?? $user->name)) }}</i></div>
                         </div>
 
                         <div class="pr-actions">
@@ -786,7 +786,7 @@
                                             Ikuti
                                         @endif
                                     </button>
-                                    <button class="pr-btn pr-btn-secondary">Pesan</button>
+                                    <a href="{{ route('user.chat.index', ['user' => $user->id]) }}" class="pr-btn pr-btn-secondary">Pesan</a>
                                 @endif
                             @else
                                 <a href="{{ route('login') }}" class="pr-btn pr-btn-follow">Masuk untuk Mengikuti</a>
@@ -927,14 +927,6 @@
                                                         <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M8.5 14.5S2 10.5 2 6A4 4 0 018.5 2.8 4 4 0 0115 6C15 10.5 8.5 14.5 8.5 14.5z" stroke="#888" stroke-width="1.6"/></svg>
                                                     @endif
                                                 </button>
-                                                <button class="ap-modal-action">
-                                                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                                                        <circle cx="12" cy="3" r="1.5" stroke="#888" stroke-width="1.4"/>
-                                                        <circle cx="3" cy="7.5" r="1.5" stroke="#888" stroke-width="1.4"/>
-                                                        <circle cx="12" cy="12" r="1.5" stroke="#888" stroke-width="1.4"/>
-                                                        <path d="M4.5 8.5l6 3M4.5 6.5l6-3" stroke="#888" stroke-width="1.4"/>
-                                                    </svg>
-                                                </button>
                                                 @auth
                                                     @if(auth()->id() === $post->user_id)
                                                         <div class="dropdown">
@@ -944,7 +936,7 @@
                                                                 </svg>
                                                             </button>
                                                             <ul class="dropdown-menu dropdown-menu-end">
-                                                                <li><a class="dropdown-item" href="#">✏️ Edit</a></li>
+                                                                <li><a class="dropdown-item" href="{{ route('user.postingan.edit', $post) }}">✏️ Edit</a></li>
                                                                 <form action="{{ route('user.postingan.destroy', $post) }}" method="POST">
                                                                     @csrf @method('DELETE')
                                                                     <li><button class="dropdown-item text-danger" onclick="return confirm('Hapus postingan?')">🗑️ Hapus</button></li>

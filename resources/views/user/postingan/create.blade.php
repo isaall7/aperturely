@@ -30,6 +30,27 @@
         font-family: 'DM Sans', sans-serif;
     }
 
+    /* bagian tag */
+    .tag-suggestions {
+    position: absolute;
+    background: #1f2937;
+    color: white;
+    border-radius: 8px;
+    margin-top: 5px;
+    width: 100%;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 999;
+    }
+
+    .tag-item {
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+
+    .tag-item:hover {
+        background: #374151;
+    }
     /* ── Override layout ── */
     .container-fluid { padding: 0 !important; max-width: 100% !important; }
     .body-wrapper    { margin-top: 0 !important; }
@@ -274,7 +295,10 @@
     .up-preview-remove:hover { transform: scale(1.15) rotate(90deg); background: var(--red); }
 
     /* ===================== FORM FIELDS ===================== */
-    .up-group { margin-bottom: 24px; }
+    .up-group {
+        margin-bottom: 24px; 
+        position: relative;
+    }
 
     .up-field {
         width: 100%;
@@ -674,13 +698,14 @@
                         <div class="up-preview-grid" id="photoPreviewGrid"></div>
                     </div>
 
-                    {{-- ── Caption ── --}}
+                    <!-- {{-- ── Caption ── --}} -->
                     <div class="up-group">
                         <label class="up-label" for="captionInput">Caption</label>
                         <textarea name="caption" id="captionInput" rows="4"
-                                  class="up-field @error('caption') is-invalid @enderror"
-                                  placeholder="Ceritakan tentang foto Anda…"
-                                  maxlength="500">{{ old('caption') }}</textarea>
+                                class="up-field @error('caption') is-invalid @enderror"
+                                placeholder="Ceritakan tentang foto Anda… Gunakan # untuk menambahkan tag"
+                                maxlength="500">{{ old('caption') }}</textarea>
+                        <div id="tagSuggestions" class="tag-suggestions"></div>
                         <div class="up-char-counter" id="charCounter">0 / 500 karakter</div>
                         @error('caption')
                             <span class="up-invalid">{{ $message }}</span>
@@ -729,7 +754,7 @@
                         </div>
                     </div>
 
-                    {{-- ── Actions ── --}}
+                    <!-- {{-- ── Actions ── --}} -->
                     <div class="up-actions">
                         <a href="{{ route('user.profile') }}" class="up-btn up-btn-back">
                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -751,7 +776,7 @@
     </div>
 </div>
 
-{{-- ── Scan Progress Modal ── --}}
+<!-- {{-- ── Scan Progress Modal ── --}} -->
 <div id="scanModal" class="up-scan-modal">
     <div class="up-scan-panel">
         <div class="up-scan-header">
@@ -784,7 +809,7 @@
     </div>
 </div>
 
-{{-- ── Confirm Cancel Modal ── --}}
+<!-- {{-- ── Confirm Cancel Modal ── --}} -->
 <div id="confirmModal" class="up-confirm-modal">
     <div class="up-confirm-panel">
         <div class="up-confirm-icon">
@@ -992,6 +1017,72 @@ async function handlePhotoInput(event) {
     renderPreview();
 }
 
+// untuk tag
+const textarea = document.getElementById('captionInput');
+const suggestionBox = document.getElementById('tagSuggestions');
+
+let timeout = null;
+
+// 🔥 function utama
+async function handleTagSearch() {
+    const text = textarea.value;
+    const cursorPos = textarea.selectionStart;
+
+    // ambil hashtag terakhir
+    const match = text.substring(0, cursorPos).match(/#(\w*)$/);
+
+    if (!match) {
+        suggestionBox.innerHTML = '';
+        return;
+    }
+
+    const keyword = match[1] || '';
+
+    try {
+        const res = await fetch(`/tags/search?q=${keyword}`);
+        const tags = await res.json();
+
+        if (!tags.length) {
+            suggestionBox.innerHTML = `<div class="tag-item">Tidak ada tag</div>`;
+            return;
+        }
+
+        suggestionBox.innerHTML = tags.map(tag => `
+            <div class="tag-item" data-tag="${tag.name}">
+                #${tag.name} (${tag.posts_count}x)
+            </div>
+        `).join('');
+
+        // klik tag
+        document.querySelectorAll('.tag-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const tag = item.dataset.tag;
+
+                const newText = text.replace(/#(\w*)$/, '#' + tag + ' ');
+                textarea.value = newText;
+
+                suggestionBox.innerHTML = '';
+                textarea.focus();
+            });
+        });
+
+    } catch (err) {
+        console.error('Tag search error:', err);
+    }
+}
+
+// 🔥 debounce biar gak spam
+textarea.addEventListener('keyup', () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(handleTagSearch, 300);
+});
+
+// 🔥 klik luar = tutup dropdown
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.up-group')) {
+        suggestionBox.innerHTML = '';
+    }
+});
 
 // ── Drag & drop ─────────────────────────────────────────────────────
 const dropZone = document.getElementById('dropZone');

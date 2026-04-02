@@ -6,7 +6,7 @@
     <title>Aperture — Daftar</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('ui/images/logos/aperturely_logo.png') }}"/>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
-  <style>
+<style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -54,7 +54,7 @@
         border-radius: var(--r-xl);
         box-shadow: var(--shadow-lg);
         width: 100%;
-        max-width: 420px;
+        max-width: 600px;
         position: relative;
         z-index: 1;
         overflow: hidden;
@@ -277,7 +277,50 @@
     @media (max-width: 480px) {
         .auth-body { padding: 32px 24px 28px; }
     }
-  </style>
+      /* ===================== MOBILE RESPONSIVE ===================== */
+    @media (max-width: 480px) {
+
+    body { padding: 16px 12px; align-items: flex-start; }
+
+    .auth-card { border-radius: var(--r-lg); }
+
+    .auth-body { padding: 28px 20px 20px; }
+
+    /* Brand lebih compact */
+    .auth-brand { margin-bottom: 16px; }
+    .auth-brand img { height: 28px; }
+
+    /* Heading lebih kecil */
+    .auth-heading { margin-bottom: 20px; }
+    .auth-heading h1 { font-size: 20px; }
+    .auth-heading p { font-size: 13px; }
+
+    /* Input full & nyaman disentuh */
+    .auth-field { height: 48px; font-size: 16px; /* cegah zoom otomatis iOS */ }
+
+    /* Password row jadi 1 kolom */
+    .auth-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    /* Tombol lebih tinggi, mudah ditekan */
+    .auth-submit { height: 48px; font-size: 15px; margin-top: 12px; }
+
+    .auth-google { height: 48px; }
+
+    .auth-divider { margin: 18px 0; }
+
+    .auth-footer { margin-top: 20px; font-size: 13px; }
+
+    .auth-terms { font-size: 11.5px; }
+    }
+
+    @media (max-width: 360px) {
+        .auth-body { padding: 24px 16px 20px; }
+        .auth-heading h1 { font-size: 18px; }
+    }
+</style>
 </head>
 <body>
 

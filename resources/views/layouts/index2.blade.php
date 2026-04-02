@@ -362,5 +362,20 @@
     });
   </script>
   @endif
+
+  @php
+    $noChatRoutes = [
+        'user.chat.index',
+        'user.riwayat.notifikasi',
+        'user.riwayat.mengikuti',
+        'user.riwayat.diikuti',
+        'user.riwayat.like',
+        'user.riwayat.komentar',
+    ];
+  @endphp
+
+  @if(!in_array(Route::currentRouteName(), $noChatRoutes))
+      @include('layouts.ui_user.chat')
+  @endif
 </body>
 </html>

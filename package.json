@@ -18,6 +18,8 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
-        "nsfwjs": "^4.2.1"
+        "laravel-echo": "^2.3.1",
+        "nsfwjs": "^4.2.1",
+        "pusher-js": "^8.4.2"
     }
 }
