@@ -21,7 +21,7 @@
               <span class="hide-menu">Home</span>
             </li> -->
             <li class="sidebar-item">
-              <a class="sidebar-link primary-hover-bg justify-content-between"
+              <a class="sidebar-link primary-hover-bg justify-content-between {{ request()->routeIs('admin.dashboard') ? 'active-admin-link' : '' }}"
                 href="{{route('admin.dashboard')}}" aria-expanded="false">
                 <div class="d-flex align-items-center gap-6">
                   <span class="d-flex">
@@ -32,7 +32,7 @@
               </a>
             </li>
            <li class="sidebar-item">
-              <a class="sidebar-link primary-hover-bg justify-content-between"
+              <a class="sidebar-link primary-hover-bg justify-content-between {{ request()->routeIs('admin.category.*') ? 'active-admin-link' : '' }}"
                 href="{{ route('admin.category.index') }}" aria-expanded="false">
                   <div class="d-flex align-items-center gap-6">
                       <span class="d-flex">
@@ -44,7 +44,7 @@
           </li>
 
           <li class="sidebar-item">
-              <a class="sidebar-link primary-hover-bg justify-content-between"
+              <a class="sidebar-link primary-hover-bg justify-content-between {{ request()->routeIs('admin.typecategory.*') ? 'active-admin-link' : '' }}"
                 href="{{ auth()->check() ? route('admin.typecategory.index') : route('login') }}" aria-expanded="false">
                   <div class="d-flex align-items-center gap-6">
                       <span class="d-flex">
@@ -56,7 +56,7 @@
           </li>
 
           <li class="sidebar-item">
-              <a class="sidebar-link primary-hover-bg justify-content-between"
+              <a class="sidebar-link primary-hover-bg justify-content-between {{ request()->routeIs('admin.user.index') ? 'active-admin-link' : '' }}"
                 href="{{ route('admin.user.index') }}" aria-expanded="false">
                   <div class="d-flex align-items-center gap-6">
                       <span class="d-flex">
@@ -68,7 +68,7 @@
           </li>
 
           <li class="sidebar-item">
-              <a class="sidebar-link primary-hover-bg justify-content-between"
+              <a class="sidebar-link primary-hover-bg justify-content-between {{ request()->routeIs('admin.user.posts') ? 'active-admin-link' : '' }}"
                 href="{{ route('admin.user.posts') }}" aria-expanded="false">
                   <div class="d-flex align-items-center gap-6">
                       <span class="d-flex">
@@ -80,7 +80,7 @@
           </li>
 
           <li class="sidebar-item">
-              <a class="sidebar-link primary-hover-bg justify-content-between"
+              <a class="sidebar-link primary-hover-bg justify-content-between {{ request()->routeIs('admin.report.post') ? 'active-admin-link' : '' }}"
                 href="{{ route('admin.report.post') }}" aria-expanded="false">
                   <div class="d-flex align-items-center gap-6">
                       <span class="d-flex">
@@ -92,7 +92,7 @@
           </li>
 
           <li class="sidebar-item">
-              <a class="sidebar-link primary-hover-bg justify-content-between"
+              <a class="sidebar-link primary-hover-bg justify-content-between {{ request()->routeIs('admin.report.comment') ? 'active-admin-link' : '' }}"
                 href="{{ route('admin.report.comment') }}" aria-expanded="false">
                   <div class="d-flex align-items-center gap-6">
                       <span class="d-flex">

@@ -105,10 +105,93 @@
         transform: translateX(0);
       }
     }
+
+    @auth
+      @if (auth()->user()->role === 'admin')
+        body.admin-layout {
+          background: #f1f5f9;
+        }
+
+        .admin-layout .left-sidebar {
+          width: 270px;
+          background: linear-gradient(180deg, #0f172a 0%, #172554 100%);
+          box-shadow: 18px 0 40px rgba(15, 23, 42, 0.18);
+        }
+
+        .admin-layout .body-wrapper {
+          margin-left: 270px;
+        }
+
+        .admin-layout .app-header {
+          left: 290px;
+          right: 24px;
+          top: 16px;
+          border-radius: 22px;
+          padding: 0 22px;
+          border: 1px solid rgba(148, 163, 184, 0.2);
+          box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .admin-layout .app-header .navbar {
+          width: 100%;
+          min-height: 72px;
+        }
+
+        .admin-layout .body-wrapper-inner {
+          padding: 102px 18px 24px;
+        }
+
+        .admin-layout .container-fluid {
+          padding: 0;
+        }
+
+        .admin-layout .left-sidebar .sidebar-nav ul .sidebar-item .sidebar-link {
+          color: rgba(255, 255, 255, 0.78);
+          border-radius: 16px;
+          margin: 4px 16px;
+          padding: 14px 16px;
+        }
+
+        .admin-layout .left-sidebar .sidebar-nav ul .sidebar-item .sidebar-link:hover,
+        .admin-layout .left-sidebar .sidebar-nav ul .sidebar-item .sidebar-link.active-admin-link {
+          background: rgba(255, 255, 255, 0.1);
+          color: #fff;
+        }
+
+        .admin-layout .left-sidebar .sidebar-nav ul .sidebar-item .sidebar-link iconify-icon,
+        .admin-layout .left-sidebar .sidebar-nav ul .sidebar-item .sidebar-link i {
+          color: inherit;
+        }
+
+        .admin-layout .left-sidebar .brand-logo {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        @media (max-width: 1199px) {
+          .admin-layout .left-sidebar {
+            display: none !important;
+          }
+
+          .admin-layout .body-wrapper {
+            margin-left: 0;
+          }
+
+          .admin-layout .app-header {
+            left: 16px;
+            right: 16px;
+            top: 12px;
+          }
+
+          .admin-layout .body-wrapper-inner {
+            padding: 96px 12px 20px;
+          }
+        }
+      @endif
+    @endauth
   </style>
 </head>
 
-<body>
+<body class="@auth{{ auth()->user()->role === 'admin' ? 'admin-layout' : '' }}@endauth">
   <!-- Body Wrapper -->
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">

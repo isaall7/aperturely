@@ -123,7 +123,49 @@ class DashboardAdmin extends Controller
 
     public function index()
     {
-        return view('admin.dashboard');
+        $totalUsers = User::where('role', 'user')->count();
+        $activePosts = Posts::where('status', 'active')->count();
+        $totalReports = Report::count();
+        $pendingReports = Report::where('status', 'pending')->count();
+
+        $reportSummary = Report::select('reason', DB::raw('count(*) as total'))
+            ->groupBy('reason')
+            ->orderByDesc('total')
+            ->take(5)
+            ->get();
+
+        $recentUsers = User::where('role', 'user')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $recentPosts = Posts::with(['user'])
+            ->withCount(['likes', 'comments', 'reports'])
+            ->where('status', 'active')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $recentReports = Report::with([
+                'reporter',
+                'reportedUser',
+                'post.photos',
+                'comment',
+            ])
+            ->latest()
+            ->take(6)
+            ->get();
+
+        return view('admin.dashboard', compact(
+            'totalUsers',
+            'activePosts',
+            'totalReports',
+            'pendingReports',
+            'reportSummary',
+            'recentUsers',
+            'recentPosts',
+            'recentReports'
+        ));
     }
 
     // ini buat hapus akun user di halaman admin

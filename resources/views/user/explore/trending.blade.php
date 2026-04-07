@@ -928,13 +928,6 @@
                 @endforeach
             </div>
 
-            {{-- Pagination --}}
-            @if(method_exists($trendingPosts, 'links'))
-            <div class="tr-pagination">
-                {{ $trendingPosts->links() }}
-            </div>
-            @endif
-
         @else
             <div class="tr-empty">
                 <div class="tr-empty-icon">

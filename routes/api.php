@@ -30,3 +30,5 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/{id}', [PostController::class, 'show']); 
 Route::get('/kategori', [PostController::class, 'kategori']); 
+Route::get('/tipe-foto', [PostController::class, 'tipeFoto']);
+Route::get('/tipe-foto/{id}/posts', [PostController::class, 'postByTipeFoto']);
