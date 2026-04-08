@@ -235,7 +235,7 @@
 
     @media (max-width: 1300px) { .ap-grid { columns: 3; } }
     @media (max-width: 900px)  { .ap-grid { columns: 2; column-gap: 14px; } }
-    @media (max-width: 480px)  { .ap-grid { columns: 1; } }
+    @media (max-width: 480px)  { .ap-grid { columns: 2; column-gap: 10px; } }
 
     /* ===================== POST CARD ===================== */
     .ap-card {
@@ -512,19 +512,72 @@
     .ap-modal-action:hover { background: var(--warm-gray); transform: scale(1.08); }
 
     .ap-modal-save {
-        height: 34px; padding: 0 18px;
-        background: var(--accent); color: var(--white);
-        border: none; border-radius: 34px;
-        font-size: 13.5px; font-weight: 600;
+        height: 40px;
+        padding: 0 18px;
+        border: none;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-h) 100%);
+        color: var(--white);
+        font-size: 13px;
+        font-weight: 700;
         font-family: 'DM Sans', sans-serif;
-        cursor: pointer; transition: background .2s;
-        display: inline-flex; align-items: center; justify-content: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         text-decoration: none;
+        box-shadow: 0 10px 24px rgba(200, 83, 58, 0.22);
+        transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+        cursor: pointer;
     }
-    .ap-modal-save:hover { background: var(--accent-h); }
-    .ap-modal-save.dropdown-toggle::after { margin-left: 8px; }
-    .ap-download-menu { min-width: 230px; }
-    .ap-download-menu .dropdown-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .ap-modal-save:hover {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-h) 100%);
+        color: var(--white);
+        transform: translateY(-1px);
+        box-shadow: 0 14px 28px rgba(200, 83, 58, 0.28);
+        filter: saturate(1.05);
+    }
+    .ap-modal-save.dropdown-toggle::after {
+        margin-left: 2px;
+        vertical-align: middle;
+    }
+    .ap-download-menu {
+        min-width: 260px;
+        padding: 8px;
+        border: 1px solid rgba(10,10,10,0.06);
+        border-radius: 16px;
+        box-shadow: var(--shadow-lg);
+    }
+    .ap-download-menu .dropdown-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 13px;
+        color: var(--black);
+    }
+    .ap-download-menu .dropdown-item span:last-child {
+        flex-shrink: 0;
+        min-width: 28px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 700;
+        text-align: center;
+    }
+    .ap-download-menu .dropdown-item:hover,
+    .ap-download-menu .dropdown-item:focus {
+        background: #f6f1eb;
+        color: var(--black);
+    }
+    .ap-download-menu .dropdown-divider {
+        margin: 8px 2px;
+        border-top-color: var(--warm-gray);
+    }
 
     .ap-modal-author {
         padding: 16px 18px;
@@ -696,6 +749,26 @@
         .ex-sidebar { position: static; }
     }
     @media (max-width: 480px) {
+        .ex-page { padding: 20px 0 56px; }
+        .ex-inner { padding: 0 12px; }
+        .ex-heading { margin-bottom: 14px; }
+        .ex-title { font-size: 20px; }
+        .ap-card {
+            margin-bottom: 10px;
+            border-radius: 16px;
+        }
+        .ap-card-body {
+            display: none;
+        }
+        .ap-card-overlay {
+            padding: 10px;
+        }
+        .ap-multi-badge {
+            top: 8px;
+            left: 8px;
+            font-size: 10px;
+            padding: 3px 8px;
+        }
         .ap-modal-header,
         .ap-modal-author,
         .ap-modal-comments,

@@ -81,27 +81,45 @@
         overflow: hidden;
         background: var(--black);
         box-shadow: var(--shadow-lg);
-        max-height: 90vh;
+        width: 100%;
+        min-height: 320px;
+        max-height: min(90vh, 980px);
+        padding: clamp(10px, 1.4vw, 18px);
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
     .pd-photo-wrap img {
-        width: 100%;
+        width: auto;
+        max-width: 100%;
         height: auto;
-        max-height: 90vh;
+        max-height: calc(min(90vh, 980px) - clamp(20px, 2.8vw, 36px));
         object-fit: contain;
         display: block;
+        margin: 0 auto;
     }
 
     /* Carousel in detail page */
-    .pd-photo-wrap .carousel { width: 100%; }
+    .pd-photo-wrap .carousel {
+        width: 100%;
+        height: 100%;
+    }
+
+    .pd-photo-wrap .carousel-inner,
+    .pd-photo-wrap .carousel-item {
+        height: 100%;
+    }
+
+    .pd-photo-wrap .carousel-item {
+        text-align: center;
+    }
 
     .pd-photo-wrap .carousel-item img {
-        width: 100%;
+        width: auto;
+        max-width: 100%;
         height: auto;
-        max-height: 90vh;
+        max-height: calc(min(90vh, 980px) - clamp(20px, 2.8vw, 36px));
         object-fit: contain;
     }
 
@@ -203,6 +221,77 @@
         transition: background 0.2s, transform 0.15s;
     }
     .pd-save-btn:hover { background: var(--accent-h); transform: scale(1.04); }
+
+    .ap-modal-save {
+        height: 40px;
+        padding: 0 18px;
+        border: none;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-h) 100%);
+        color: var(--white);
+        font-size: 13px;
+        font-weight: 700;
+        font-family: 'DM Sans', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        box-shadow: 0 10px 24px rgba(200, 83, 58, 0.22);
+        transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    }
+    .ap-modal-save:hover {
+        color: var(--white);
+        transform: translateY(-1px);
+        box-shadow: 0 14px 28px rgba(200, 83, 58, 0.28);
+        filter: saturate(1.05);
+    }
+    .ap-modal-save.dropdown-toggle::after {
+        margin-left: 2px;
+        vertical-align: middle;
+    }
+
+    .ap-download-menu {
+        min-width: 260px;
+        padding: 8px;
+        border: 1px solid rgba(10,10,10,0.06);
+        border-radius: 16px;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .ap-download-menu .dropdown-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 13px;
+        color: var(--black);
+    }
+
+    .ap-download-menu .dropdown-item span:last-child {
+        flex-shrink: 0;
+        min-width: 28px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .ap-download-menu .dropdown-item:hover,
+    .ap-download-menu .dropdown-item:focus {
+        background: #f6f1eb;
+        color: var(--black);
+    }
+
+    .ap-download-menu .dropdown-divider {
+        margin: 8px 2px;
+        border-top-color: var(--warm-gray);
+    }
 
     /* Author */
     .pd-author {
@@ -619,15 +708,23 @@
         }
         .pd-photo-wrap {
             position: static;
-            max-height: 70vw;
+            min-height: 0;
+            max-height: none;
+            padding: 10px;
         }
         .pd-photo-wrap img,
         .pd-photo-wrap .carousel-item img {
-            max-height: 70vw;
-            object-fit: cover;
+            width: 100%;
+            max-width: 100%;
+            max-height: 75vh;
+            object-fit: contain;
         }
         .pd-related-grid { columns: 2; column-gap: 12px; }
         .pd-related-grid { column-gap: 12px; }
+        .ap-modal-save,
+        .ap-download-menu {
+            width: 100%;
+        }
     }
 
     @media (max-width: 480px) {

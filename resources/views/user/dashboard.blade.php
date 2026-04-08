@@ -653,23 +653,6 @@
                                 </div>
                             @endif
 
-                            <div class="ap-card-overlay">
-                                <div class="ap-overlay-top"></div>
-                                <div class="ap-overlay-bottom">
-                                    <div class="ap-overlay-actions">
-                                        <span class="ap-icon-btn" title="Suka">
-                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                <path d="M8 13.5S2 10 2 5.5A3.5 3.5 0 018 3.1 3.5 3.5 0 0114 5.5C14 10 8 13.5 8 13.5z" stroke="#c8533a" stroke-width="1.6"/>
-                                            </svg>
-                                        </span>
-                                        <span class="ap-icon-btn" title="Komentar">
-                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                <path d="M13 2H3a1 1 0 00-1 1v7a1 1 0 001 1h2l3 3 3-3h2a1 1 0 001-1V3a1 1 0 00-1-1z" stroke="#555" stroke-width="1.6"/>
-                                            </svg>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         @if($post->caption || $post->user)
