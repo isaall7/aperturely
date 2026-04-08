@@ -21,6 +21,11 @@ class ChatController extends Controller
         ->get()
         ->map(function ($conv) {
             $other = $conv->users->where('id', '!=', Auth::id())->first();
+
+            if (!$other) {
+                return null;
+            }
+
             return [
                 'conversation_id' => $conv->id,
                 'user'            => $other,
@@ -30,7 +35,9 @@ class ChatController extends Controller
                     ->where('is_read', false)
                     ->count(),
             ];
-        });
+        })
+        ->filter()
+        ->values();
 
     // Jika ada ?user=id di URL, buat/cari conversation lalu auto-open
     $openConvId = null;

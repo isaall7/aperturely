@@ -756,7 +756,34 @@
                         </ul>
                     </div>
                 </div>
-                <button class="pd-save-btn">Simpan</button>
+                @if($post->photos && $post->photos->count() > 1)
+                    <div class="dropdown">
+                        <button class="ap-modal-save dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Download
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end ap-download-menu">
+                            @foreach($post->photos as $slideIndex => $photo)
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('user.postingan.download', ['post' => $post->id, 'photo' => $photo->id]) }}">
+                                        <span>Download slide {{ $slideIndex + 1 }}</span>
+                                        <span>#{{ $slideIndex + 1 }}</span>
+                                    </a>
+                                </li>
+                            @endforeach
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <button type="button"
+                                        class="dropdown-item fw-semibold download-all-btn"
+                                        data-download-urls='@json($post->photos->map(fn ($photo) => route('user.postingan.download', ['post' => $post->id, 'photo' => $photo->id]))->values())'>
+                                    <span>Download semua foto</span>
+                                    <span>{{ $post->photos->count() }}</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                @elseif($post->photos && $post->photos->first())
+                    <a href="{{ route('user.postingan.download', ['post' => $post->id]) }}" class="ap-modal-save">Download</a>
+                @endif
             </div>
 
             {{-- Author + Caption --}}

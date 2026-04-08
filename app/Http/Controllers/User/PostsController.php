@@ -16,19 +16,31 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Typography\FontFactory;
 
 class PostsController extends Controller
 {
-    public function download($id)
+    //ini untuk mengunduh foto dengan watermark, bisa pilih slide mana yang ingin diunduh 
+    //jika postingan memiliki lebih dari 1 foto
+    public function download(Request $request, Posts $post)
     {
-    $photo = Photo::findOrFail($id);
+        $post->loadMissing(['photos', 'user']);
 
-    $path = storage_path('app/public/' . $photo->photo);
+        if ($post->photos->isEmpty()) {
+            abort(404);
+        }
 
-    if (!file_exists($path)) {
-        abort(404);
-    }
-    return response()->download($path);
+        if ($post->photos->count() === 1) {
+            return $this->downloadSinglePhoto($post, $post->photos->first());
+        }
+
+        $photo = $post->photos->firstWhere('id', $request->integer('photo'));
+
+        if (!$photo) {
+            return back()->with('error', 'Pilih slide foto yang ingin diunduh.');
+        }
+
+        return $this->downloadSinglePhoto($post, $photo);
     }
 
     public function create()
@@ -271,5 +283,92 @@ class PostsController extends Controller
         return redirect()
             ->route('user.dashboard')
             ->with('success', 'Postingan berhasil dihapus 🗑️');
+    }
+    private function downloadSinglePhoto(Posts $post, Photo $photo)
+    {
+        $tempPath = $this->createWatermarkedPhoto($post, $photo);
+
+        return response()
+            ->download($tempPath, $this->buildPhotoFilename($post, $photo))
+            ->deleteFileAfterSend(true);
+    }
+
+    //ini untuk membuat logo watermark dan username saat foto diunduh
+    private function createWatermarkedPhoto(Posts $post, Photo $photo): string
+    {
+        $sourcePath = storage_path('app/public/' . $photo->photo);
+
+        if (!is_file($sourcePath)) {
+            abort(404);
+        }
+
+        $manager = new ImageManager(new Driver());
+        $image = $manager->read($sourcePath);
+        $padding = max(18, (int) round(min($image->width(), $image->height()) * 0.03));
+        $logoHeight = 0;
+
+        $logoPath = public_path('ui/images/logos/aperturely_logo.png');
+        if (is_file($logoPath)) {
+            $logo = $manager->read($logoPath);
+            $logo->scaleDown(width: max(70, min(160, (int) round($image->width() * 0.12))));
+            $logoHeight = $logo->height();
+            $image->place($logo, 'bottom-right', $padding, $padding);
+        }
+
+        $fontSize = max(18, min(44, (int) round($image->width() * 0.022)));
+        $textY = max($padding + $fontSize, $image->height() - $padding - $logoHeight - 10);
+
+        $image->text('@' . ($post->user->username ?? $post->user->name ?? 'aperturely'), $image->width() - $padding, $textY, function (FontFactory $font) use ($fontSize) {
+            $font->filename($this->resolveWatermarkFont());
+            $font->size($fontSize);
+            $font->color('#ffffff');
+            $font->align('right');
+            $font->valign('bottom');
+            $font->stroke('#111111', max(1, (int) round($fontSize / 16)));
+        });
+
+        $tempPath = $this->ensureTempDirectory() . DIRECTORY_SEPARATOR . Str::uuid() . '.jpg';
+        file_put_contents($tempPath, (string) $image->toJpeg(90));
+
+        return $tempPath;
+    }
+
+    //ini untuk memastikan direktori sementara untuk menyimpan foto yang sudah diberi watermark, sebelum diunduh
+    private function ensureTempDirectory(): string
+    {
+        $directory = storage_path('app/temp-downloads');
+
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        return $directory;
+    }
+
+    //ini untuk membangun nama file saat diunduh, misalnya: aperturely-johndoe-post-123-slide-1.jpg
+    private function buildPhotoFilename(Posts $post, Photo $photo): string
+    {
+        $index = $post->photos->search(fn ($item) => (int) $item->id === (int) $photo->id);
+        $slideNumber = $index === false ? 1 : $index + 1;
+
+        return 'aperturely-' . Str::slug($post->user->username ?? $post->user->name ?? 'user') . '-post-' . $post->id . '-slide-' . $slideNumber . '.jpg';
+    }
+
+    //ini untuk mencari font yang tersedia untuk watermark, dengan beberapa kandidat umum
+    private function resolveWatermarkFont(): string
+    {
+        $candidates = [
+            public_path('ui/css/icons/tabler-icons/fonts/tabler-icons.ttf'),
+            'C:\\Windows\\Fonts\\arial.ttf',
+            'C:\\Windows\\Fonts\\segoeui.ttf',
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (is_file($candidate)) {
+                return $candidate;
+            }
+        }
+
+        abort(500, 'Font watermark tidak ditemukan.');
     }
 }

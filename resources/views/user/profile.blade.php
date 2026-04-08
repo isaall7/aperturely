@@ -458,9 +458,10 @@
 
     /* ===================== DETAIL MODAL ===================== */
     .ap-detail-modal .modal-dialog {
-        max-width: 1040px;
-        margin: 3vh auto;
-        height: 94vh;
+        width: min(1180px, calc(100vw - 24px));
+        max-width: none;
+        margin: min(3vh, 24px) auto;
+        height: min(94vh, 960px);
     }
 
     .ap-detail-modal .modal-content {
@@ -476,12 +477,16 @@
     .ap-detail-modal .modal-body {
         padding: 0;
         flex: 1;
+        min-height: 0;
         overflow: hidden;
         display: flex;
     }
 
     .ap-modal-media {
-        flex: 1;
+        flex: 1 1 auto;
+        min-width: 0;
+        min-height: clamp(320px, 58vh, 860px);
+        padding: clamp(12px, 1.8vw, 22px);
         background: var(--black);
         display: flex;
         align-items: center;
@@ -490,7 +495,14 @@
         position: relative;
     }
 
-    .ap-modal-media img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .ap-modal-media > img,
+    .ap-modal-media .carousel-item img {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
 
     .ap-modal-media .carousel { width: 100%; height: 100%; }
     .ap-modal-media .carousel-inner { height: 100%; }
@@ -535,7 +547,10 @@
 
     /* Sidebar */
     .ap-modal-sidebar {
-        width: 380px; flex-shrink: 0;
+        width: min(400px, 38vw);
+        min-width: 320px;
+        min-height: 0;
+        flex-shrink: 0;
         background: var(--white);
         display: flex; flex-direction: column;
         border-left: 1px solid var(--warm-gray);
@@ -567,8 +582,13 @@
         font-size: 13.5px; font-weight: 600;
         font-family: 'DM Sans', sans-serif;
         cursor: pointer; transition: background 0.2s;
+        display: inline-flex; align-items: center; justify-content: center;
+        text-decoration: none;
     }
     .ap-modal-save:hover { background: var(--accent-h); }
+    .ap-modal-save.dropdown-toggle::after { margin-left: 8px; }
+    .ap-download-menu { min-width: 230px; }
+    .ap-download-menu .dropdown-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 
     .ap-modal-author {
         padding: 16px 18px;
@@ -725,14 +745,62 @@
         .pr-info-top { flex-direction: column; align-items: center; }
         .pr-actions { justify-content: center; }
         .pr-stats { justify-content: center; }
-        .ap-detail-modal .modal-body { flex-direction: column; }
-        .ap-modal-media { height: 48vh; }
-        .ap-modal-sidebar { width: 100%; flex: 1; }
+        .ap-detail-modal .modal-dialog {
+            width: 100%;
+            height: 100dvh;
+            margin: 0;
+        }
+        .ap-detail-modal .modal-content { border-radius: 0; }
+        .ap-detail-modal .modal-body {
+            flex-direction: column;
+            overflow-y: auto;
+            background: var(--white);
+        }
+        .ap-modal-media {
+            flex: none;
+            width: 100%;
+            height: min(58dvh, 460px);
+            min-height: 280px;
+            padding: 12px;
+        }
+        .ap-modal-sidebar {
+            width: 100%;
+            min-width: 0;
+            min-height: auto;
+            border-left: none;
+            border-top: 1px solid var(--warm-gray);
+        }
+        .ap-modal-header {
+            position: sticky;
+            top: 0;
+            z-index: 4;
+            background: var(--white);
+        }
+        .ap-modal-comments {
+            overflow: visible;
+            max-height: none;
+        }
     }
 
     @media (max-width: 480px) {
-        .ap-detail-modal .modal-dialog { margin: 0; height: 100vh; max-width: 100%; }
-        .ap-detail-modal .modal-content { border-radius: 0; }
+        .ap-modal-header,
+        .ap-modal-author,
+        .ap-modal-comments,
+        .ap-comment-form-wrap {
+            padding-left: 14px;
+            padding-right: 14px;
+        }
+        .ap-modal-header {
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+        .ap-modal-header-left { flex-wrap: wrap; }
+        .ap-modal-save { width: 100%; }
+        .ap-modal-media .carousel-control-prev,
+        .ap-modal-media .carousel-control-next {
+            width: 38px;
+            height: 38px;
+        }
     }
 </style>
 
@@ -951,7 +1019,34 @@
                                                     </svg>
                                                 </button>
                                             </div>
-                                            <button class="ap-modal-save">Simpan</button>
+                                            @if($post->photos && $post->photos->count() > 1)
+                                                <div class="dropdown">
+                                                    <button class="ap-modal-save dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        Download
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end ap-download-menu">
+                                                        @foreach($post->photos as $slideIndex => $photo)
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('user.postingan.download', ['post' => $post->id, 'photo' => $photo->id]) }}">
+                                                                    <span>Download slide {{ $slideIndex + 1 }}</span>
+                                                                    <span>#{{ $slideIndex + 1 }}</span>
+                                                                </a>
+                                                            </li>
+                                                        @endforeach
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li>
+                                                            <button type="button"
+                                                                    class="dropdown-item fw-semibold download-all-btn"
+                                                                    data-download-urls='@json($post->photos->map(fn ($photo) => route('user.postingan.download', ['post' => $post->id, 'photo' => $photo->id]))->values())'>
+                                                                <span>Download semua foto</span>
+                                                                <span>{{ $post->photos->count() }}</span>
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            @elseif($post->photos && $post->photos->first())
+                                                <a href="{{ route('user.postingan.download', ['post' => $post->id]) }}" class="ap-modal-save">Download</a>
+                                            @endif
                                         </div>
 
                                         <div class="ap-modal-author">
@@ -1224,6 +1319,37 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ── Toast ────────────────────────────────────────────────────────
+    document.addEventListener('click', function (e) {
+        const trigger = e.target.closest('.download-all-btn');
+        if (!trigger) return;
+
+        e.preventDefault();
+
+        let urls = [];
+        try {
+            urls = JSON.parse(trigger.dataset.downloadUrls || '[]');
+        } catch (error) {
+            urls = [];
+        }
+
+        if (!urls.length) {
+            showToast('error', 'Foto tidak ditemukan');
+            return;
+        }
+
+        showToast('success', 'Menyiapkan download semua foto...');
+
+        urls.forEach((url, index) => {
+            setTimeout(() => {
+                const frame = document.createElement('iframe');
+                frame.style.display = 'none';
+                frame.src = url;
+                document.body.appendChild(frame);
+                setTimeout(() => frame.remove(), 20000);
+            }, index * 700);
+        });
+    });
+
     function showToast(type, msg) {
         const t = document.createElement('div');
         t.className = 'ap-toast ' + type;

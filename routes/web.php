@@ -52,6 +52,7 @@ Route::prefix('/')->name('user.')->group(function () {
     Route::get('/post/{id}', [DashboardUser::class, 'show'])->name('post-detail');
 
     Route::resource('/postingan', PostsController::class);
+    Route::get('/postingan/{post}/download', [PostsController::class, 'download'])->name('postingan.download');
     Route::get('/tags/search', [PostsController::class, 'searchTag']);
 
     Route::post('/report/post/{post}', [ReportController::class, 'reportPost'])->name('report.post');
