@@ -536,14 +536,14 @@
                     <span class="ap-dd-name">{{ auth()->user()->name }}</span>
                     <span class="ap-dd-handle">@<i>{{ auth()->user()->username ?? strtolower(str_replace(' ','', auth()->user()->name)) }}</i></span>
                 </div>
-                <a class="ap-dd-item" href="{{ route('user.profile') }}">
+                <a class="ap-dd-item" href="#" data-bs-toggle="modal" data-bs-target="#apLoginModal">
                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                         <circle cx="7.5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4"/>
                         <path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
                     </svg>
                     Profil
                 </a>
-                <a class="ap-dd-item" href="{{ route('user.riwayat.postingan') }}">
+                <a class="ap-dd-item" href="#" data-bs-toggle="modal" data-bs-target="#apLoginModal">
                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                         <path d="M13 2H2a.5.5 0 00-.5.5v9a.5.5 0 00.5.5h4l1.5 1.5L9 12h4a.5.5 0 00.5-.5v-9A.5.5 0 0013 2z" stroke="currentColor" stroke-width="1.4"/>
                     </svg>
@@ -581,7 +581,7 @@
                         </svg>
                         Trending
                     </a>
-                    <a class="ap-dd-item" href="{{ route('user.postingan.create') }}">
+                    <a class="ap-dd-item" href="#" data-bs-toggle="modal" data-bs-target="#apLoginModal">
                         <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
                             <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.7"/>
                             <path d="M10 6.5v7M6.5 10h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
@@ -595,7 +595,7 @@
                         </svg>
                         Eksplor
                     </a>
-                    <a class="ap-dd-item" href="{{ route('user.riwayat.postingan') }}">
+                    <a class="ap-dd-item" href="#" data-bs-toggle="modal" data-bs-target="#apLoginModal">
                         <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
                             <path d="M3 10a7 7 0 107-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
                             <path d="M3 6v4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
@@ -605,17 +605,14 @@
                 </div>
 
                 <div class="ap-dd-sep"></div>
-                <form action="{{ route('logout') }}" method="POST" style="margin:0">
-                    @csrf
-                    <button type="submit" class="ap-dd-item danger">
+                <button type="button" class="ap-dd-item" data-bs-toggle="modal" data-bs-target="#apLoginModal" style="width:100%;border:none;background:none;text-align:left;">
                         <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                             <path d="M5.5 2H3a1 1 0 00-1 1v9a1 1 0 001 1h2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
                             <path d="M10 5l3 2.5L10 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                             <line x1="13" y1="7.5" x2="6" y2="7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
                         </svg>
-                        Logout
-                    </button>
-                </form>
+                        Masuk
+                </button>
             </div>
         </div>
 
@@ -634,14 +631,14 @@
                     <span class="ap-dd-name">Guest User</span>
                     <span class="ap-dd-handle">@<i>guestuser</i></span>
                 </div>
-                <a class="ap-dd-item" href="{{ route('user.profile') }}">
+                <a class="ap-dd-item" href="#" data-bs-toggle="modal" data-bs-target="#apLoginModal">
                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                         <circle cx="7.5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4"/>
                         <path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
                     </svg>
                     Profil
                 </a>
-                <a class="ap-dd-item" href="{{ route('user.riwayat.postingan') }}">
+                <a class="ap-dd-item" href="#" data-bs-toggle="modal" data-bs-target="#apLoginModal">
                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                         <path d="M13 2H2a.5.5 0 00-.5.5v9a.5.5 0 00.5.5h4l1.5 1.5L9 12h4a.5.5 0 00.5-.5v-9A.5.5 0 0013 2z" stroke="currentColor" stroke-width="1.4"/>
                     </svg>
@@ -679,7 +676,7 @@
                         </svg>
                         Trending
                     </a>
-                    <a class="ap-dd-item" href="{{ route('user.postingan.create') }}">
+                    <a class="ap-dd-item" href="#" data-bs-toggle="modal" data-bs-target="#apLoginModal">
                         <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
                             <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.7"/>
                             <path d="M10 6.5v7M6.5 10h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
@@ -693,27 +690,23 @@
                         </svg>
                         Eksplor
                     </a>
-                    <a class="ap-dd-item" href="{{ route('user.riwayat.postingan') }}">
+                    <a class="ap-dd-item" href="#" data-bs-toggle="modal" data-bs-target="#apLoginModal">
                         <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
                             <path d="M3 10a7 7 0 107-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
                             <path d="M3 6v4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         Riwayat
                     </a>
-                </div>
-
+                </div>            
                 <div class="ap-dd-sep"></div>
-                <form action="{{ route('logout') }}" method="POST" style="margin:0">
-                    @csrf
-                    <button type="submit" class="ap-dd-item danger">
+                <button type="button" class="ap-dd-item" data-bs-toggle="modal" data-bs-target="#apLoginModal" style="width:100%;border:none;background:none;text-align:left;">
                         <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                             <path d="M5.5 2H3a1 1 0 00-1 1v9a1 1 0 001 1h2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
                             <path d="M10 5l3 2.5L10 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                             <line x1="13" y1="7.5" x2="6" y2="7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
                         </svg>
-                        Logout
-                    </button>
-                </form>
+                        Masuk
+                </button>
             </div>
         </div>
         @endguest

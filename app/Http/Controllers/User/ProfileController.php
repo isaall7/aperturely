@@ -52,6 +52,10 @@ class ProfileController extends Controller
     {
         $user = Auth::user(); // user login
 
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
         return $this->profileData($user);
     }
 
@@ -98,6 +102,10 @@ class ProfileController extends Controller
 
     public function create()
     {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
         return view('user.avatar.create');
     }
 
@@ -106,6 +114,10 @@ class ProfileController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
         $request->validate([
             'avatar'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'bio'      => 'nullable|string|max:500',
@@ -148,6 +160,10 @@ class ProfileController extends Controller
      */
     public function edit()
     {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
         $user = auth()->user();
         
         return view('user.avatar.edit', [
@@ -160,8 +176,12 @@ class ProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-        public function update(Request $request)
+    public function update(Request $request)
     {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
         $request->validate([
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'bio' => 'nullable|string|max:500',

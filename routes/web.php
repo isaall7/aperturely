@@ -58,9 +58,9 @@ Route::prefix('/')->name('user.')->group(function () {
     Route::post('/report/post/{post}', [ReportController::class, 'reportPost'])->name('report.post');
     Route::post('/report/comment/{comment}', [ReportController::class, 'reportComment'])->name('report.comment');
 
-    Route::resource('/avatar', ProfileController::class);
+    Route::resource('/avatar', ProfileController::class)->middleware('auth')->except(['show']);
     // profile sendiri
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::get('/profile', [ProfileController::class, 'index'])->middleware('auth')->name('profile');
     // profile user lain
     Route::get('/users/{name}', [ProfileController::class, 'show'])->name('profile.username');
 
@@ -72,7 +72,7 @@ Route::prefix('/')->name('user.')->group(function () {
 
     Route::post('/post-like/{post}', [LikesPhotoController::class, 'likePhoto'])->name('post.like');
 
-    Route::post('/follow/{userId}', [ProfileController::class, 'follow'])->name('profile.follow');
+    Route::post('/follow/{userId}', [ProfileController::class, 'follow'])->middleware('auth')->name('profile.follow');
     Route::get('riwayat-menyukai', [DashboardUser::class, 'showLikesPhoto'])->name('riwayat.like');
 
     // Routes untuk Explore
