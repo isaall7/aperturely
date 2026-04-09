@@ -114,8 +114,9 @@
 
         .admin-layout .left-sidebar {
           width: 270px;
-          background: linear-gradient(180deg, #0f172a 0%, #172554 100%);
-          box-shadow: 18px 0 40px rgba(15, 23, 42, 0.18);
+          background: #ffffff;
+          box-shadow: 18px 0 40px rgba(15, 23, 42, 0.08);
+          border-right: 1px solid rgba(15, 23, 42, 0.08);
         }
 
         .admin-layout .body-wrapper {
@@ -130,11 +131,55 @@
           padding: 0 22px;
           border: 1px solid rgba(148, 163, 184, 0.2);
           box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+          overflow: visible;
         }
 
         .admin-layout .app-header .navbar {
           width: 100%;
           min-height: 72px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+        }
+
+        .admin-layout .app-header .navbar-collapse {
+          display: flex !important;
+          flex-basis: auto;
+          flex-grow: 0;
+          min-width: 0;
+          justify-content: flex-end;
+        }
+
+        .admin-layout .app-header .navbar-nav {
+          flex-wrap: nowrap;
+        }
+
+        .admin-layout .app-header .nav-item.dropdown {
+          flex-shrink: 0;
+        }
+
+        .admin-layout .app-header .nav-link {
+          padding: 0;
+        }
+
+        .admin-layout .app-header .admin-profile-trigger {
+          width: 52px;
+          height: 52px;
+          border-radius: 50%;
+          overflow: hidden;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid rgba(148, 163, 184, 0.3);
+          background: #fff;
+          box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+        }
+
+        .admin-layout .app-header .admin-profile-trigger img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
 
         .admin-layout .body-wrapper-inner {
@@ -146,7 +191,7 @@
         }
 
         .admin-layout .left-sidebar .sidebar-nav ul .sidebar-item .sidebar-link {
-          color: rgba(255, 255, 255, 0.78);
+          color: #374151;
           border-radius: 16px;
           margin: 4px 16px;
           padding: 14px 16px;
@@ -154,8 +199,8 @@
 
         .admin-layout .left-sidebar .sidebar-nav ul .sidebar-item .sidebar-link:hover,
         .admin-layout .left-sidebar .sidebar-nav ul .sidebar-item .sidebar-link.active-admin-link {
-          background: rgba(255, 255, 255, 0.1);
-          color: #fff;
+          background: #e5e7eb;
+          color: #111827;
         }
 
         .admin-layout .left-sidebar .sidebar-nav ul .sidebar-item .sidebar-link iconify-icon,
@@ -164,7 +209,7 @@
         }
 
         .admin-layout .left-sidebar .brand-logo {
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          border-bottom: 1px solid rgba(15, 23, 42, 0.08);
         }
 
         @media (max-width: 1199px) {

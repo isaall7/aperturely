@@ -11,12 +11,12 @@
           <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
               <li class="nav-item dropdown">
-                <a class="nav-link" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link admin-profile-trigger" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
                 @auth 
-                  <img src="{{ auth()->user()->avatar_display }}" alt="" width="60" height="60" class="rounded-circle">
+                  <img src="{{ auth()->user()->avatar_display }}" alt="Admin profile">
                 @endauth
                 @guest
-                  <img src="{{ asset('ui/images/profile/user3.jpg') }}" alt="" width="60" height="60" class="rounded-circle">
+                  <img src="{{ asset('ui/images/profile/user3.jpg') }}" alt="Guest profile">
                 @endguest
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
