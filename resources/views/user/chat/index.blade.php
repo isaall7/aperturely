@@ -671,12 +671,8 @@
                 <div class="ch-header-avatar" id="chatHeaderAvatar">--</div>
                 <div class="ch-header-info">
                     <h3 id="chatHeaderName">-</h3>
-                    <div class="ch-header-status" id="chatHeaderStatus">Firestore realtime aktif</div>
+                    <div class="ch-header-status" id="chatHeaderStatus"></div>
                 </div>
-            </div>
-
-            <div class="ch-note" id="chatNote">
-                Struktur Firestore: <code>chats/{chat_id}/messages</code>
             </div>
 
             <div class="ch-messages" id="chatMessages"></div>
@@ -750,7 +746,6 @@ const header          = document.getElementById('chatHeader');
 const headerAvatar    = document.getElementById('chatHeaderAvatar');
 const headerName      = document.getElementById('chatHeaderName');
 const headerStatus    = document.getElementById('chatHeaderStatus');
-const chatNote        = document.getElementById('chatNote');
 const messagesEl      = document.getElementById('chatMessages');
 const form            = document.getElementById('chatForm');
 const input           = document.getElementById('chatInput');
@@ -795,6 +790,7 @@ const buildChatKey = (a, b) => {
     const pair = [Number(a), Number(b)].sort((x, y) => x - y);
     return `chat_${pair[0]}_${pair[1]}`;
 };
+const getSeenStorageKey = chatId => `chat:last-seen:${authId}:${chatId}`;
 
 const setComposerEnabled = on => {
     input.disabled    = !on;
@@ -870,6 +866,15 @@ const renderMessages = msgs => {
                 <div class="ch-msg-meta">${formatTime(date)} ${checkMark}</div>
             </div>`);
     });
+
+    if (activeChatId) {
+        const lastDate = normalizeDate(msgs.at(-1)?.created_at);
+        localStorage.setItem(
+            getSeenStorageKey(activeChatId),
+            String(lastDate ? lastDate.getTime() : Date.now())
+        );
+    }
+
     // Typing indicator
     messagesEl.insertAdjacentHTML('beforeend', `
         <div class="ch-typing" id="typingIndicator" style="display:none;">
@@ -983,7 +988,7 @@ const openConversation = async item => {
     header.classList.add('show');
     messagesEl.classList.add('show');
     form.classList.add('show');
-    chatNote.classList.add('show');
+    localStorage.setItem(getSeenStorageKey(activeChatId), String(Date.now()));
 
     syncUrl(activeChatId);
     renderStatus('Membuka percakapan...', 'Menghubungkan akun ke Firebase…');

@@ -117,6 +117,7 @@
     display: flex; align-items: center; justify-content: center;
     padding: 0 5px;
 }
+.d-none { display: none !important; }
 
 .cb-empty {
     padding: 32px 20px; text-align: center;
@@ -178,7 +179,10 @@
                         : '';
                 @endphp
                 <a href="{{ route('user.chat.index', ['open' => $convId]) }}"
-                   class="cb-item {{ $unread > 0 ? 'cb-unread-item' : '' }}">
+                   class="cb-item {{ $unread > 0 ? 'cb-unread-item' : '' }}"
+                   data-chat-id="{{ $convId }}"
+                   data-other-user-id="{{ $other->id }}"
+                   data-initial-unread="{{ $unread }}">
                     <div class="cb-av-wrap">
                         <img src="{{ $other->avatar_display ?? 'https://ui-avatars.com/api/?name='.urlencode($other->name) }}"
                              alt="{{ $other->name }}"
@@ -186,13 +190,11 @@
                     </div>
                     <div class="cb-info">
                         <div class="cb-name">{{ $other->username ?? $other->name }}</div>
-                        <div class="cb-preview">{{ $preview }}</div>
+                        <div class="cb-preview" id="cbPreview{{ $convId }}">{{ $preview }}</div>
                     </div>
                     <div class="cb-meta">
-                        <span class="cb-time">{{ $timeAgo }}</span>
-                        @if($unread > 0)
-                            <span class="cb-unread">{{ $unread > 99 ? '99+' : $unread }}</span>
-                        @endif
+                        <span class="cb-time" id="cbTime{{ $convId }}">{{ $timeAgo }}</span>
+                        <span class="cb-unread {{ $unread > 0 ? '' : 'd-none' }}" id="cbUnread{{ $convId }}">{{ $unread > 99 ? '99+' : $unread }}</span>
                     </div>
                 </a>
             @endforeach
@@ -213,7 +215,21 @@
 </div>
 @endauth
 
-<script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import {
+    getAuth,
+    signInWithCustomToken,
+} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import {
+    collection,
+    getFirestore,
+    limit,
+    onSnapshot,
+    orderBy,
+    query,
+} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+
 (function () {
     const trigger = document.getElementById('cbTrigger');
     const panel   = document.getElementById('cbPanel');
@@ -237,6 +253,157 @@
             open = false;
             panel.classList.remove('open');
         }
+    });
+
+    const firebaseConfig = {
+        apiKey: 'AIzaSyCUAAmjfFRw3o0t2Ifwj8zarmBTBNj_c1Y',
+        authDomain: 'aperture-62cbb.firebaseapp.com',
+        projectId: 'aperture-62cbb',
+        storageBucket: 'aperture-62cbb.firebasestorage.app',
+        messagingSenderId: '795719998676',
+        appId: '1:795719998676:web:d668473fc5bdc1ae0b2f41',
+        measurementId: 'G-9GD9M5VPYR'
+    };
+
+    const authId = {{ auth()->id() }};
+    const csrfToken = @json(csrf_token());
+    const badgeEl = document.getElementById('cbBadge');
+    const bubbleItems = Array.from(document.querySelectorAll('.cb-item[data-chat-id]'));
+    const unreadState = new Map();
+    const firebaseApp = initializeApp(firebaseConfig, 'chat-bubble');
+    const firebaseAuth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
+
+    const buildChatKey = (a, b) => {
+        const pair = [Number(a), Number(b)].sort((x, y) => x - y);
+        return `chat_${pair[0]}_${pair[1]}`;
+    };
+
+    const normalizeDate = value => {
+        if (value?.toDate) return value.toDate();
+        if (value instanceof Date) return value;
+        return value ? new Date(value) : null;
+    };
+
+    const formatTimeAgo = date => {
+        if (!date) return '';
+
+        const seconds = Math.max(1, Math.floor((Date.now() - date.getTime()) / 1000));
+        if (seconds < 60) return 'baru saja';
+        if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+        if (seconds < 86400) return `${Math.floor(seconds / 3600)}j`;
+        if (seconds < 604800) return `${Math.floor(seconds / 86400)}h`;
+
+        return date.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'short',
+        });
+    };
+
+    const getSeenStorageKey = chatId => `chat:last-seen:${authId}:${chatId}`;
+
+    const setUnread = (chatId, isUnread) => {
+        unreadState.set(String(chatId), Boolean(isUnread));
+
+        const unreadEl = document.getElementById(`cbUnread${chatId}`);
+        const itemEl = document.querySelector(`.cb-item[data-chat-id="${chatId}"]`);
+
+        if (unreadEl) {
+            unreadEl.textContent = isUnread ? '1' : '0';
+            unreadEl.classList.toggle('d-none', !isUnread);
+        }
+
+        itemEl?.classList.toggle('cb-unread-item', Boolean(isUnread));
+
+        const totalUnread = Array.from(unreadState.values()).filter(Boolean).length;
+        if (badgeEl) {
+            badgeEl.textContent = totalUnread > 99 ? '99+' : String(totalUnread);
+            badgeEl.classList.toggle('show', totalUnread > 0);
+        }
+    };
+
+    const fetchCustomToken = async () => {
+        const response = await fetch('{{ route('user.firebase.custom-token') }}', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({}),
+        });
+
+        if (!response.ok) {
+            const payload = await response.json().catch(() => ({}));
+            throw new Error(payload.message || 'Gagal membuat custom token.');
+        }
+
+        return response.json();
+    };
+
+    const moveItemToTop = item => {
+        const list = item?.parentElement;
+        if (!list || !item || list.firstElementChild === item) return;
+        list.prepend(item);
+    };
+
+    bubbleItems.forEach(item => {
+        const chatId = item.dataset.chatId;
+        const initialUnread = Number(item.dataset.initialUnread || 0) > 0;
+        unreadState.set(String(chatId), initialUnread);
+
+        item.addEventListener('click', () => {
+            localStorage.setItem(getSeenStorageKey(chatId), String(Date.now()));
+            setUnread(chatId, false);
+        });
+    });
+
+    const hydrateBubbleRealtime = async () => {
+        const tokenPayload = await fetchCustomToken();
+        await signInWithCustomToken(firebaseAuth, tokenPayload.token);
+
+        bubbleItems.forEach(item => {
+            const chatId = item.dataset.chatId;
+            const otherUserId = item.dataset.otherUserId;
+            const previewEl = document.getElementById(`cbPreview${chatId}`);
+            const timeEl = document.getElementById(`cbTime${chatId}`);
+            const chatKey = buildChatKey(authId, otherUserId);
+            const lastSeenKey = getSeenStorageKey(chatId);
+            const messageQuery = query(
+                collection(db, `chats/${chatKey}/messages`),
+                orderBy('created_at', 'desc'),
+                limit(1)
+            );
+
+            onSnapshot(messageQuery, snapshot => {
+                const lastMessage = snapshot.docs[0]?.data({ serverTimestamps: 'estimate' });
+                if (!lastMessage) return;
+
+                const messageDate = normalizeDate(lastMessage.created_at);
+                if (previewEl) {
+                    previewEl.textContent = (lastMessage.text || 'Mulai percakapan...').slice(0, 38);
+                }
+                if (timeEl && messageDate) {
+                    timeEl.textContent = formatTimeAgo(messageDate);
+                }
+
+                const seenAt = Number(localStorage.getItem(lastSeenKey) || 0);
+                const messageTime = messageDate ? messageDate.getTime() : Date.now();
+                const isIncomingUnread =
+                    String(lastMessage.sender_id) !== String(authId) &&
+                    messageTime > seenAt;
+
+                setUnread(chatId, isIncomingUnread);
+                moveItemToTop(item);
+            }, error => {
+                console.error('Bubble realtime error', error);
+            });
+        });
+    };
+
+    hydrateBubbleRealtime().catch(error => {
+        console.error('Bubble init error', error);
     });
 })();
 </script>
