@@ -1,12 +1,3 @@
 <?php
 
-use Illuminate\Support\Facades\Broadcast;
-use App\Models\Conversation;
-
-Broadcast::channel('chat.{conversationId}', function ($user, $conversationId) {
-    $conversation = Conversation::find($conversationId);
-
-    if (!$conversation) return false;
-
-    return $conversation->users->contains($user->id);
-});
+// Broadcast channels removed. Firestore handles chat subscriptions client-side.

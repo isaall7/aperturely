@@ -8,25 +8,19 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TypeCategoryController;
 
 use App\Http\Controllers\User\DashboardUser;
-use App\Http\Controllers\User\PostsController;  
+use App\Http\Controllers\User\PostsController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ReportController;
 use App\Http\Controllers\User\CommentController;
 use App\Http\Controllers\User\LikesPhotoController;
 use App\Http\Controllers\User\ExploreController;
-use App\Http\Controllers\User\ChatController;   
-
-use Google\Cloud\Vision\V1\Client\ImageAnnotatorClient;
-
-use Illuminate\Http\Request;
-
+use App\Http\Controllers\User\ChatController;
+use App\Http\Controllers\User\FirebaseAuthController;
 
 Route::get('/auth/google-redirect', [App\Http\Controllers\Auth\GoogleController::class, 'google_redirect']);
 Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleController::class, 'google_callback']);
 
 Auth::routes();
-
-
 
 Route::prefix('dashboard')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/', [DashboardAdmin::class, 'index'])->name('dashboard');
@@ -45,7 +39,6 @@ Route::prefix('dashboard')->name('admin.')->middleware(['auth', 'role:admin'])->
     Route::get('/reports/comments', [DashboardAdmin::class, 'reportComments'])->name('report.comment');
 });
 
-
 Route::prefix('/')->name('user.')->group(function () {
     Route::get('/', [DashboardUser::class, 'index'])->name('dashboard');
     Route::get('/dashboard/kategori/{slug}', [DashboardUser::class, 'index'])->name('dashboard.kategori');
@@ -59,9 +52,7 @@ Route::prefix('/')->name('user.')->group(function () {
     Route::post('/report/comment/{comment}', [ReportController::class, 'reportComment'])->name('report.comment');
 
     Route::resource('/avatar', ProfileController::class)->middleware('auth')->except(['show']);
-    // profile sendiri
     Route::get('/profile', [ProfileController::class, 'index'])->middleware('auth')->name('profile');
-    // profile user lain
     Route::get('/users/{name}', [ProfileController::class, 'show'])->name('profile.username');
 
     Route::get('/notifikasi', [DashboardUser::class, 'BanPostUser'])->name('riwayat.postingan');
@@ -75,7 +66,6 @@ Route::prefix('/')->name('user.')->group(function () {
     Route::post('/follow/{userId}', [ProfileController::class, 'follow'])->middleware('auth')->name('profile.follow');
     Route::get('riwayat-menyukai', [DashboardUser::class, 'showLikesPhoto'])->name('riwayat.like');
 
-    // Routes untuk Explore
     Route::get('/explore', [ExploreController::class, 'index'])->name('explore.halaman');
     Route::get('/explore/category/{id}', [ExploreController::class, 'filterByCategory'])->name('explore.category');
     Route::get('/explore/search', [ExploreController::class, 'search'])->name('explore.search');
@@ -84,9 +74,6 @@ Route::prefix('/')->name('user.')->group(function () {
     Route::get('riwayat-diikuti', [DashboardUser::class, 'showFollowers'])->name('riwayat.diikuti');
     Route::get('riwayat-mengikuti', [DashboardUser::class, 'showFollowing'])->name('riwayat.mengikuti');
 
-    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
-    Route::get('/chat/{conversationId}/messages', [ChatController::class, 'messages'])->name('chat.messages');
-    Route::post('/chat/{conversationId}/send', [ChatController::class, 'send'])->name('chat.send');
-    Route::post('/chat/{conversationId}/read', [ChatController::class, 'read'])->name('chat.read');
-
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index')->middleware('auth');
+    Route::post('/firebase/custom-token', [FirebaseAuthController::class, 'customToken'])->name('firebase.custom-token')->middleware('auth');
 });
