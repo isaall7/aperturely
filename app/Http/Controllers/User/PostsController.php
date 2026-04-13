@@ -54,7 +54,7 @@ class PostsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'photos'           => 'required|array|min:1|max:10',
+            'photos'           => 'required|array|min:1|max:8',
             'photos.*'         => 'image|mimes:jpeg,jpg,png,webp|max:15360',
             'caption'          => 'nullable|string|max:2000',
             'category_id'      => 'nullable|exists:categories,id',

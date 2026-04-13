@@ -611,7 +611,6 @@
             <div class="ch-sidebar-head">
                 <div class="ch-sidebar-head-top">
                     <h2>Pesan</h2>
-                    <button class="ch-new-chat-btn" title="Chat baru">&#43;</button>
                 </div>
                 <div class="ch-search-wrap">
                     <span class="ch-search-icon">&#128269;</span>
@@ -981,7 +980,7 @@ const openConversation = async item => {
     headerAvatar.innerHTML = avatar
         ? `<img src="${avatar}" alt="${escapeHtml(name)}" onerror="this.style.display='none'; this.parentElement.textContent='${getInitials(name)}';">`
         : getInitials(name);
-    headerStatus.textContent = 'Firestore realtime aktif';
+    headerStatus.textContent = '';
     headerStatus.className   = 'ch-header-status';
 
     emptyState.style.display = 'none';

@@ -2,6 +2,11 @@
 
 @section('content')
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+@php
+    $activeView = $activeView ?? 'posts';
+    $isAccountView = $activeView === 'accounts';
+    $searchQuery = $searchQuery ?? '';
+@endphp
 
 <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -227,6 +232,64 @@
         font-weight: 500;
     }
 
+    .ex-view-tabs {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px;
+        background: var(--white);
+        border-radius: 999px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .ex-view-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 14px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        text-decoration: none;
+        transition: background .2s, color .2s, transform .2s;
+    }
+
+    .ex-view-tab:hover {
+        background: var(--accent-soft);
+        color: var(--accent);
+    }
+
+    .ex-view-tab.active {
+        background: var(--black);
+        color: var(--white);
+    }
+
+    .ex-view-badge {
+        min-width: 24px;
+        height: 24px;
+        padding: 0 8px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.14);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .ex-view-tab:not(.active) .ex-view-badge {
+        background: var(--accent-soft);
+        color: var(--accent);
+    }
+
+    .ex-search-hint {
+        margin-top: 10px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--muted);
+    }
+
     /* ===================== MASONRY ===================== */
     .ap-grid {
         columns: 4;
@@ -405,6 +468,114 @@
     }
 
     .ex-empty p { font-size: 14px; color: var(--muted); }
+
+    .ex-users {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .ex-user-card {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        padding: 20px;
+        background: var(--white);
+        border-radius: var(--r-lg);
+        box-shadow: var(--shadow-sm);
+        text-decoration: none;
+        color: inherit;
+        transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .ex-user-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .ex-user-avatar {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+        border: 2px solid var(--warm-gray);
+    }
+
+    .ex-user-body {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .ex-user-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--black);
+        line-height: 1.3;
+        margin-bottom: 3px;
+        word-break: break-word;
+    }
+
+    .ex-user-handle {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 10px;
+        word-break: break-word;
+    }
+
+    .ex-user-bio {
+        font-size: 13px;
+        color: #5f584f;
+        line-height: 1.55;
+        margin-bottom: 14px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .ex-user-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .ex-user-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: var(--cream);
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--black);
+    }
+
+    .ex-pagination {
+        margin-top: 24px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .ex-pagination nav > div:first-child {
+        display: none;
+    }
+
+    .ex-pagination nav > div:last-child {
+        display: flex;
+        justify-content: center;
+    }
+
+    .ex-pagination svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .ex-pagination span,
+    .ex-pagination a {
+        border-radius: 12px !important;
+    }
 
     /* ===================== DETAIL MODAL ===================== */
     .ap-detail-modal .modal-dialog {
@@ -711,6 +882,7 @@
 
     /* Responsive modal */
     @media (max-width: 860px) {
+        .ex-users { grid-template-columns: 1fr; }
         .ap-detail-modal .modal-dialog {
             width: 100%;
             height: 100dvh;
@@ -751,8 +923,17 @@
     @media (max-width: 480px) {
         .ex-page { padding: 20px 0 56px; }
         .ex-inner { padding: 0 12px; }
-        .ex-heading { margin-bottom: 14px; }
+        .ex-heading {
+            margin-bottom: 14px;
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 12px;
+        }
         .ex-title { font-size: 20px; }
+        .ex-view-tabs { width: 100%; justify-content: space-between; }
+        .ex-view-tab { flex: 1; justify-content: center; }
+        .ex-user-card { padding: 16px; gap: 12px; }
+        .ex-user-avatar { width: 56px; height: 56px; }
         .ap-card {
             margin-bottom: 10px;
             border-radius: 16px;
@@ -799,6 +980,7 @@
             {{-- Search --}}
             <div class="ex-search-box">
                 <form action="{{ route('user.explore.search') }}" method="GET">
+                    <input type="hidden" name="view" value="{{ $activeView }}">
                     <div class="ex-search-wrap">
                         <span class="ex-search-icon">
                             <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
@@ -806,30 +988,35 @@
                                 <path d="M10.5 10.5L13.5 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                             </svg>
                         </span>
-                        <input type="text" name="q" placeholder="Cari postingan…" value="{{ $searchQuery ?? '' }}">
+                        <input type="text" name="q" placeholder="{{ $isAccountView ? 'Cari akun user…' : 'Cari postingan…' }}" value="{{ $searchQuery ?? '' }}">
                     </div>
                     <button type="submit" class="ex-search-btn">Cari</button>
                 </form>
+                <p class="ex-search-hint">
+                    {{ $isAccountView ? 'Mode akun menampilkan user yang cocok dengan nama atau username.' : 'Mode postingan menampilkan hasil dari caption, kategori, dan tag.' }}
+                </p>
             </div>
 
-            {{-- Categories --}}
-            <div class="ex-cat-card">
-                <div class="ex-cat-header">Kategori</div>
-                <div class="ex-cat-list">
-                    <a href="{{ route('user.explore.halaman') }}"
-                       class="ex-cat-item {{ !isset($selectedCategory) ? 'active' : '' }}">
-                        <span class="ex-cat-dot"></span>
-                        Semua
-                    </a>
-                    @foreach($categories as $category)
-                        <a href="{{ route('user.explore.category', $category->id) }}"
-                           class="ex-cat-item {{ isset($selectedCategory) && $selectedCategory->id === $category->id ? 'active' : '' }}">
+            @unless($isAccountView)
+                {{-- Categories --}}
+                <div class="ex-cat-card">
+                    <div class="ex-cat-header">Kategori</div>
+                    <div class="ex-cat-list">
+                        <a href="{{ route('user.explore.halaman') }}"
+                           class="ex-cat-item {{ !isset($selectedCategory) ? 'active' : '' }}">
                             <span class="ex-cat-dot"></span>
-                            {{ $category->name }}
+                            Semua
                         </a>
-                    @endforeach
+                        @foreach($categories as $category)
+                            <a href="{{ route('user.explore.category', $category->id) }}"
+                               class="ex-cat-item {{ isset($selectedCategory) && $selectedCategory->id === $category->id ? 'active' : '' }}">
+                                <span class="ex-cat-dot"></span>
+                                {{ $category->name }}
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
+            @endunless
 
         </aside>
 
@@ -847,13 +1034,49 @@
                         Jelajahi
                     @endif
                 </h2>
-                @if($posts->count() > 0)
-                    <span class="ex-count">{{ $posts->count() }} postingan</span>
-                @endif
+                <div class="ex-view-tabs">
+                    <a href="{{ route('user.explore.search', ['q' => $searchQuery, 'view' => 'posts']) }}" class="ex-view-tab {{ !$isAccountView ? 'active' : '' }}">
+                        <span>Postingan</span>
+                    </a>
+                    <a href="{{ route('user.explore.search', ['q' => $searchQuery, 'view' => 'accounts']) }}" class="ex-view-tab {{ $isAccountView ? 'active' : '' }}">
+                        <span>Akun</span>
+                    </a>
+                </div>
             </div>
 
             {{-- Grid --}}
-            @if($posts->count() > 0)
+            @if($isAccountView)
+                @if($users->count() > 0)
+                    <div class="ex-users">
+                        @foreach($users as $user)
+                            <a href="{{ route('user.profile.username', ['name' => $user->name]) }}" class="ex-user-card">
+                                <img src="{{ $user->avatar_display ?? 'https://ui-avatars.com/api/?name=' . urlencode($user->name) }}" alt="{{ $user->username ?? $user->name }}" class="ex-user-avatar">
+                                <div class="ex-user-body">
+                                    <div class="ex-user-name">{{ $user->username ?? $user->name }}</div>
+                                    <div class="ex-user-handle">{{ '@' . ($user->username ?? strtolower(str_replace(' ', '', $user->name))) }}</div>
+                                    <div class="ex-user-bio">{{ $user->profile->bio ?? 'Belum ada bio.' }}</div>
+                                    <div class="ex-user-meta">
+                                        <span class="ex-user-pill">{{ $user->posts_count ?? 0 }} postingan</span>
+                                        <span class="ex-user-pill">{{ $user->followers_count ?? 0 }} pengikut</span>
+                                        <span class="ex-user-pill">{{ $user->following_count ?? 0 }} mengikuti</span>
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="ex-empty">
+                        <div class="ex-empty-icon">
+                            <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                                <circle cx="13" cy="9" r="4.2" stroke="#b8b3ac" stroke-width="1.6"/>
+                                <path d="M5.5 21c1.8-3.7 5-5.5 7.5-5.5s5.7 1.8 7.5 5.5" stroke="#b8b3ac" stroke-width="1.6" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h4>Akun tidak ditemukan</h4>
+                        <p>Coba nama atau username lain untuk menemukan user yang kamu cari</p>
+                    </div>
+                @endif
+            @elseif($posts->count() > 0)
                 <div class="ap-grid">
                     @foreach($posts as $post)
 
@@ -1216,6 +1439,12 @@
                     <h4>Tidak ada postingan</h4>
                     <p>Coba kata kunci lain atau pilih kategori berbeda</p>
                 </div>
+            @endif
+
+            @if($isAccountView && method_exists($users, 'links'))
+                <div class="ex-pagination">{{ $users->links() }}</div>
+            @elseif(!$isAccountView && method_exists($posts, 'links'))
+                <div class="ex-pagination">{{ $posts->links() }}</div>
             @endif
 
         </main>

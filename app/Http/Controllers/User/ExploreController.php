@@ -9,11 +9,12 @@ use App\Models\Likes_photo;
 use App\Models\Photo;
 use App\Models\TypeCategories;
 use App\Models\Categories;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ExploreController extends Controller
 {
-    public function index()
+     public function index()
     {
         // Ambil posts dengan relasi lengkap
         $posts = Posts::with([
@@ -34,7 +35,9 @@ class ExploreController extends Controller
 
         return view('user.explore.index', [
             'posts'         => $posts,
+            'users'         => collect(),
             'categories'    => $categories,
+            'activeView'    => 'posts',
         ]);
     }
 
@@ -61,14 +64,48 @@ class ExploreController extends Controller
 
         return view('user.explore.index', [
             'posts'            => $posts,
+            'users'            => collect(),
             'categories'       => $categories,
             'selectedCategory' => $selectedCategory,
+            'activeView'       => 'posts',
         ]);
     }
 
     public function search(Request $request)
     {
         $query = $request->input('q');
+        $view  = $request->input('view', 'posts');
+
+        $categories = Categories::all();
+
+        if ($view === 'accounts') {
+            $users = User::with('profile')
+                ->where('role', '!=', 'admin')
+                ->withCount([
+                    'posts' => function ($q) {
+                        $q->where('status', 'active');
+                    },
+                    'followers',
+                    'following',
+                ])
+                ->when($query, function ($qUser, $query) {
+                    $qUser->where(function ($sub) use ($query) {
+                        $sub->where('name', 'like', "%{$query}%")
+                            ->orWhere('username', 'like', "%{$query}%");
+                    });
+                })
+                ->latest()
+                ->paginate(12)
+                ->withQueryString();
+
+            return view('user.explore.index', [
+                'posts'         => collect(),
+                'users'         => $users,
+                'categories'    => $categories,
+                'searchQuery'   => $query,
+                'activeView'    => 'accounts',
+            ]);
+        }
 
         $posts = Posts::when($query, function ($q, $query) {
             $q->where(function ($sub) use ($query) {
@@ -78,10 +115,6 @@ class ExploreController extends Controller
                             ->orWhereHas('typecategories', function ($qType) use ($query) {
                                 $qType->where('name', 'like', "%{$query}%");
                             });
-                    })
-                    ->orWhereHas('user', function ($qUser) use ($query) {
-                        $qUser->where('name', 'like', "%{$query}%")
-                            ->orWhere('username', 'like', "%{$query}%");
                     })
                     ->orWhereHas('tags', function ($qTag) use ($query) {
                         $qTag->where('name', 'like', "%{$query}%");
@@ -99,14 +132,15 @@ class ExploreController extends Controller
         ->where('status', 'active')
         ->withCount(['likes', 'comments'])
         ->latest()
-        ->paginate(12);
-
-        $categories = Categories::all();
+        ->paginate(12)
+        ->withQueryString();
 
         return view('user.explore.index', [
             'posts'         => $posts,
+            'users'         => collect(),
             'categories'    => $categories,
             'searchQuery'   => $query,
+            'activeView'    => 'posts',
         ]);
     }
 
