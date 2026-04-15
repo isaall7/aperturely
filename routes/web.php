@@ -37,6 +37,7 @@ Route::prefix('dashboard')->name('admin.')->middleware(['auth', 'role:admin'])->
 
     Route::get('/reports/posts', [DashboardAdmin::class, 'reportPosts'])->name('report.post');
     Route::get('/reports/comments', [DashboardAdmin::class, 'reportComments'])->name('report.comment');
+    Route::patch('/reports/{report}/reject', [DashboardAdmin::class, 'rejectReport'])->name('report.reject');
 });
 
 Route::prefix('/')->name('user.')->group(function () {
@@ -48,18 +49,12 @@ Route::prefix('/')->name('user.')->group(function () {
     Route::get('/postingan/{post}/download', [PostsController::class, 'download'])->name('postingan.download');
     Route::get('/tags/search', [PostsController::class, 'searchTag']);
 
-    Route::post('/report/post/{post}', [ReportController::class, 'reportPost'])->name('report.post');
-    Route::post('/report/comment/{comment}', [ReportController::class, 'reportComment'])->name('report.comment');
-
     Route::resource('/avatar', ProfileController::class)->middleware('auth')->except(['show']);
     Route::get('/profile', [ProfileController::class, 'index'])->middleware('auth')->name('profile');
     Route::get('/users/{name}', [ProfileController::class, 'show'])->name('profile.username');
 
     Route::get('/notifikasi', [DashboardUser::class, 'BanPostUser'])->name('riwayat.postingan');
     Route::get('/riwayat-komentar', [DashboardUser::class, 'BanAndShowComment'])->name('riwayat.komentar');
-
-    Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
-    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
     Route::post('/post-like/{post}', [LikesPhotoController::class, 'likePhoto'])->name('post.like');
 
@@ -76,4 +71,11 @@ Route::prefix('/')->name('user.')->group(function () {
 
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.index')->middleware('auth');
     Route::post('/firebase/custom-token', [FirebaseAuthController::class, 'customToken'])->name('firebase.custom-token')->middleware('auth');
+
+    Route::middleware('auth')->group(function () {
+        Route::post('/report/post/{post}', [ReportController::class, 'reportPost'])->name('report.post');
+        Route::post('/report/comment/{comment}', [ReportController::class, 'reportComment'])->name('report.comment');
+        Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
+        Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    });
 });

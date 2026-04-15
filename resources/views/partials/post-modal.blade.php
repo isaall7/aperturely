@@ -194,9 +194,6 @@
                                                     <div class="ap-comment-meta">
                                                         <span class="ap-comment-time">{{ $reply->created_at->diffForHumans() }}</span>
                                                         @auth
-                                                            <button class="ap-comment-action-btn reply-btn"
-                                                                    data-id="{{ $reply->id }}"
-                                                                    data-username="{{ $reply->user->username ?? $reply->user->name }}">Balas</button>
                                                             @if(auth()->id() === $reply->user_id || auth()->user()->role === 'admin')
                                                                 <button class="ap-comment-action-btn danger delete-comment-btn"
                                                                         data-id="{{ $reply->id }}"
@@ -294,6 +291,8 @@
 </div>
 
 {{-- ===== REPORT COMMENT MODALS ===== --}}
+@include('partials.comment-report-modals', ['comments' => $post->comments])
+{{--
 @foreach($post->comments as $comment)
     <div class="modal fade ap-report-modal" id="reportCommentModal{{ $comment->id }}" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
@@ -334,3 +333,4 @@
         </div>
     </div>
 @endforeach
+--}}

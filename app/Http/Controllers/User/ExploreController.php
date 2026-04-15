@@ -14,18 +14,32 @@ use Illuminate\Http\Request;
 
 class ExploreController extends Controller
 {
-     public function index()
+    //digunakan untuk menampilkan halaman explore dengan semua post yang sudah di filter
+    // berdasarkan kategori dan tipe foto, dan juga menampilkan semua kategori untuk filter
+    public function index()
     {
         // Ambil posts dengan relasi lengkap
         $posts = Posts::with([
             'user',
             'photos',
             'likes',
+            'comments' => function ($q) {
+                $q->where('status', 'active');
+            },
             'comments.user',
+            'comments.replies' => function ($q) {
+                $q->where('status', 'active');
+            },
             'comments.replies.user'
         ])
         ->where('status', 'active')
-        ->withCount(['likes', 'comments'])
+        ->withCount([
+            'likes',
+            'comments' => function ($q) {
+                $q->where('status', 'active');
+            }
+        ])
+
         ->orderByRaw('(likes_count + comments_count * 2) DESC')
         ->latest()
         ->paginate(12);
@@ -34,13 +48,14 @@ class ExploreController extends Controller
         $categories = Categories::all();
 
         return view('user.explore.index', [
-            'posts'         => $posts,
-            'users'         => collect(),
-            'categories'    => $categories,
-            'activeView'    => 'posts',
+            'posts'      => $posts,
+            'users'      => collect(),
+            'categories' => $categories,
+            'activeView' => 'posts',
         ]);
     }
 
+    //digunakan untuk menampilkan halaman detail post dengan related post yang sudah di filter berdasarkan tipe kategori
     public function filterByCategory($categoryId)
     {
         // Filter posts berdasarkan kategori
@@ -71,6 +86,7 @@ class ExploreController extends Controller
         ]);
     }
 
+    //digunakan untuk menampilkan halaman detail post dengan related post yang sudah di filter berdasarkan tipe kategori
     public function search(Request $request)
     {
         $query = $request->input('q');
@@ -144,6 +160,7 @@ class ExploreController extends Controller
         ]);
     }
 
+    //digunakan untuk menampilkan postingan yang sedang trending berdasarkan jumlah likes dan comments
     public function trending()
     {
         // Ambil 10 posts terpopuler berdasarkan likes dan comments

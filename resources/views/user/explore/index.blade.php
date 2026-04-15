@@ -31,7 +31,6 @@
         font-family: 'DM Sans', sans-serif;
     }
 
-    /* ── Override layout ── */
     .container-fluid { padding: 0 !important; max-width: 100% !important; }
     .body-wrapper    { margin-top: 0 !important; }
 
@@ -65,7 +64,6 @@
         gap: 16px;
     }
 
-    /* Search box */
     .ex-search-box {
         background: var(--white);
         border-radius: var(--r-lg);
@@ -124,7 +122,6 @@
 
     .ex-search-btn:hover { background: #222; }
 
-    /* Category card */
     .ex-cat-card {
         background: var(--white);
         border-radius: var(--r-lg);
@@ -190,7 +187,6 @@
     /* ===================== MAIN ===================== */
     .ex-main { min-width: 0; }
 
-    /* Search bar desktop (top of main) */
     .ex-search-top {
         background: var(--white);
         border-radius: var(--r-lg);
@@ -211,11 +207,13 @@
         flex-shrink: 0;
     }
 
-    /* Section heading */
+    /* ===================== SECTION HEADING ===================== */
     .ex-heading {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        flex-wrap: nowrap;
+        gap: 10px;
         margin-bottom: 20px;
     }
 
@@ -224,6 +222,11 @@
         font-size: 22px;
         font-weight: 400;
         color: var(--black);
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .ex-count {
@@ -240,6 +243,7 @@
         background: var(--white);
         border-radius: 999px;
         box-shadow: var(--shadow-sm);
+        flex-shrink: 0;
     }
 
     .ex-view-tab {
@@ -252,6 +256,7 @@
         font-weight: 600;
         color: var(--muted);
         text-decoration: none;
+        white-space: nowrap;
         transition: background .2s, color .2s, transform .2s;
     }
 
@@ -469,6 +474,7 @@
 
     .ex-empty p { font-size: 14px; color: var(--muted); }
 
+    /* ===================== USER GRID ===================== */
     .ex-users {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -552,30 +558,24 @@
         color: var(--black);
     }
 
+    /* ===================== PAGINATION ===================== */
     .ex-pagination {
         margin-top: 24px;
         display: flex;
         justify-content: center;
     }
 
-    .ex-pagination nav > div:first-child {
-        display: none;
-    }
+    .ex-pagination nav > div:first-child { display: none; }
 
     .ex-pagination nav > div:last-child {
         display: flex;
         justify-content: center;
     }
 
-    .ex-pagination svg {
-        width: 16px;
-        height: 16px;
-    }
+    .ex-pagination svg { width: 16px; height: 16px; }
 
     .ex-pagination span,
-    .ex-pagination a {
-        border-radius: 12px !important;
-    }
+    .ex-pagination a { border-radius: 12px !important; }
 
     /* ===================== DETAIL MODAL ===================== */
     .ap-detail-modal .modal-dialog {
@@ -687,7 +687,7 @@
         padding: 0 18px;
         border: none;
         border-radius: 999px;
-        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-h) 100%);
+        background: #111111;
         color: var(--white);
         font-size: 13px;
         font-weight: 700;
@@ -697,21 +697,22 @@
         justify-content: center;
         gap: 8px;
         text-decoration: none;
-        box-shadow: 0 10px 24px rgba(200, 83, 58, 0.22);
+        box-shadow: 0 10px 24px rgba(17, 17, 17, 0.18);
         transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
         cursor: pointer;
     }
     .ap-modal-save:hover {
-        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-h) 100%);
+        background: #000000;
         color: var(--white);
         transform: translateY(-1px);
-        box-shadow: 0 14px 28px rgba(200, 83, 58, 0.28);
-        filter: saturate(1.05);
+        box-shadow: 0 14px 28px rgba(17, 17, 17, 0.24);
+        filter: none;
     }
     .ap-modal-save.dropdown-toggle::after {
         margin-left: 2px;
         vertical-align: middle;
     }
+
     .ap-download-menu {
         min-width: 260px;
         padding: 8px;
@@ -741,14 +742,8 @@
         text-align: center;
     }
     .ap-download-menu .dropdown-item:hover,
-    .ap-download-menu .dropdown-item:focus {
-        background: #f6f1eb;
-        color: var(--black);
-    }
-    .ap-download-menu .dropdown-divider {
-        margin: 8px 2px;
-        border-top-color: var(--warm-gray);
-    }
+    .ap-download-menu .dropdown-item:focus { background: #f6f1eb; color: var(--black); }
+    .ap-download-menu .dropdown-divider { margin: 8px 2px; border-top-color: var(--warm-gray); }
 
     .ap-modal-author {
         padding: 16px 18px;
@@ -844,7 +839,7 @@
     .ap-comment-submit:hover:not(:disabled) { background: var(--accent-h); }
     .ap-comment-submit:disabled { opacity: .4; cursor: not-allowed; }
 
-    /* Report Modal */
+    /* ===================== REPORT MODAL ===================== */
     .ap-report-modal .modal-dialog { max-width: 480px; }
     .ap-report-modal .modal-content { border: none; border-radius: var(--r-xl); box-shadow: var(--shadow-lg); overflow: hidden; }
     .ap-report-modal .modal-header { padding: 22px 26px 14px; border-bottom: 1px solid var(--warm-gray); }
@@ -867,22 +862,23 @@
     .ap-report-modal .btn-submit-report { flex: 1; height: 40px; background: #c0392b; border: none; border-radius: var(--r-md); font-size: 13.5px; font-weight: 600; font-family: 'DM Sans', sans-serif; color: var(--white); cursor: pointer; transition: background .2s; }
     .ap-report-modal .btn-submit-report:hover { background: #a93226; }
 
-    /* Dropdown */
+    /* ===================== DROPDOWN ===================== */
     .dropdown-menu { border: 1px solid var(--warm-gray); border-radius: var(--r-md); box-shadow: var(--shadow-md); padding: 6px; font-family: 'DM Sans', sans-serif; }
     .dropdown-item { border-radius: var(--r-sm); padding: 8px 13px; font-size: 13.5px; color: var(--black); transition: background .15s; }
     .dropdown-item:hover { background: var(--cream); }
     .dropdown-item.text-danger { color: #c0392b !important; }
     .dropdown-item.text-danger:hover { background: #fdf2f2; }
 
-    /* Toast */
+    /* ===================== TOAST ===================== */
     .ap-toast { position: fixed; top: 80px; right: 24px; z-index: 99999; padding: 12px 18px; border-radius: var(--r-md); font-size: 13.5px; font-weight: 500; font-family: 'DM Sans', sans-serif; box-shadow: var(--shadow-lg); animation: toastIn .3s ease; max-width: 300px; }
     .ap-toast.success { background: #1a7431; color: var(--white); }
     .ap-toast.error   { background: #c0392b; color: var(--white); }
     @keyframes toastIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
 
-    /* Responsive modal */
+    /* ===================== RESPONSIVE MODAL ===================== */
     @media (max-width: 860px) {
         .ex-users { grid-template-columns: 1fr; }
+
         .ap-detail-modal .modal-dialog {
             width: 100%;
             height: 100dvh;
@@ -920,54 +916,73 @@
         }
         .ex-sidebar { position: static; }
     }
+
+    /* ===================== MOBILE ===================== */
     @media (max-width: 480px) {
         .ex-page { padding: 20px 0 56px; }
         .ex-inner { padding: 0 12px; }
+
+        /* Heading: judul & tab selalu 1 baris */
         .ex-heading {
             margin-bottom: 14px;
-            align-items: flex-start;
-            flex-direction: column;
-            gap: 12px;
+            flex-direction: row;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 8px;
         }
-        .ex-title { font-size: 20px; }
-        .ex-view-tabs { width: 100%; justify-content: space-between; }
-        .ex-view-tab { flex: 1; justify-content: center; }
-        .ex-user-card { padding: 16px; gap: 12px; }
-        .ex-user-avatar { width: 56px; height: 56px; }
-        .ap-card {
-            margin-bottom: 10px;
-            border-radius: 16px;
+
+        .ex-title {
+            font-size: 16px;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-        .ap-card-body {
-            display: none;
+
+        .ex-view-tabs {
+            flex-shrink: 0;
+            width: auto;
+            padding: 4px;
+            gap: 3px;
         }
-        .ap-card-overlay {
-            padding: 10px;
+
+        .ex-view-tab {
+            padding: 7px 10px;
+            font-size: 12px;
+            gap: 4px;
+            white-space: nowrap;
         }
-        .ap-multi-badge {
-            top: 8px;
-            left: 8px;
+
+        .ex-view-badge {
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
             font-size: 10px;
-            padding: 3px 8px;
         }
+
+        /* User cards */
+        .ex-users { gap: 12px; }
+        .ex-user-card { padding: 14px; gap: 10px; }
+        .ex-user-avatar { width: 52px; height: 52px; }
+        .ex-user-name { font-size: 14px; }
+        .ex-user-pill { padding: 5px 8px; font-size: 11px; }
+
+        /* Post cards */
+        .ap-card { margin-bottom: 10px; border-radius: 16px; }
+        .ap-card-body { display: none; }
+        .ap-card-overlay { padding: 10px; }
+        .ap-multi-badge { top: 8px; left: 8px; font-size: 10px; padding: 3px 8px; }
+
+        /* Modal */
         .ap-modal-header,
         .ap-modal-author,
         .ap-modal-comments,
-        .ap-comment-form-wrap {
-            padding-left: 14px;
-            padding-right: 14px;
-        }
-        .ap-modal-header {
-            flex-wrap: wrap;
-            align-items: flex-start;
-        }
-        .ap-modal-header-left { flex-wrap: wrap; }
+        .ap-comment-form-wrap { padding-left: 14px; padding-right: 14px; }
+        .ap-modal-header { flex-wrap: wrap; align-items: flex-start; }
         .ap-modal-save { width: 100%; }
         .ap-modal-media .carousel-control-prev,
-        .ap-modal-media .carousel-control-next {
-            width: 38px;
-            height: 38px;
-        }
+        .ap-modal-media .carousel-control-next { width: 38px; height: 38px; }
     }
 </style>
 
@@ -1304,6 +1319,9 @@
                                                                                     @if(auth()->id() === $reply->user_id || auth()->user()->role === 'admin')
                                                                                         <button class="ap-comment-action-btn danger delete-comment-btn" data-id="{{ $reply->id }}" data-url="{{ route('user.comments.destroy', $reply->id) }}">Hapus</button>
                                                                                     @endif
+                                                                                    @if(auth()->id() !== $reply->user_id)
+                                                                                        <button class="ap-comment-action-btn" data-bs-toggle="modal" data-bs-target="#reportCommentModal{{ $reply->id }}">Laporkan</button>
+                                                                                    @endif
                                                                                 @endauth
                                                                             </div>
                                                                         </div>
@@ -1384,6 +1402,8 @@
                             </div>
                         </div>
 
+                        @include('partials.comment-report-modals', ['comments' => $post->comments])
+                        {{--
                         @foreach($post->comments as $comment)
                             <div class="modal fade ap-report-modal" id="reportCommentModal{{ $comment->id }}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -1424,6 +1444,7 @@
                                 </div>
                             </div>
                         @endforeach
+                        --}}
 
                     @endforeach
                 </div>

@@ -580,7 +580,7 @@
         padding: 0 18px;
         border: none;
         border-radius: 999px;
-        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-h) 100%);
+        background: #111111;
         color: var(--white);
         font-size: 13px;
         font-weight: 700;
@@ -590,16 +590,16 @@
         justify-content: center;
         gap: 8px;
         text-decoration: none;
-        box-shadow: 0 10px 24px rgba(200, 83, 58, 0.22);
+        box-shadow: 0 10px 24px rgba(17, 17, 17, 0.18);
         transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
         cursor: pointer;
     }
     .ap-modal-save:hover {
-        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-h) 100%);
+        background: #000000;
         color: var(--white);
         transform: translateY(-1px);
-        box-shadow: 0 14px 28px rgba(200, 83, 58, 0.28);
-        filter: saturate(1.05);
+        box-shadow: 0 14px 28px rgba(17, 17, 17, 0.24);
+        filter: none;
     }
     .ap-modal-save.dropdown-toggle::after {
         margin-left: 2px;

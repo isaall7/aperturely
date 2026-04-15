@@ -38,7 +38,7 @@ class DashboardAdmin extends Controller
                     });
                 });
             })
-            ->latest() ade anak pa aly
+            ->latest()
             ->get();
 
         return view('admin.user.posts', compact('posts', 'search', 'totalPosts', 'userId'));

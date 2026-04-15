@@ -205,25 +205,50 @@ class DashboardUser extends Controller
             'photos',
             'user',
             'likes',
+
             'comments' => function ($q) {
-                $q->whereNull('reply_id')->with(['user', 'replies.user'])->latest();
+                $q->whereNull('reply_id')
+                ->where('status', 'active') // 🔥 filter comment
+                ->with([
+                    'user',
+                    'replies' => function ($q) {
+                        $q->where('status', 'active'); // 🔥 filter replies
+                    },
+                    'replies.user'
+                ])
+                ->latest();
             },
+
             'tipeKategori',
         ])
         ->where('status', 'active')
         ->findOrFail($id);
 
-        // Ambil 10 postingan dari kategori yang sama (acak), kecuali postingan ini
+        // Related post
         $relatedPosts = collect();
 
         if ($post->tipeKategori) {
-            $relatedPosts = Posts::with(['photos', 'user', 'likes', 'comments'])
+            $relatedPosts = Posts::with([
+                    'photos',
+                    'user',
+                    'likes',
+
+                    // 🔥 ini juga harus difilter
+                    'comments' => function ($q) {
+                        $q->where('status', 'active');
+                    }
+                ])
                 ->where('status', 'active')
                 ->where('id', '!=', $post->id)
                 ->whereHas('tipeKategori', function ($q) use ($post) {
                     $q->where('id', $post->tipeKategori->id);
                 })
-                ->withCount(['likes', 'comments'])
+                ->withCount([
+                    'likes',
+                    'comments' => function ($q) {
+                        $q->where('status', 'active'); // 🔥 count sesuai
+                    }
+                ])
                 ->inRandomOrder()
                 ->limit(10)
                 ->get();

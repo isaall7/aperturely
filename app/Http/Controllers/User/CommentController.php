@@ -21,14 +21,36 @@ class CommentController extends Controller
         $request->validate([
             'post_id' => 'required|exists:posts,id',
             'comment' => 'required|string|max:1000',
-            'reply_id' => 'nullable|exists:comments,id',     
+            'reply_id' => 'nullable|exists:comments,id',
         ]);
+
+        if ($request->filled('reply_id')) {
+            $parentComment = Comment::query()
+                ->where('id', $request->reply_id)
+                ->where('post_id', $request->post_id)
+                ->where('status', 'active')
+                ->first();
+
+            if (!$parentComment) {
+                $message = 'Komentar yang ingin dibalas tidak ditemukan atau sudah tidak aktif.';
+
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $message,
+                    ], 422);
+                }
+
+                return back()->with('error', $message);
+            }
+        }
 
         $comment = Comment::create([
             'post_id' => $request->post_id,
             'user_id' => Auth::id(),
             'comment' => $request->comment,
             'reply_id' => $request->reply_id,
+            'status' => 'active',
         ]);
 
         // Load relasi user untuk response

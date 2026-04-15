@@ -249,6 +249,7 @@
                             <th>Pelapor</th>
                             <th>Terlapor</th>
                             <th>Komentar</th>
+                            <th>status</th>
                             <th>Alasan</th>
                             <th>Status</th>
                             <th>Tanggal</th>
@@ -279,6 +280,12 @@
                                 <td>
                                     @if($report->comment)
                                         <strong>{{ \Illuminate\Support\Str::limit($report->comment->comment, 80) }}</strong>
+                                    @else
+                                        <span class="muted-text">Komentar sudah dihapus.</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($report->comment)
                                         <div class="muted-text mt-1">
                                             <span class="pill {{ $report->comment->status }}">{{ ucfirst($report->comment->status) }}</span>
                                         </div>
@@ -288,7 +295,7 @@
                                 </td>
                                 <td><span class="pill reason">{{ $report->reason_label }}</span></td>
                                 <td><span class="pill {{ $report->status }}">{{ ucfirst($report->status) }}</span></td>
-                                <td>{{ $report->created_at->format('d M Y H:i') }}</td>
+                                <td>{{ $report->created_at->format('d M Y') }}</td>
                                 <td>
                                     <div class="action-row">
                                         <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal{{ $report->id }}">Detail</button>

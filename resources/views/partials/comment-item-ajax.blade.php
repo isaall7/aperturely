@@ -16,9 +16,6 @@
         <div class="ap-comment-meta">
             <span class="ap-comment-time">{{ $comment->created_at->diffForHumans() }}</span>
             @auth
-                <button class="ap-comment-action-btn reply-btn"
-                        data-id="{{ $comment->id }}"
-                        data-username="{{ $comment->user->username ?? $comment->user->name }}">Balas</button>
                 @if(auth()->id() === $comment->user_id || auth()->user()->role === 'admin')
                     <button class="ap-comment-action-btn danger delete-comment-btn"
                             data-id="{{ $comment->id }}"
@@ -29,10 +26,6 @@
                             data-bs-toggle="modal"
                             data-bs-target="#reportCommentModal{{ $comment->id }}">Laporkan</button>
                 @endif
-            @else
-                <button class="ap-comment-action-btn"
-                        data-bs-toggle="modal"
-                        data-bs-target="#reportCommentModal{{ $comment->id }}">Laporkan</button>
             @endauth
         </div>
     </div>
@@ -68,13 +61,11 @@
                                 data-bs-toggle="modal"
                                 data-bs-target="#reportCommentModal{{ $comment->id }}">Laporkan</button>
                     @endif
-                @else
-                    <button class="ap-comment-action-btn"
-                            data-bs-toggle="modal"
-                            data-bs-target="#reportCommentModal{{ $comment->id }}">Laporkan</button>
                 @endauth
             </div>
         </div>
     </div>
 </div>
 @endif
+
+@include('partials.comment-report-modals', ['comments' => collect([$comment])])

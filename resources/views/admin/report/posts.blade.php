@@ -287,7 +287,6 @@
                                 </td>
                                 <td>
                                     @if($report->post)
-                                        <strong>{{ \Illuminate\Support\Str::limit($report->post->caption ?: 'Tanpa caption', 70) }}</strong>
                                         <div class="muted-text mt-1">
                                             <span class="pill {{ $report->post->status }}">{{ ucfirst($report->post->status) }}</span>
                                         </div>
@@ -297,7 +296,7 @@
                                 </td>
                                 <td><span class="pill reason">{{ $report->reason_label }}</span></td>
                                 <td><span class="pill {{ $report->status }}">{{ ucfirst($report->status) }}</span></td>
-                                <td>{{ $report->created_at->format('d M Y H:i') }}</td>
+                                <td>{{ $report->created_at->format('d M Y') }}</td>
                                 <td>
                                     <div class="action-row">
                                         <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal{{ $report->id }}">Detail</button>

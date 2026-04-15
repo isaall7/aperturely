@@ -227,7 +227,7 @@
         padding: 0 18px;
         border: none;
         border-radius: 999px;
-        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-h) 100%);
+        background: #111111;
         color: var(--white);
         font-size: 13px;
         font-weight: 700;
@@ -237,14 +237,15 @@
         justify-content: center;
         gap: 8px;
         text-decoration: none;
-        box-shadow: 0 10px 24px rgba(200, 83, 58, 0.22);
+        box-shadow: 0 10px 24px rgba(17, 17, 17, 0.18);
         transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
     }
     .ap-modal-save:hover {
+        background: #000000;
         color: var(--white);
         transform: translateY(-1px);
-        box-shadow: 0 14px 28px rgba(200, 83, 58, 0.28);
-        filter: saturate(1.05);
+        box-shadow: 0 14px 28px rgba(17, 17, 17, 0.24);
+        filter: none;
     }
     .ap-modal-save.dropdown-toggle::after {
         margin-left: 2px;
@@ -872,8 +873,6 @@
                                 <button type="button"
                                         class="dropdown-item fw-semibold download-all-btn"
                                         data-download-urls='@json($post->photos->map(fn ($photo) => route('user.postingan.download', ['post' => $post->id, 'photo' => $photo->id]))->values())'>
-                                    <span>Download semua foto</span>
-                                    <span>{{ $post->photos->count() }}</span>
                                 </button>
                             </li>
                         </ul>
@@ -935,7 +934,7 @@
             {{-- Comments --}}
             <div class="pd-comments-wrap" id="commentsContainer">
                 @forelse($post->comments->whereNull('reply_id') as $comment)
-                    <div class="comment-wrapper" id="cw-{{ $comment->id }}">
+                    <div class="comment-wrapper" id="comment-wrapper-{{ $comment->id }}">
                         <div class="ap-comment" id="comment-{{ $comment->id }}">
                             <a href="{{ route('user.profile.username', ['name' => $comment->user->name]) }}">
                                 <img src="{{ $comment->user->avatar_display ?? 'https://ui-avatars.com/api/?name=User' }}"
@@ -992,13 +991,15 @@
                                             <div class="ap-comment-meta">
                                                 <span class="ap-comment-time">{{ $reply->created_at->diffForHumans() }}</span>
                                                 @auth
-                                                    <button class="ap-comment-action-btn reply-btn"
-                                                            data-id="{{ $reply->id }}"
-                                                            data-username="{{ $reply->user->username ?? $reply->user->name }}">Balas</button>
                                                     @if(auth()->id() === $reply->user_id || auth()->user()->role === 'admin')
                                                         <button class="ap-comment-action-btn danger delete-comment-btn"
                                                                 data-id="{{ $reply->id }}"
                                                                 data-url="{{ route('user.comments.destroy', $reply->id) }}">Hapus</button>
+                                                    @endif
+                                                    @if(auth()->id() !== $reply->user_id)
+                                                        <button class="ap-comment-action-btn"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#reportCommentModal{{ $reply->id }}">Laporkan</button>
                                                     @endif
                                                 @endauth
                                             </div>
@@ -1149,6 +1150,8 @@
 </div>
 
 {{-- ===== REPORT COMMENT MODALS ===== --}}
+@include('partials.comment-report-modals', ['comments' => $post->comments])
+{{--
 @foreach($post->comments as $comment)
     <div class="modal fade" id="reportCommentModal{{ $comment->id }}" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
@@ -1189,6 +1192,7 @@
         </div>
     </div>
 @endforeach
+--}}
 
 
 <script>
@@ -1268,7 +1272,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (noMsg) noMsg.remove();
 
                     if (data.comment.reply_id) {
-                        let pw = document.getElementById('cw-' + data.comment.reply_id);
+                        let pw = document.getElementById('comment-wrapper-' + data.comment.reply_id);
                         if (pw) {
                             let nest = pw.querySelector('.ap-replies-nest');
                             if (!nest) {
@@ -1336,7 +1340,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                const cw = document.getElementById('cw-' + id);
+                const cw = document.getElementById('comment-wrapper-' + id);
                 if (cw) cw.remove();
                 else {
                     const c = document.getElementById('comment-' + id);
